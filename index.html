@@ -1,5 +1,867 @@
 <!DOCTYPE html>
-<html>
-<head><title>AFTR Setlist</title></head>
-<body><p>Coming soon</p></body>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFTR Weekly Setlist</title>
+<style>
+  :root {
+    --gold: #EF9F27;
+    --gold-light: #FFF3D6;
+    --gold-dark: #7a4800;
+    --free-bg: #d4edda;
+    --free-border: #5a9e6f;
+    --free-text: #1a5c33;
+    --purple-bg: #EEEDFE;
+    --purple-border: #7F77DD;
+    --purple-text: #3C3489;
+    --twitch: #9146FF;
+    --twitch-dark: #5c2d9e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f5f5; color: #111; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
+  .page-sub { font-size: 12px; color: #888; margin-bottom: 0.9rem; }
+  .top-bar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+  .top-btns { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 0.8rem; align-items: center; padding: 7px 14px; background: #fff; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; color: #444; }
+  .legend-swatch { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+  .controls { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.9rem; align-items: center; }
+  .ctrl { font-size: 12px; padding: 4px 11px; border-radius: 5px; border: 1px solid #bbb; background: #fff; color: #444; cursor: pointer; transition: all 0.12s; }
+  .ctrl:hover { background: #eee; }
+  .ctrl.active { background: #111; color: #fff; border-color: #111; }
+  .ctrl.all-btn { border-color: #999; }
+  .font-slider-wrap { display: flex; align-items: center; gap: 6px; margin-left: 8px; }
+  .font-slider-label { font-size: 12px; color: #888; font-weight: 600; line-height: 1; }
+  .font-slider { width: 90px; accent-color: #111; cursor: pointer; }
+  .section { margin-bottom: 1rem; }
+  .section-header { margin-bottom: 5px; padding-bottom: 4px; border-bottom: 2px solid #ddd; display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+  .section-left { display: flex; align-items: baseline; gap: 10px; flex: 1; min-width: 0; }
+  .section-title { font-size: 19px; font-weight: 700; color: #111; }
+  .section-sub { font-size: 14px; color: #999; font-style: italic; }
+  .section-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; table-layout: fixed; }
+  col.c-artist { width: 19%; }
+  col.c-title  { width: 30%; }
+  col.c-vibe   { width: 27%; }
+  col.c-sub    { width: 13%; }
+  col.c-status { width: 11%; }
+  thead th { background: #f0f0f0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #666; padding: 6px 10px; text-align: left; border-bottom: 1px solid #ddd; }
+  tbody tr { border-bottom: 1px solid #efefef; cursor: pointer; user-select: none; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { filter: brightness(0.96); }
+  tbody td { padding: 10px 12px; vertical-align: middle; line-height: 1.3; }
+  .td-artist { font-weight: 600; font-size: 19px; color: #111; }
+  .td-title   { font-size: 19px; color: #222; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 6px; border-radius: 3px; background: #e8e8e8; color: #555; margin-left: 6px; vertical-align: middle; letter-spacing: 0.03em; white-space: nowrap; }
+  .td-vibe    { font-size: 16px; color: #777; font-style: italic; }
+  .td-sub     { font-size: 16px; color: #555; }
+  .td-status  { text-align: center; }
+  .badge { display: inline-block; font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.02em; white-space: nowrap; }
+  .badge-winner { background: var(--gold-light); color: var(--gold-dark); border: 1px solid var(--gold); }
+  .badge-free   { background: var(--free-bg); color: var(--free-text); border: 1px solid var(--free-border); }
+  tr.comeback { background: var(--purple-bg); }
+  tr.comeback .td-artist { color: var(--purple-text); }
+  tr.comeback .td-title  { color: var(--purple-border); }
+  tr.free-pick { background: #e8f5ed; }
+  tr.free-pick .td-artist { color: #1a4a2a; }
+  tr.free-pick .td-title  { color: #1a4a2a; }
+  tr.winner { background: var(--gold-light); }
+  tr.winner td:first-child { border-left: 4px solid var(--gold); }
+  tr.winner .td-artist { color: var(--gold-dark); }
+  .top-btn { font-size: 12px; padding: 5px 12px; border-radius: 5px; border: 1px solid #999; background: #fff; cursor: pointer; color: #444; white-space: nowrap; }
+  .top-btn:hover { background: #eee; }
+  .desc-btn { background: #111; color: #fff; border-color: #111; }
+  .desc-btn:hover { background: #333; }
+  .twitch-btn { background: var(--twitch); color: #fff; border-color: var(--twitch-dark); }
+  .twitch-btn:hover { background: var(--twitch-dark); }
+  .twitch-btn.connected { background: #1a7a3a; border-color: #145c2c; }
+  .twitch-btn.connected:hover { background: #145c2c; }
+  .playlist-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 3px 10px; border-radius: 4px; border: 1px solid #c00; background: #fff; color: #c00; cursor: pointer; text-decoration: none; font-weight: 600; flex-shrink: 0; }
+  .playlist-btn:hover { background: #c00; color: #fff; }
+  .playlist-btn svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .poll-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 3px 10px; border-radius: 4px; border: 1px solid var(--twitch-dark); background: #fff; color: var(--twitch); cursor: pointer; font-weight: 600; flex-shrink: 0; white-space: nowrap; transition: all 0.12s; }
+  .poll-btn:hover { background: var(--twitch); color: #fff; }
+  .poll-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .poll-btn.loading { opacity: 0.7; cursor: wait; }
+  .poll-btn.success { background: #1a7a3a; color: #fff; border-color: #145c2c; }
+  .poll-duration-wrap { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #888; }
+  .poll-duration { font-size: 12px; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; background: #fff; color: #444; width: 60px; }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 10px; width: 680px; max-width: 95vw; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgba(0,0,0,0.25); }
+  .modal-header { padding: 16px 20px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  .modal-header h2 { font-size: 16px; font-weight: 700; }
+  .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #888; line-height: 1; padding: 0 4px; }
+  .modal-close:hover { color: #111; }
+  .modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+  .modal-footer { padding: 12px 20px; border-top: 1px solid #eee; display: flex; gap: 8px; justify-content: flex-end; flex-shrink: 0; }
+  .modal-foot-btn { font-size: 13px; padding: 7px 16px; border-radius: 6px; border: 1px solid #bbb; background: #fff; cursor: pointer; color: #444; }
+  .modal-foot-btn:hover { background: #eee; }
+  .modal-foot-btn.primary { background: #111; color: #fff; border-color: #111; }
+  .modal-foot-btn.primary:hover { background: #333; }
+  .modal-foot-btn.success { background: #1a7a3a; color: #fff; border-color: #1a7a3a; }
+  .desc-type-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .desc-type-btn { flex: 1; padding: 10px 8px; border-radius: 6px; border: 1px solid #ccc; background: #f8f8f8; cursor: pointer; font-size: 13px; font-weight: 500; color: #555; transition: all 0.12s; text-align: center; }
+  .desc-type-btn:hover { border-color: #999; background: #f0f0f0; }
+  .desc-type-btn.selected { background: #111; color: #fff; border-color: #111; }
+  .field-group { margin-bottom: 16px; }
+  .field-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 6px; }
+  .field-input { width: 100%; font-size: 14px; padding: 8px 11px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; color: #111; }
+  .field-input:focus { outline: none; border-color: #888; }
+  .ai-result { font-size: 14px; line-height: 1.75; color: #222; white-space: pre-wrap; }
+
+  /* Twitch status bar */
+  .twitch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 12px; border-radius: 6px; margin-bottom: 0.8rem; background: #fff; border: 1px solid #ddd; }
+  .twitch-status.connected { background: #f0f8f2; border-color: var(--free-border); color: #1a5c33; }
+  .twitch-status.disconnected { color: #888; }
+  .twitch-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
+  .twitch-status.connected .twitch-dot { background: #1a7a3a; }
+  .poll-preview { background: #f8f8f8; border: 1px solid #e0e0e0; border-radius: 6px; padding: 10px 14px; font-size: 13px; margin-top: 8px; }
+  .poll-preview-title { font-weight: 600; margin-bottom: 6px; color: #333; }
+  .poll-preview-option { padding: 3px 0; color: #555; }
+  .poll-preview-option::before { content: '• '; color: var(--twitch); }
+  .poll-truncated { color: #aaa; font-size: 11px; margin-left: 6px; }
+
+  @media print {
+    .controls, .top-btn, .legend, .modal-overlay, .playlist-btn, .poll-btn, .twitch-status, .poll-duration-wrap { display: none !important; }
+    body { background: #fff; }
+    .section { break-inside: avoid; }
+    h1 { font-size: 18px; }
+    .section-title { font-size: 14px; }
+    .td-artist, .td-title { font-size: 13px; }
+    .td-vibe, .td-sub { font-size: 12px; }
+    tbody td { padding: 5px 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top-bar">
+    <div>
+      <h1>Along for the Ride Reacts — Weekly Setlist</h1>
+      <p class="page-sub">Left-click a row to toggle <strong>winner</strong> &nbsp;|&nbsp; Right-click a row to toggle <strong>free pick winner</strong> &nbsp;|&nbsp; Right-click a category button to <strong>solo</strong> it</p>
+    </div>
+    <div class="top-btns">
+      <button class="top-btn twitch-btn" id="twitchAuthBtn" onclick="handleTwitchAuth()">Connect Twitch</button>
+      <button class="top-btn desc-btn" onclick="openDescModal()">Generate description</button>
+      <button class="top-btn" onclick="window.print()">Print / Save PDF</button>
+    </div>
+  </div>
+
+  <div class="twitch-status disconnected" id="twitchStatus">
+    <div class="twitch-dot"></div>
+    <span id="twitchStatusText">Not connected to Twitch — connect to enable live polls</span>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--purple-bg);border:1px solid var(--purple-border)"></div> Comeback</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#e8f5ed;border:1px solid var(--free-border)"></div> Free pick winner</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--gold-light);border:1px solid var(--gold)"></div> Winner</div>
+    <div class="legend-item" style="margin-left:8px;color:#888"><span class="tag">MV</span> Music video &nbsp;<span class="tag">Live</span> Live performance &nbsp;<span class="tag">PV</span> Performance video &nbsp;<span class="tag">DP</span> Dance practice &nbsp;<span class="tag">Cover</span> Cover &nbsp;<span class="tag">OST</span> OST</div>
+    <div class="poll-duration-wrap" style="margin-left:auto">
+      Poll duration: <input type="number" class="poll-duration" id="pollDuration" value="120" min="15" max="1800"> sec
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl all-btn active" onclick="toggleAll(this)">All</button>
+    <button class="ctrl active" data-cat="comebacks"              onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Comebacks</button>
+    <button class="ctrl active" data-cat="InBloom"                onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">In Bloom</button>
+    <button class="ctrl active" data-cat="Cross"                  onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Cross</button>
+    <button class="ctrl active" data-cat="VegetableRollercoaster" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Vegetable + Rollercoaster</button>
+    <button class="ctrl active" data-cat="Yobs"                   onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Yobs</button>
+    <button class="ctrl active" data-cat="OddOneOut"              onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Odd One Out</button>
+    <div class="font-slider-wrap">
+      <span class="font-slider-label">A</span>
+      <input type="range" min="12" max="28" value="19" class="font-slider" id="fontSlider" oninput="setFontSize(this.value)">
+      <span class="font-slider-label" style="font-size:18px">A</span>
+    </div>
+  </div>
+
+  <div id="setlist"></div>
+</div>
+
+<!-- Description modal -->
+<div class="modal-overlay" id="descModal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Generate stream description</h2>
+      <button class="modal-close" onclick="closeDescModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div id="stepChoose">
+        <p style="font-size:13px;color:#666;margin-bottom:14px;">Which platform are you writing for?</p>
+        <div class="desc-type-row">
+          <div class="desc-type-btn" id="btnYT" onclick="selectType('youtube')">
+            <div style="font-size:15px;margin-bottom:3px;">▶ YouTube</div>
+            <div style="font-size:11px;opacity:0.7">Comebacks stream replay</div>
+          </div>
+          <div class="desc-type-btn" id="btnPat" onclick="selectType('patreon')">
+            <div style="font-size:15px;margin-bottom:3px;">&#9733; Patreon</div>
+            <div style="font-size:11px;opacity:0.7">Wednesday Jukebox stream</div>
+          </div>
+        </div>
+      </div>
+      <div id="stepDetails" style="display:none">
+        <div class="field-group">
+          <div class="field-label">Stream date</div>
+          <input class="field-input" type="text" id="streamDate">
+        </div>
+        <div style="margin-top:4px;padding:10px 12px;background:#f8f8f8;border:1px solid #e0e0e0;border-radius:6px;font-size:12px;color:#888;line-height:1.6;">
+          Click <strong>Copy prompt for Claude</strong>, paste into a new Claude chat, then add the five free pick winner names at the end of the prompt before sending.
+        </div>
+      </div>
+      <div id="stepResult" style="display:none">
+        <p style="font-size:12px;color:#888;margin-bottom:10px;">Copy this and paste it into Claude along with your description request.</p>
+        <div class="ai-result" id="aiResult"></div>
+      </div>
+    </div>
+    <div class="modal-footer" id="modalFooter">
+      <button class="modal-foot-btn" onclick="closeDescModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Poll preview modal -->
+<div class="modal-overlay" id="pollModal" onclick="handlePollOverlayClick(event)">
+  <div class="modal" style="width:480px">
+    <div class="modal-header">
+      <h2 id="pollModalTitle">Start Twitch Poll</h2>
+      <button class="modal-close" onclick="closePollModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#666;margin-bottom:12px;">This poll will go live on your Twitch channel immediately.</p>
+      <div class="poll-preview" id="pollPreview"></div>
+      <p style="font-size:12px;color:#aaa;margin-top:10px;" id="pollDurationNote"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-foot-btn" onclick="closePollModal()">Cancel</button>
+      <button class="modal-foot-btn primary" id="pollConfirmBtn" onclick="confirmPoll()">Start poll</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Config ───────────────────────────────────────────────────────────────────
+const TWITCH_CLIENT_ID    = 'umh17eumefmyh0l2ovp3sqogfo5bi1';
+const TWITCH_REDIRECT_URI = 'https://coldsnapdev.github.io/aftr-setlist/callback';
+const TWITCH_SCOPES       = 'channel:manage:polls';
+const STREAM_DATE_DEFAULT = '10th June 2026';
+const POLL_MAX_CHARS      = 25;
+
+// ─── Data ────────────────────────────────────────────────────────────────────
+const data = {
+  comebacks: {
+    id: 'comebacks',
+    title: "This week's comebacks",
+    sub: "Listed in order of estimated popularity",
+    playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=naoGk-Zjc1s,zGsj0fDHB_s,NQRGAh7ukh8,S2XF34ma--k',
+    songs: [
+      { artist: 'BABYMONSTER', title: 'SUGAR HONEY ICE TEA', url: 'https://www.youtube.com/watch?v=naoGk-Zjc1s' },
+      { artist: 'BOYNEXTDOOR', title: 'VIRAL',               url: 'https://www.youtube.com/watch?v=zGsj0fDHB_s' },
+      { artist: 'izna',        title: 'METRONOME',           url: 'https://www.youtube.com/watch?v=NQRGAh7ukh8' },
+      { artist: 'EPEX',        title: 'Echo',                url: 'https://www.youtube.com/watch?v=S2XF34ma--k' },
+    ]
+  },
+  categories: [
+    {
+      id: 'InBloom',
+      title: 'In Bloom',
+      sub: 'Flowers (You can be given flowers on your birthday)',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=PVzSI9PpkXc,DvDPinu7pVY,WHTNt7_Ebdw,MxJQoyKh8TQ',
+      songs: [
+        { artist: 'MAMAMOO',  title: '4 Flowers',    tag: '',     vibe: 'INCREDIBLE',                    submitter: 'Jordan' },
+        { artist: 'iKON',     title: 'B-DAY',        tag: '',     vibe: "Cuz it's my - (see song title)", submitter: 'Mercy' },
+        { artist: 'Exo CBX',  title: 'Blooming Day', tag: 'Live', vibe: 'Feast',                         submitter: 'Angela' },
+        { artist: 'XG',       title: 'Flowers',      tag: '',     vibe: 'Culture',                       submitter: 'Jord' },
+      ]
+    },
+    {
+      id: 'Cross',
+      title: 'Cross',
+      sub: 'X names — which is a cross',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=bdctjZjx5Hs,6R5u4xgveLc,5cfNIoFkyoc,NOL81qQXMQ8',
+      songs: [
+        { artist: 'XIA',               title: 'GRAVITY',    tag: 'MV',   vibe: 'banger',                                 submitter: 'taz' },
+        { artist: 'NCT WISH',          title: 'EXO Medley', tag: 'Live', vibe: 'RIKU!!! (ft. SHOWNU in the background)', submitter: 'J' },
+        { artist: 'XLOV Wumuti & Rui', title: 'Extancy',    tag: '',     vibe: 'mothers',                                submitter: 'Our #1 favourite Patreon supporter Diz' },
+        { artist: 'EXO',               title: 'Crazy',      tag: '',     vibe: 'Crazy',                                  submitter: 'Eri' },
+      ]
+    },
+    {
+      id: 'VegetableRollercoaster',
+      title: 'Vegetable + Rollercoaster',
+      sub: 'Pride (Pea + Ride)',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=E4TygUpWUTQ,9aNubVaK9xc,nhntH2wn3m0,ZlwErCvdwHw',
+      songs: [
+        { artist: 'Sistar & Giorgio Moroder', title: 'One More Day',       tag: '',  vibe: 'Dark romance',                                                           submitter: 'Emil' },
+        { artist: 'Luna Đào',                 title: 'Bước Dưới Màn Mưa', tag: '',  vibe: "it's pride month, support (actually) queer artists, trans rep edition",  submitter: 'mako' },
+        { artist: 'HANRORO',                  title: 'Can I Be Me?',       tag: '',  vibe: 'moonlight',                                                              submitter: 'Klára' },
+        { artist: '4Mix',                     title: 'Y U Come Back',      tag: '',  vibe: 'Happy Pride',                                                            submitter: 'CalamityJay' },
+      ]
+    },
+    {
+      id: 'Yobs',
+      title: 'Yobs',
+      sub: 'Boy Groups — Boy backwards',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=SP7DbHFyB_Y,5iuKW-DpSyc,0GVgDhUbo0Q,yAWJ7F_OQUo',
+      songs: [
+        { artist: 'BTS',                         title: 'Let Go',   tag: 'Live', vibe: 'Dynamic',        submitter: 'April Marie' },
+        { artist: 'Cravity',                      title: 'Historia', tag: '',     vibe: 'Epic',           submitter: 'Laurel (Jibireru)', freePick: true },
+        { artist: 'CORTIS (Seonghyeon & Keonho)', title: 'Joyride',  tag: '',     vibe: 'Stunning vocals', submitter: 'Liliya' },
+        { artist: 'NexT1DE',                      title: 'Reckless', tag: '',     vibe: '',               submitter: 'wooahaepuffs' },
+      ]
+    },
+    {
+      id: 'OddOneOut',
+      title: 'Odd One Out',
+      sub: 'One is a dance, rest are singing',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=4YHDorf7Wss,-2i59Pp5ggM,cmNO7iTrF00,6LE-Srn1UUo',
+      songs: [
+        { artist: 'Yook Sungjae (BTOB)',           title: 'Lie',         tag: 'Live',  vibe: 'Vocals', submitter: 'Niki' },
+        { artist: 'R.E.D',                         title: 'Body Language', tag: 'DP', vibe: 'Good',   submitter: 'Leah' },
+        { artist: 'Wing, Hiss',                    title: 'Sailor',      tag: '',      vibe: 'vibey',  submitter: 'Kristine' },
+        { artist: 'IRENE, SEULGI, KARINA, WINTER', title: 'Chu~♡',       tag: 'Cover', vibe: 'Cute',   submitter: 'Laker' },
+      ]
+    },
+  ]
+};
+
+// ─── State ───────────────────────────────────────────────────────────────────
+const winners   = new Set();
+const freePicks = new Set();
+const hidden    = new Set();
+let selectedType   = null;
+let twitchToken    = null;
+let twitchUserId   = null;
+let twitchUsername = null;
+let pendingPollCat = null;
+
+data.categories.forEach(cat => {
+  cat.songs.forEach((song, i) => {
+    if (song.freePick) freePicks.add(cat.id + '__' + i);
+  });
+});
+
+// ─── Twitch Auth ──────────────────────────────────────────────────────────────
+function handleTwitchAuth() {
+  if (twitchToken) {
+    if (confirm('Disconnect from Twitch?')) disconnectTwitch();
+    return;
+  }
+  const state = Math.random().toString(36).substring(2);
+  sessionStorage.setItem('twitch_state', state);
+  const params = new URLSearchParams({
+    client_id:     TWITCH_CLIENT_ID,
+    redirect_uri:  TWITCH_REDIRECT_URI,
+    response_type: 'token',
+    scope:         TWITCH_SCOPES,
+    state:         state,
+    force_verify:  'false',
+  });
+  window.location.href = 'https://id.twitch.tv/oauth2/authorize?' + params.toString();
+}
+
+function disconnectTwitch() {
+  twitchToken = twitchUserId = twitchUsername = null;
+  localStorage.removeItem('twitch_token');
+  localStorage.removeItem('twitch_user_id');
+  localStorage.removeItem('twitch_username');
+  updateTwitchUI();
+  render();
+}
+
+async function validateToken(token) {
+  try {
+    const r = await fetch('https://id.twitch.tv/oauth2/validate', {
+      headers: { 'Authorization': 'OAuth ' + token }
+    });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch { return null; }
+}
+
+async function initTwitch() {
+  // Check for token in URL hash (callback from Twitch)
+  if (window.location.hash) {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const token  = params.get('access_token');
+    const state  = params.get('state');
+    if (token && state === sessionStorage.getItem('twitch_state')) {
+      sessionStorage.removeItem('twitch_state');
+      const info = await validateToken(token);
+      if (info) {
+        twitchToken    = token;
+        twitchUserId   = info.user_id;
+        twitchUsername = info.login;
+        localStorage.setItem('twitch_token',    token);
+        localStorage.setItem('twitch_user_id',  info.user_id);
+        localStorage.setItem('twitch_username', info.login);
+        history.replaceState(null, '', window.location.pathname);
+      }
+    }
+  }
+  // Try to restore from localStorage
+  if (!twitchToken) {
+    const saved = localStorage.getItem('twitch_token');
+    if (saved) {
+      const info = await validateToken(saved);
+      if (info) {
+        twitchToken    = saved;
+        twitchUserId   = info.user_id;
+        twitchUsername = info.login;
+      } else {
+        localStorage.removeItem('twitch_token');
+        localStorage.removeItem('twitch_user_id');
+        localStorage.removeItem('twitch_username');
+      }
+    }
+  }
+  updateTwitchUI();
+  render();
+}
+
+function updateTwitchUI() {
+  const btn    = document.getElementById('twitchAuthBtn');
+  const status = document.getElementById('twitchStatus');
+  const text   = document.getElementById('twitchStatusText');
+  if (twitchToken) {
+    btn.textContent = `Disconnect (${twitchUsername})`;
+    btn.classList.add('connected');
+    status.classList.remove('disconnected');
+    status.classList.add('connected');
+    text.textContent = `Connected as ${twitchUsername} — poll buttons are live`;
+  } else {
+    btn.textContent = 'Connect Twitch';
+    btn.classList.remove('connected');
+    status.classList.add('disconnected');
+    status.classList.remove('connected');
+    text.textContent = 'Not connected to Twitch — connect to enable live polls';
+  }
+}
+
+// ─── Poll helpers ─────────────────────────────────────────────────────────────
+function truncate(str, max) {
+  if (str.length <= max) return { text: str, truncated: false };
+  return { text: str.slice(0, max - 1) + '…', truncated: true };
+}
+
+function buildPollOptions(songs) {
+  return songs.map((song, i) => {
+    const raw = `${song.artist} – ${song.title}`;
+    const { text, truncated } = truncate(raw, POLL_MAX_CHARS);
+    return { text, truncated, original: raw, index: i };
+  });
+}
+
+function openPollModal(catId) {
+  const cat = data.categories.find(c => c.id === catId);
+  if (!cat) return;
+  pendingPollCat = cat;
+
+  const options  = buildPollOptions(cat.songs);
+  const duration = parseInt(document.getElementById('pollDuration').value) || 120;
+
+  document.getElementById('pollModalTitle').textContent = `Poll: ${cat.title}`;
+
+  let previewHtml = `<div class="poll-preview-title">Which was your favourite?</div>`;
+  options.forEach(opt => {
+    previewHtml += `<div class="poll-preview-option">${opt.text}`;
+    if (opt.truncated) previewHtml += `<span class="poll-truncated">(truncated from: ${opt.original})</span>`;
+    previewHtml += `</div>`;
+  });
+  document.getElementById('pollPreview').innerHTML = previewHtml;
+  document.getElementById('pollDurationNote').textContent = `Poll will run for ${duration} seconds.`;
+  document.getElementById('pollConfirmBtn').textContent = 'Start poll';
+  document.getElementById('pollConfirmBtn').disabled = false;
+  document.getElementById('pollModal').classList.add('open');
+}
+
+function closePollModal() {
+  document.getElementById('pollModal').classList.remove('open');
+  pendingPollCat = null;
+}
+
+function handlePollOverlayClick(e) {
+  if (e.target === document.getElementById('pollModal')) closePollModal();
+}
+
+async function confirmPoll() {
+  if (!pendingPollCat || !twitchToken) return;
+  const options  = buildPollOptions(pendingPollCat.songs);
+  const duration = parseInt(document.getElementById('pollDuration').value) || 120;
+  const btn      = document.getElementById('pollConfirmBtn');
+
+  btn.textContent = 'Starting…';
+  btn.disabled    = true;
+
+  try {
+    const body = {
+      broadcaster_id: twitchUserId,
+      title:          `${pendingPollCat.title} — favourite song?`,
+      choices:        options.map(o => ({ title: o.text })),
+      duration:       duration,
+    };
+
+    const r = await fetch('https://api.twitch.tv/helix/polls', {
+      method: 'POST',
+      headers: {
+        'Authorization':  'Bearer ' + twitchToken,
+        'Client-Id':      TWITCH_CLIENT_ID,
+        'Content-Type':   'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (r.ok) {
+      btn.textContent = 'Poll started!';
+      btn.classList.add('success');
+      setTimeout(() => closePollModal(), 1500);
+    } else {
+      const err = await r.json();
+      btn.textContent = 'Failed — try again';
+      btn.disabled    = false;
+      console.error('Twitch poll error:', err);
+      alert(`Poll failed: ${err.message || 'Unknown error'}`);
+    }
+  } catch (e) {
+    btn.textContent = 'Error — try again';
+    btn.disabled    = false;
+    console.error(e);
+  }
+}
+
+// ─── Font size ────────────────────────────────────────────────────────────────
+function setFontSize(val) {
+  const size = parseInt(val);
+  document.querySelectorAll('.td-artist, .td-title').forEach(el => el.style.fontSize = size + 'px');
+  document.querySelectorAll('.td-vibe, .td-sub').forEach(el => el.style.fontSize = Math.max(11, size - 3) + 'px');
+  document.querySelectorAll('.tag').forEach(el => el.style.fontSize = Math.max(10, size - 7) + 'px');
+  document.querySelectorAll('.badge').forEach(el => el.style.fontSize = Math.max(10, size - 6) + 'px');
+}
+
+function rowId(catId, i) { return catId + '__' + i; }
+
+// ─── Toggle functions ─────────────────────────────────────────────────────────
+function toggleWinner(id) {
+  if (winners.has(id)) winners.delete(id); else winners.add(id);
+  render();
+}
+function toggleFreePick(id) {
+  if (freePicks.has(id)) freePicks.delete(id); else freePicks.add(id);
+  render();
+}
+function toggleAll(btn) {
+  const catBtns = document.querySelectorAll('.ctrl[data-cat]');
+  const allActive = [...catBtns].every(b => b.classList.contains('active'));
+  catBtns.forEach(b => {
+    if (allActive) { b.classList.remove('active'); hidden.add(b.dataset.cat); }
+    else           { b.classList.add('active');    hidden.delete(b.dataset.cat); }
+  });
+  btn.classList.toggle('active', !allActive);
+  render();
+}
+function toggleCat(btn) {
+  const cat = btn.dataset.cat;
+  if (hidden.has(cat)) { hidden.delete(cat); btn.classList.add('active'); }
+  else                 { hidden.add(cat);    btn.classList.remove('active'); }
+  const catBtns = document.querySelectorAll('.ctrl[data-cat]');
+  document.querySelector('.all-btn').classList.toggle('active', [...catBtns].every(b => b.classList.contains('active')));
+  render();
+}
+function soloCat(btn) {
+  const cat = btn.dataset.cat;
+  const catBtns = document.querySelectorAll('.ctrl[data-cat]');
+  const alreadySoloed = [...catBtns].every(b => b.dataset.cat === cat ? b.classList.contains('active') : !b.classList.contains('active'));
+  catBtns.forEach(b => {
+    if (alreadySoloed || b.dataset.cat === cat) { hidden.delete(b.dataset.cat); b.classList.add('active'); }
+    else                                         { hidden.add(b.dataset.cat);    b.classList.remove('active'); }
+  });
+  document.querySelector('.all-btn').classList.toggle('active', alreadySoloed);
+  render();
+}
+
+// ─── Render ───────────────────────────────────────────────────────────────────
+function makeTable(catId, songs, isComebacks) {
+  let html = '<table>';
+  if (!isComebacks) html += '<colgroup><col class="c-artist"><col class="c-title"><col class="c-vibe"><col class="c-sub"><col class="c-status"></colgroup>';
+  html += '<thead><tr><th>Artist</th><th>Song</th>';
+  if (!isComebacks) html += '<th>Vibe</th><th>Submitter</th><th></th>';
+  html += '</tr></thead><tbody>';
+  songs.forEach((song, i) => {
+    const id = rowId(catId, i);
+    const isWinner   = winners.has(id);
+    const isFreePick = freePicks.has(id);
+    let rowClass = isComebacks ? 'comeback' : '';
+    if (!isComebacks) {
+      if (isWinner)        rowClass = 'winner';
+      else if (isFreePick) rowClass = 'free-pick';
+    }
+    const tagHtml = song.tag ? `<span class="tag">${song.tag}</span>` : '';
+    html += `<tr class="${rowClass}" onclick="toggleWinner('${id}')" oncontextmenu="event.preventDefault();toggleFreePick('${id}')">`;
+    html += `<td class="td-artist">${song.artist}</td>`;
+    html += `<td class="td-title">${song.title}${tagHtml}</td>`;
+    if (!isComebacks) {
+      html += `<td class="td-vibe">${song.vibe || ''}</td>`;
+      html += `<td class="td-sub">${song.submitter || ''}</td>`;
+      html += '<td class="td-status">';
+      if (isWinner)        html += '<span class="badge badge-winner">Winner</span>';
+      else if (isFreePick) html += '<span class="badge badge-free">Free pick</span>';
+      html += '</td>';
+    }
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function playlistBtn(url) {
+  if (!url) return '';
+  return `<a class="playlist-btn" href="${url}" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Open playlist</a>`;
+}
+
+function pollBtn(catId) {
+  if (!twitchToken) return '';
+  return `<button class="poll-btn" onclick="openPollModal('${catId}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M3 3h4v18H3V3zm7 6h4v12h-4V9zm7-4h4v16h-4V5z"/></svg>Start poll</button>`;
+}
+
+function render() {
+  const el = document.getElementById('setlist');
+  let html = '';
+  if (!hidden.has('comebacks')) {
+    const cb = data.comebacks;
+    html += `<div class="section"><div class="section-header"><div class="section-left"><span class="section-title">${cb.title}</span><span class="section-sub">${cb.sub}</span></div><div class="section-actions">${playlistBtn(cb.playlistUrl)}</div></div>${makeTable(cb.id, cb.songs, true)}</div>`;
+  }
+  data.categories.forEach(cat => {
+    if (hidden.has(cat.id)) return;
+    html += `<div class="section"><div class="section-header"><div class="section-left"><span class="section-title">${cat.title}</span><span class="section-sub">${cat.sub}</span></div><div class="section-actions">${playlistBtn(cat.playlistUrl)}${pollBtn(cat.id)}</div></div>${makeTable(cat.id, cat.songs, false)}</div>`;
+  });
+  el.innerHTML = html;
+  const slider = document.getElementById('fontSlider');
+  if (slider) setFontSize(slider.value);
+}
+
+// ─── Tracklist builders ───────────────────────────────────────────────────────
+function buildYouTubeTracklist() {
+  const lines = ['COMEBACKS THIS WEEK'];
+  data.comebacks.songs.forEach(s => lines.push(`  ${s.artist} – ${s.title}`));
+  return lines.join('\n');
+}
+
+function buildPatreonTracklist() {
+  const lines = [];
+  data.categories.forEach((cat, ci) => {
+    if (ci > 0) lines.push('');
+    lines.push(`${cat.title.toUpperCase()}${cat.sub ? ` (${cat.sub})` : ''}`);
+    cat.songs.forEach(song => {
+      const tagPart = song.tag ? ` [${song.tag}]` : '';
+      lines.push(`  ${song.artist} – ${song.title}${tagPart}`);
+    });
+  });
+  return lines.join('\n');
+}
+
+// ─── Date normaliser ──────────────────────────────────────────────────────────
+function normaliseDate(input) {
+  if (!input) return '';
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const monthMap = {
+    jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11,
+    january:0,february:1,march:2,april:3,may:4,june:5,july:6,august:7,september:8,october:9,november:10,december:11
+  };
+  const s = input.trim().toLowerCase().replace(/[\/\-,\.]/g, ' ').replace(/\s+/g, ' ');
+  let day, month, year;
+  const namedMonth = s.match(/^(\d{1,2})(?:st|nd|rd|th)?\s+([a-z]+)(?:\s+(\d{2,4}))?/);
+  if (namedMonth) {
+    day = parseInt(namedMonth[1]);
+    const mKey = namedMonth[2].substring(0,3);
+    month = monthMap[mKey] ?? monthMap[namedMonth[2]];
+    year = namedMonth[3] ? parseInt(namedMonth[3]) : null;
+  } else {
+    const numeric = s.match(/^(\d{1,2})\s+(\d{1,2})(?:\s+(\d{2,4}))?/);
+    if (numeric) {
+      day = parseInt(numeric[1]);
+      month = parseInt(numeric[2]) - 1;
+      year = numeric[3] ? parseInt(numeric[3]) : null;
+    }
+  }
+  if (day === undefined || month === undefined || month < 0 || month > 11) return input;
+  if (year !== null && year < 100) year = 2000 + year;
+  if (!year) year = new Date().getFullYear();
+  const suffix = d => { if (d>=11&&d<=13) return 'th'; switch(d%10){case 1:return 'st';case 2:return 'nd';case 3:return 'rd';default:return 'th';} };
+  return `${day}${suffix(day)} ${months[month]} ${year}`;
+}
+
+// ─── Description modal ───────────────────────────────────────────────────────
+function openDescModal() {
+  selectedType = null;
+  document.getElementById('stepChoose').style.display = 'block';
+  document.getElementById('stepDetails').style.display = 'none';
+  document.getElementById('stepResult').style.display = 'none';
+  document.getElementById('streamDate').value = STREAM_DATE_DEFAULT;
+  ['btnYT','btnPat'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  setModalFooter('choose');
+  document.getElementById('descModal').classList.add('open');
+}
+function closeDescModal() { document.getElementById('descModal').classList.remove('open'); }
+function handleOverlayClick(e) { if (e.target === document.getElementById('descModal')) closeDescModal(); }
+
+function setModalFooter(step) {
+  const f = document.getElementById('modalFooter');
+  if (step === 'choose') {
+    f.innerHTML = `<button class="modal-foot-btn" onclick="closeDescModal()">Close</button>`;
+  } else if (step === 'details') {
+    f.innerHTML = `
+      <button class="modal-foot-btn" onclick="closeDescModal()">Close</button>
+      <button class="modal-foot-btn" onclick="goToChoose()">Back</button>
+      <button class="modal-foot-btn" onclick="showTracklist()">Just the tracklist</button>
+      <button class="modal-foot-btn primary" id="copyPromptBtn" onclick="copyPrompt()">Copy prompt for Claude</button>`;
+  } else if (step === 'result') {
+    f.innerHTML = `
+      <button class="modal-foot-btn" onclick="closeDescModal()">Close</button>
+      <button class="modal-foot-btn" onclick="goToDetails()">Back</button>
+      <button class="modal-foot-btn primary" id="copyBtn" onclick="copyResult()">Copy to clipboard</button>`;
+  }
+}
+
+function goToChoose() {
+  document.getElementById('stepChoose').style.display = 'block';
+  document.getElementById('stepDetails').style.display = 'none';
+  document.getElementById('stepResult').style.display = 'none';
+  setModalFooter('choose');
+}
+function goToDetails() {
+  document.getElementById('stepChoose').style.display = 'none';
+  document.getElementById('stepDetails').style.display = 'block';
+  document.getElementById('stepResult').style.display = 'none';
+  setModalFooter('details');
+}
+function selectType(type) {
+  selectedType = type;
+  ['btnYT','btnPat'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  document.getElementById(type === 'youtube' ? 'btnYT' : 'btnPat').classList.add('selected');
+  document.getElementById('modalTitle').textContent = type === 'youtube' ? 'YouTube — comebacks replay' : 'Patreon — Wednesday Jukebox';
+  goToDetails();
+}
+function showTracklist() {
+  const tracklist = selectedType === 'youtube' ? buildYouTubeTracklist() : buildPatreonTracklist();
+  document.getElementById('stepDetails').style.display = 'none';
+  document.getElementById('stepResult').style.display = 'block';
+  document.getElementById('aiResult').textContent = tracklist;
+  setModalFooter('result');
+}
+
+function buildPrompt() {
+  const date      = normaliseDate(document.getElementById('streamDate').value.trim());
+  const tracklist = selectedType === 'youtube' ? buildYouTubeTracklist() : buildPatreonTracklist();
+  const context   = date ? `Stream date: ${date}` : '';
+  const styleRules = `Style rules:
+- Always use "we" not "I"
+- UK English spelling
+- No em dashes
+- No emojis
+- Natural, warm, non-robotic prose
+- No time-based references like "today" or "tonight"
+- No analysis of song content or lyrics
+- Do not reproduce the tracklist as a raw block — instead weave it into the body as a formatted list after the descriptive sentences`;
+
+  if (selectedType === 'youtube') {
+    return `You are writing a YouTube stream replay description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry.
+
+${styleRules}
+
+Use this exact structure, reproducing it precisely:
+
+TITLE
+A descriptive title that names every artist from the comebacks list, followed by "– UK K-Pop Reaction". Use this format: "[Artist1], [Artist2], [Artist3] & [Artist4] – UK K-Pop Reaction". Include all artists — do not use "& More" or truncate. Do not include the date.
+
+OPENING LINE
+A single warm welcome line. Example: "Hello everyone and welcome back to the channel. We're back with another K-Pop reaction for you here."
+
+BODY
+Two to three sentences describing the stream in general terms — the range of artists, the energy, any standout moments — without analysing lyrics. Then list every comeback on its own line in this format: Artist – Song Title
+
+LINKS
+Each link must include a short introductory sentence before the URL, exactly as shown:
+Join our Discord to keep the conversation going, take part in future streams, and help shape what we react to next: https://discord.gg/U9U3QAqWQJ
+You can catch us live on Twitch for reactions, jukebox streams, and album reviews throughout the week: https://www.twitch.tv/alongfortheridereacts
+If you'd like to support the channel and get access to extra content, early videos, and full replays, you can find us on Patreon: https://patreon.com/alongfortheride899
+For everything else, including all our links in one place, head over to our Linktree: https://linktr.ee/aftrreacts
+If you'd like to buy us a coffee and support the channel directly, you can do that here: https://buymeacoffee.com/alongfortheride
+
+CLOSING LINE
+Use this line exactly, word for word: "If it's your birthday, Happy Birthday. We'll see you at the next one"
+
+HASHTAGS
+Three to five lowercase hashtags on one line. Include the artist names and kpop.
+
+TAGS
+A comma-separated tag block of 15 to 20 relevant tags. Include artist names, song titles from the tracklist, and general kpop reaction tags.
+
+${context ? context + '\n\n' : ''}Comebacks list:
+${tracklist}`;
+  } else {
+    return `You are writing a Patreon post for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is for their Wednesday Jukebox stream where the community submits songs in themed categories.
+
+${styleRules}
+
+Format:
+Title: Wednesday Jukebox | ${date || '[date]'}
+
+One short, casual, warm intro sentence about the stream. Do not explain or describe what the category names mean. Do not spoil which songs won. Do not analyse song content or lyrics.
+
+After the intro sentence, include the full tracklist grouped by category. Put a blank line between categories. Format each category exactly like this, using a bullet point (•) before each song:
+
+Category Name
+• Artist – Song Title
+• Artist – Song Title
+
+Category Name
+• Artist – Song Title
+• Artist – Song Title
+
+Then add a short warm closing line followed by the free pick winner names as a simple list, formatted exactly like this:
+
+This week's free pick winners are:
+Name
+Name
+Name
+
+[ADD THE 5 FREE PICK WINNER NAMES HERE BEFORE SENDING]
+
+No links. No hashtags.
+
+${context ? context + '\n\n' : ''}Categories and songs:
+${tracklist}`;
+  }
+}
+
+function copyPrompt() {
+  const prompt = buildPrompt();
+  navigator.clipboard.writeText(prompt).then(() => {
+    const btn = document.getElementById('copyPromptBtn');
+    btn.textContent = 'Copied! Paste into Claude';
+    btn.classList.add('success');
+    setTimeout(() => { btn.textContent = 'Copy prompt for Claude'; btn.classList.remove('success'); }, 3000);
+  });
+}
+function copyResult() {
+  const text = document.getElementById('aiResult').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('success');
+    setTimeout(() => { btn.textContent = 'Copy to clipboard'; btn.classList.remove('success'); }, 2000);
+  });
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+initTwitch();
+</script>
+</body>
 </html>
