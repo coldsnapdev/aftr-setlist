@@ -547,7 +547,17 @@ function makeTable(catId, songs, isComebacks) {
 
 function playlistBtn(url) {
   if (!url) return '';
-  return `<a class="playlist-btn" href="${url}" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Open playlist</a>`;
+  const escapedUrl = url.replace(/'/g, "\\'");
+  return `<a class="playlist-btn" href="${url}" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Open playlist</a><button class="playlist-btn" onclick="copyPlaylistUrl('${escapedUrl}', this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4C3 1 2 2 2 3v14h2V3h12V1zm3 4H8C7 5 6 6 6 7v14c0 1 1 2 2 2h11c1 0 2-1 2-2V7c0-1-1-2-2-2zm0 16H8V7h11v14z"/></svg>Copy URL</button>`;
+}
+
+function copyPlaylistUrl(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    const orig = btn.innerHTML;
+    btn.textContent = 'Copied!';
+    btn.style.background = '#1a7a3a'; btn.style.color = '#fff'; btn.style.borderColor = '#145c2c';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+  });
 }
 
 function pollBtn(catId) {
