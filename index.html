@@ -6,17 +6,10 @@
 <title>AFTR Weekly Setlist</title>
 <style>
   :root {
-    --gold: #EF9F27;
-    --gold-light: #FFF3D6;
-    --gold-dark: #7a4800;
-    --free-bg: #d4edda;
-    --free-border: #5a9e6f;
-    --free-text: #1a5c33;
-    --purple-bg: #EEEDFE;
-    --purple-border: #7F77DD;
-    --purple-text: #3C3489;
-    --twitch: #9146FF;
-    --twitch-dark: #5c2d9e;
+    --gold: #EF9F27; --gold-light: #FFF3D6; --gold-dark: #7a4800;
+    --free-bg: #d4edda; --free-border: #5a9e6f; --free-text: #1a5c33;
+    --purple-bg: #EEEDFE; --purple-border: #7F77DD; --purple-text: #3C3489;
+    --twitch: #9146FF; --twitch-dark: #5c2d9e;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f5f5; color: #111; }
@@ -41,33 +34,29 @@
   .section-left { display: flex; align-items: baseline; gap: 10px; flex: 1; min-width: 0; }
   .section-title { font-size: 19px; font-weight: 700; color: #111; }
   .section-sub { font-size: 14px; color: #999; font-style: italic; }
-  .section-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .section-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
   table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; table-layout: fixed; }
-  col.c-artist { width: 19%; }
-  col.c-title  { width: 30%; }
-  col.c-vibe   { width: 27%; }
-  col.c-sub    { width: 13%; }
-  col.c-status { width: 11%; }
+  col.c-artist { width: 19%; } col.c-title { width: 30%; } col.c-vibe { width: 27%; } col.c-sub { width: 13%; } col.c-status { width: 11%; }
   thead th { background: #f0f0f0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #666; padding: 6px 10px; text-align: left; border-bottom: 1px solid #ddd; }
   tbody tr { border-bottom: 1px solid #efefef; cursor: pointer; user-select: none; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { filter: brightness(0.96); }
   tbody td { padding: 10px 12px; vertical-align: middle; line-height: 1.3; }
   .td-artist { font-weight: 600; font-size: 19px; color: #111; }
-  .td-title   { font-size: 19px; color: #222; }
+  .td-title { font-size: 19px; color: #222; }
   .tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 6px; border-radius: 3px; background: #e8e8e8; color: #555; margin-left: 6px; vertical-align: middle; letter-spacing: 0.03em; white-space: nowrap; }
-  .td-vibe    { font-size: 16px; color: #777; font-style: italic; }
-  .td-sub     { font-size: 16px; color: #555; }
-  .td-status  { text-align: center; }
+  .td-vibe { font-size: 16px; color: #777; font-style: italic; }
+  .td-sub { font-size: 16px; color: #555; }
+  .td-status { text-align: center; }
   .badge { display: inline-block; font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.02em; white-space: nowrap; }
   .badge-winner { background: var(--gold-light); color: var(--gold-dark); border: 1px solid var(--gold); }
-  .badge-free   { background: var(--free-bg); color: var(--free-text); border: 1px solid var(--free-border); }
+  .badge-free { background: var(--free-bg); color: var(--free-text); border: 1px solid var(--free-border); }
   tr.comeback { background: var(--purple-bg); }
   tr.comeback .td-artist { color: var(--purple-text); }
-  tr.comeback .td-title  { color: var(--purple-border); }
+  tr.comeback .td-title { color: var(--purple-border); }
   tr.free-pick { background: #e8f5ed; }
   tr.free-pick .td-artist { color: #1a4a2a; }
-  tr.free-pick .td-title  { color: #1a4a2a; }
+  tr.free-pick .td-title { color: #1a4a2a; }
   tr.winner { background: var(--gold-light); }
   tr.winner td:first-child { border-left: 4px solid var(--gold); }
   tr.winner .td-artist { color: var(--gold-dark); }
@@ -121,7 +110,7 @@
   .poll-preview-option::before { content: '• '; color: var(--twitch); }
   .poll-truncated { color: #aaa; font-size: 11px; margin-left: 6px; }
   @media print {
-    .controls, .top-btn, .legend, .modal-overlay, .playlist-btn, .poll-btn, .twitch-status, .poll-duration-wrap { display: none !important; }
+    .controls, .top-btn, .legend, .modal-overlay, .playlist-btn, .poll-btn, .poll-points-input, .twitch-status, .poll-duration-wrap { display: none !important; }
     body { background: #fff; }
     .section { break-inside: avoid; }
     h1 { font-size: 18px; }
@@ -163,12 +152,12 @@
 
   <div class="controls">
     <button class="ctrl all-btn active" onclick="toggleAll(this)">All</button>
-    <button class="ctrl active" data-cat="comebacks"          onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Comebacks</button>
-    <button class="ctrl active" data-cat="SparklyBooty"       onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Sparkly Booty</button>
-    <button class="ctrl active" data-cat="DesensitizedCold"   onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Desensitized Cold</button>
-    <button class="ctrl active" data-cat="Marathon"           onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Marathon</button>
-    <button class="ctrl active" data-cat="CrowdPleaser"       onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Crowd Pleaser</button>
-    <button class="ctrl active" data-cat="Kiii"               onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Kiii</button>
+    <button class="ctrl active" data-cat="comebacks"        onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Comebacks</button>
+    <button class="ctrl active" data-cat="SparklyBooty"     onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Sparkly Booty</button>
+    <button class="ctrl active" data-cat="DesensitizedCold" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Desensitized Cold</button>
+    <button class="ctrl active" data-cat="Marathon"         onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Marathon</button>
+    <button class="ctrl active" data-cat="CrowdPleaser"     onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Crowd Pleaser</button>
+    <button class="ctrl active" data-cat="Kiii"             onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Kiii</button>
     <div class="font-slider-wrap">
       <span class="font-slider-label">A</span>
       <input type="range" min="12" max="28" value="19" class="font-slider" id="fontSlider" oninput="setFontSize(this.value)">
@@ -190,14 +179,8 @@
       <div id="stepChoose">
         <p style="font-size:13px;color:#666;margin-bottom:14px;">Which platform are you writing for?</p>
         <div class="desc-type-row">
-          <div class="desc-type-btn" id="btnYT" onclick="selectType('youtube')">
-            <div style="font-size:15px;margin-bottom:3px;">▶ YouTube</div>
-            <div style="font-size:11px;opacity:0.7">Comebacks stream replay</div>
-          </div>
-          <div class="desc-type-btn" id="btnPat" onclick="selectType('patreon')">
-            <div style="font-size:15px;margin-bottom:3px;">&#9733; Patreon</div>
-            <div style="font-size:11px;opacity:0.7">Wednesday Jukebox stream</div>
-          </div>
+          <div class="desc-type-btn" id="btnYT" onclick="selectType('youtube')"><div style="font-size:15px;margin-bottom:3px;">▶ YouTube</div><div style="font-size:11px;opacity:0.7">Comebacks stream replay</div></div>
+          <div class="desc-type-btn" id="btnPat" onclick="selectType('patreon')"><div style="font-size:15px;margin-bottom:3px;">&#9733; Patreon</div><div style="font-size:11px;opacity:0.7">Wednesday Jukebox stream</div></div>
         </div>
       </div>
       <div id="stepDetails" style="display:none">
@@ -253,80 +236,68 @@ const data = {
     sub: "Listed in order of estimated popularity",
     playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=E1d8dVSs0Bg,ihvuwqlGHXs,wuF8Q_iq7Bo,p3nQgIoLRMI,JebaOMAuIyw',
     songs: [
-      { artist: 'NCT WISH',        title: 'YO-I-DON',      url: 'https://www.youtube.com/watch?v=E1d8dVSs0Bg' },
-      { artist: 'Yeonjun',         title: 'Ice Cream',     url: 'https://www.youtube.com/watch?v=ihvuwqlGHXs' },
-      { artist: 'Jaehyun',         title: '99 Degrees',    url: 'https://www.youtube.com/watch?v=wuF8Q_iq7Bo' },
-      { artist: 'Lay',             title: 'The Performer', url: 'https://youtu.be/p3nQgIoLRMI' },
-      { artist: 'Super Junior-83z', title: 'Promise',      url: 'https://www.youtube.com/watch?v=JebaOMAuIyw' },
+      { artist: 'NCT WISH',         title: 'YO-I-DON',      url: 'https://www.youtube.com/watch?v=E1d8dVSs0Bg' },
+      { artist: 'Yeonjun',          title: 'Ice Cream',     url: 'https://www.youtube.com/watch?v=ihvuwqlGHXs' },
+      { artist: 'Jaehyun',          title: '99 Degrees',    url: 'https://www.youtube.com/watch?v=wuF8Q_iq7Bo' },
+      { artist: 'Lay',              title: 'The Performer', url: 'https://youtu.be/p3nQgIoLRMI' },
+      { artist: 'Super Junior-83z', title: 'Promise',       url: 'https://www.youtube.com/watch?v=JebaOMAuIyw' },
     ]
   },
   categories: [
     {
-      id: 'SparklyBooty',
-      title: 'Sparkly Booty',
-      sub: 'Shiny Treasure',
+      id: 'SparklyBooty', title: 'Sparkly Booty', sub: 'Shiny Treasure',
       playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=Xp-peQzrGcI,9K1ea6r20Lk,IA-0avC007E,T9vnI_i32q8',
       songs: [
-        { artist: 'SHINee',          title: 'Beautiful',    tag: 'Live',    vibe: 'Chaotic Weather',      submitter: 'Meagan',          freePick: true },
-        { artist: 'Treasure',         title: 'Thank You OT10', tag: 'Live', vibe: 'GOMAWOOOO',            submitter: 'anne' },
-        { artist: 'Jihoon (Treasure)', title: 'Melbourne Vlog', tag: 'Variety', vibe: '',               submitter: 'klara086',          freePick: true },
-        { artist: 'SHINee',           title: 'Dream Girl',   tag: 'Live',   vibe: 'The SHINee standard', submitter: 'Positive thinking' },
+        { artist: 'SHINee',           title: 'Beautiful',      tag: 'Live',    vibe: 'Chaotic Weather',      submitter: 'Meagan',           freePick: true },
+        { artist: 'Treasure',          title: 'Thank You OT10', tag: 'Live',    vibe: 'GOMAWOOOO',            submitter: 'anne' },
+        { artist: 'Jihoon (Treasure)', title: 'Melbourne Vlog', tag: 'Variety', vibe: '',                     submitter: 'klara086',         freePick: true },
+        { artist: 'SHINee',            title: 'Dream Girl',     tag: 'Live',    vibe: 'The SHINee standard',  submitter: 'Positive thinking' },
       ]
     },
     {
-      id: 'DesensitizedCold',
-      title: 'Desensitized Cold',
-      sub: 'Numbers (Numb + Burrr)',
+      id: 'DesensitizedCold', title: 'Desensitized Cold', sub: 'Numbers (Numb + Burrr)',
       playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=N_vwNEa-Ph8,cCSKkuN9HAQ,wqHX9YmqeyQ,tCNuyxUHlho',
       songs: [
-        { artist: 'Wanna One', title: 'Never + Pick Me',          tag: 'Live', vibe: "They're backkk",                                                             submitter: 'Jord' },
-        { artist: 'SSAK3',     title: 'Play That Summer + Beach Again', tag: 'Live', vibe: 'Summer vibes',                                                         submitter: 'Niki' },
-        { artist: 'SS501',     title: 'LoveYa',                   tag: '',     vibe: 'Pure 2nd gen',                                                               submitter: 'Rev' },
-        { artist: 'Seventeen', title: 'Lazada Biggest One Day Sale', tag: 'Live', vibe: 'to make up for my mistake last week please enjoy this really funny video and laugh', submitter: 'wooahaepuffs' },
+        { artist: 'Wanna One', title: 'Never + Pick Me',              tag: 'Live', vibe: "They're backkk",   submitter: 'Jord' },
+        { artist: 'SSAK3',     title: 'Play That Summer + Beach Again', tag: 'Live', vibe: 'Summer vibes',   submitter: 'Niki' },
+        { artist: 'SS501',     title: 'LoveYa',                        tag: '',     vibe: 'Pure 2nd gen',    submitter: 'Rev' },
+        { artist: 'Seventeen', title: 'Lazada Biggest One Day Sale',   tag: 'Live', vibe: 'to make up for my mistake last week please enjoy this really funny video and laugh', submitter: 'wooahaepuffs' },
       ]
     },
     {
-      id: 'Marathon',
-      title: 'Marathon',
-      sub: 'Running - breathless - and the scent of me (sweaty)',
+      id: 'Marathon', title: 'Marathon', sub: 'Running - breathless - and the scent of me (sweaty)',
       playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=aBNyHAasnSM,zksevZHYyk0,OhbMVYVNo40,dME6OkwjUKk',
       songs: [
-        { artist: 'Astro',                               title: 'Breathless',             tag: '',     vibe: 'Summer = Astro or Astro is soda.',                                     submitter: 'Mercy' },
-        { artist: 'Running Man (Kwang Soo, Se Chan & So Min)', title: 'Woman On The Beach', tag: 'Live', vibe: 'running man maknaes',                                              submitter: 'Aqilah' },
-        { artist: 'AHOF',                                title: 'RUN TO YOU',             tag: '',     vibe: 'RUNNING',                                                             submitter: 'WaterMork' },
-        { artist: '&TEAM',                               title: 'Scent of You',           tag: 'Live', vibe: 'i love seeing them perform songs from debut now that they\'ve all grown so much', submitter: 'gyukoo' },
+        { artist: 'Astro',                                   title: 'Breathless',       tag: '',     vibe: 'Summer = Astro or Astro is soda.',                                                   submitter: 'Mercy' },
+        { artist: 'Running Man (Kwang Soo, Se Chan & So Min)', title: 'Woman On The Beach', tag: 'Live', vibe: 'running man maknaes',                                                           submitter: 'Aqilah' },
+        { artist: 'AHOF',                                    title: 'RUN TO YOU',       tag: '',     vibe: 'RUNNING',                                                                           submitter: 'WaterMork' },
+        { artist: '&TEAM',                                   title: 'Scent of You',     tag: 'Live', vibe: "i love seeing them perform songs from debut now that they've all grown so much",    submitter: 'gyukoo' },
       ]
     },
     {
-      id: 'CrowdPleaser',
-      title: 'Crowd Pleaser',
-      sub: 'Performances in front of crowds',
+      id: 'CrowdPleaser', title: 'Crowd Pleaser', sub: 'Performances in front of crowds',
       playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=inNYQUC6dFs,df3ob9MRR3Y,L7PML9UcKwE,kwAhKmSWdx8',
       songs: [
-        { artist: 'BTS',   title: 'As I Told You',  tag: 'Cover', vibe: 'Iconic',      submitter: 'Deanna',   freePick: true },
-        { artist: 'SUGA',  title: 'First Love',     tag: 'Live',  vibe: 'sentimental', submitter: 'ace_pops' },
-        { artist: 'Dimash', title: 'El Amor En Ti', tag: 'Live',  vibe: 'Powerful',    submitter: 'Aya' },
-        { artist: 'BTS',   title: 'Dynamite by V',  tag: 'Live',  vibe: 'Chaotic',     submitter: 'Faye' },
+        { artist: 'BTS',    title: 'As I Told You',  tag: 'Cover', vibe: 'Iconic',      submitter: 'Deanna',   freePick: true },
+        { artist: 'SUGA',   title: 'First Love',     tag: 'Live',  vibe: 'sentimental', submitter: 'ace_pops' },
+        { artist: 'Dimash', title: 'El Amor En Ti',  tag: 'Live',  vibe: 'Powerful',    submitter: 'Aya' },
+        { artist: 'BTS',    title: 'Dynamite by V',  tag: 'Live',  vibe: 'Chaotic',     submitter: 'Faye' },
       ]
     },
     {
-      id: 'Kiii',
-      title: 'Kiii',
-      sub: 'First letter of each name (leftover category)',
+      id: 'Kiii', title: 'Kiii', sub: 'First letter of each name (leftover category)',
       playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=aaKYnDVy7k0,bUMLC9lCgHo,Ot1wUyuE3Vo,9_q-kb9MPH0',
       songs: [
-        { artist: 'KEYVITUP', title: 'KEYVITUP',    tag: 'Live', vibe: "This is Kim JaeJoong's new first idol group", submitter: 'holymato' },
-        { artist: 'i-dle',    title: 'Crow',        tag: '',     vibe: "Didn't want to have to use my free pick for this, but this is not a song to let slip by.", submitter: 'MamaJoss', freePick: true },
-        { artist: 'idntt',    title: 'Kids Return', tag: 'MV',   vibe: 'Noisy goodness',                             submitter: 'lee3two3',  freePick: true },
-        { artist: 'izna',     title: 'R.I.P.',      tag: '',     vibe: '',                                           submitter: 'the one with the melted puddle for a brain after the past couple of weeks' },
+        { artist: 'KEYVITUP', title: 'KEYVITUP',    tag: 'Live', vibe: "This is Kim JaeJoong's new first idol group",                                               submitter: 'holymato' },
+        { artist: 'i-dle',    title: 'Crow',        tag: '',     vibe: "Didn't want to have to use my free pick for this, but this is not a song to let slip by.", submitter: 'MamaJoss',  freePick: true },
+        { artist: 'idntt',    title: 'Kids Return', tag: 'MV',   vibe: 'Noisy goodness',                                                                           submitter: 'lee3two3',  freePick: true },
+        { artist: 'izna',     title: 'R.I.P.',      tag: '',     vibe: '',                                                                                          submitter: 'the one with the melted puddle for a brain after the past couple of weeks' },
       ]
     },
   ]
 };
 
-const winners   = new Set();
-const freePicks = new Set();
-const hidden    = new Set();
+const winners = new Set(), freePicks = new Set(), hidden = new Set();
 let selectedType = null, twitchToken = null, twitchUserId = null, twitchUsername = null, pendingPollCat = null;
 
 data.categories.forEach(cat => {
@@ -369,12 +340,16 @@ function updateTwitchUI() {
   if (twitchToken) { btn.textContent = `Disconnect (${twitchUsername})`; btn.classList.add('connected'); status.className = 'twitch-status connected'; text.textContent = `Connected as ${twitchUsername} — poll buttons are live`; }
   else { btn.textContent = 'Connect Twitch'; btn.classList.remove('connected'); status.className = 'twitch-status disconnected'; text.textContent = 'Not connected to Twitch — connect to enable live polls'; }
 }
+
+// ─── Poll helpers ─────────────────────────────────────────────────────────────
 function truncate(str, max) { return str.length <= max ? { text: str, truncated: false } : { text: str.slice(0, max - 1) + '…', truncated: true }; }
 function buildPollOptions(songs) { return songs.map(s => { const raw = `${s.artist} – ${s.title}`; const { text, truncated } = truncate(raw, POLL_MAX_CHARS); return { text, truncated, original: raw }; }); }
+
 function openPollModal(catId) {
   const cat = data.categories.find(c => c.id === catId); if (!cat) return;
   pendingPollCat = cat;
-  const opts = buildPollOptions(cat.songs), dur = parseInt(document.getElementById('pollDuration').value) || 120;
+  const opts = buildPollOptions(cat.songs);
+  const dur = parseInt(document.getElementById('pollDuration').value) || 120;
   const pointsInput = document.getElementById('pollPoints_' + catId);
   const pointsCost = Math.max(1, parseInt(pointsInput?.value) || 1000);
   document.getElementById('pollModalTitle').textContent = `Poll: ${cat.title}`;
@@ -385,6 +360,7 @@ function openPollModal(catId) {
 }
 function closePollModal() { document.getElementById('pollModal').classList.remove('open'); pendingPollCat = null; }
 function handlePollOverlayClick(e) { if (e.target === document.getElementById('pollModal')) closePollModal(); }
+
 async function confirmPoll() {
   if (!pendingPollCat || !twitchToken) return;
   const opts = buildPollOptions(pendingPollCat.songs);
@@ -394,15 +370,11 @@ async function confirmPoll() {
   const btn = document.getElementById('pollConfirmBtn');
   btn.textContent = 'Starting…'; btn.disabled = true;
   try {
-    const body = {
-      broadcaster_id: twitchUserId,
-      title: `${pendingPollCat.title} — favourite song?`,
-      choices: opts.map(o => ({ title: o.text })),
-      duration: dur,
-      channel_points_voting_enabled: true,
-      channel_points_per_vote: pointsCost,
-    };
-    const r = await fetch('https://api.twitch.tv/helix/polls', { method: 'POST', headers: { 'Authorization': 'Bearer ' + twitchToken, 'Client-Id': TWITCH_CLIENT_ID, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const r = await fetch('https://api.twitch.tv/helix/polls', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + twitchToken, 'Client-Id': TWITCH_CLIENT_ID, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ broadcaster_id: twitchUserId, title: `${pendingPollCat.title} — favourite song?`, choices: opts.map(o => ({ title: o.text })), duration: dur, channel_points_voting_enabled: true, channel_points_per_vote: pointsCost })
+    });
     if (r.ok) { btn.textContent = 'Poll started!'; btn.classList.add('success'); setTimeout(() => closePollModal(), 1500); }
     else { const err = await r.json(); btn.textContent = 'Failed — try again'; btn.disabled = false; alert(`Poll failed: ${err.message || 'Unknown error'}`); }
   } catch { btn.textContent = 'Error — try again'; btn.disabled = false; }
@@ -446,7 +418,7 @@ function makeTable(catId, songs, isComebacks) {
   html += '<thead><tr><th>Artist</th><th>Song</th>' + (isComebacks ? '' : '<th>Vibe</th><th>Submitter</th><th></th>') + '</tr></thead><tbody>';
   songs.forEach((song, i) => {
     const id = rowId(catId, i), isW = winners.has(id), isFP = freePicks.has(id);
-    let rc = isComebacks ? 'comeback' : (isW ? 'winner' : isFP ? 'free-pick' : '');
+    const rc = isComebacks ? 'comeback' : (isW ? 'winner' : isFP ? 'free-pick' : '');
     const tag = song.tag ? `<span class="tag">${song.tag}</span>` : '';
     html += `<tr class="${rc}" onclick="toggleWinner('${id}')" oncontextmenu="event.preventDefault();toggleFreePick('${id}')"><td class="td-artist">${song.artist}</td><td class="td-title">${song.title}${tag}</td>`;
     if (!isComebacks) {
@@ -470,6 +442,10 @@ function copyPlaylistUrl(url, btn) {
     const orig = btn.innerHTML; btn.textContent = 'Copied!'; btn.style.cssText = 'background:#1a7a3a;color:#fff;border-color:#145c2c';
     setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ''; }, 2000);
   });
+}
+function pollBtn(catId) {
+  if (!twitchToken) return '';
+  return `<input type="number" class="poll-points-input" id="pollPoints_${catId}" value="1000" min="1" max="1000000" title="Channel Points per extra vote"><button class="poll-btn" onclick="openPollModal('${catId}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M3 3h4v18H3V3zm7 6h4v12h-4V9zm7-4h4v16h-4V5z"/></svg>Start poll</button>`;
 }
 
 function render() {
