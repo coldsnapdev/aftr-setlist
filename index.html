@@ -84,6 +84,7 @@
   .playlist-btn svg { width: 12px; height: 12px; flex-shrink: 0; }
   .poll-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 3px 10px; border-radius: 4px; border: 1px solid var(--twitch-dark); background: #fff; color: var(--twitch); cursor: pointer; font-weight: 600; flex-shrink: 0; white-space: nowrap; transition: all 0.12s; }
   .poll-btn:hover { background: var(--twitch); color: #fff; }
+  .poll-points-input { font-size: 12px; padding: 3px 6px; border: 1px solid var(--twitch-dark); border-radius: 4px; background: #fff; color: var(--twitch-dark); width: 68px; text-align: center; font-weight: 600; }
   .poll-duration-wrap { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #888; }
   .poll-duration { font-size: 12px; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; background: #fff; color: #444; width: 60px; }
   .twitch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 12px; border-radius: 6px; margin-bottom: 0.8rem; background: #fff; border: 1px solid #ddd; }
@@ -374,9 +375,11 @@ function openPollModal(catId) {
   const cat = data.categories.find(c => c.id === catId); if (!cat) return;
   pendingPollCat = cat;
   const opts = buildPollOptions(cat.songs), dur = parseInt(document.getElementById('pollDuration').value) || 120;
+  const pointsInput = document.getElementById('pollPoints_' + catId);
+  const pointsCost = Math.max(1, parseInt(pointsInput?.value) || 1000);
   document.getElementById('pollModalTitle').textContent = `Poll: ${cat.title}`;
   document.getElementById('pollPreview').innerHTML = `<div class="poll-preview-title">Which was your favourite?</div>` + opts.map(o => `<div class="poll-preview-option">${o.text}${o.truncated ? `<span class="poll-truncated">(from: ${o.original})</span>` : ''}</div>`).join('');
-  document.getElementById('pollDurationNote').textContent = `Poll will run for ${dur} seconds.`;
+  document.getElementById('pollDurationNote').textContent = `Poll will run for ${dur} seconds. Extra votes cost ${pointsCost.toLocaleString()} Channel Points each.`;
   const btn = document.getElementById('pollConfirmBtn'); btn.textContent = 'Start poll'; btn.disabled = false; btn.classList.remove('success');
   document.getElementById('pollModal').classList.add('open');
 }
@@ -384,10 +387,22 @@ function closePollModal() { document.getElementById('pollModal').classList.remov
 function handlePollOverlayClick(e) { if (e.target === document.getElementById('pollModal')) closePollModal(); }
 async function confirmPoll() {
   if (!pendingPollCat || !twitchToken) return;
-  const opts = buildPollOptions(pendingPollCat.songs), dur = parseInt(document.getElementById('pollDuration').value) || 120, btn = document.getElementById('pollConfirmBtn');
+  const opts = buildPollOptions(pendingPollCat.songs);
+  const dur = parseInt(document.getElementById('pollDuration').value) || 120;
+  const pointsInput = document.getElementById('pollPoints_' + pendingPollCat.id);
+  const pointsCost = Math.max(1, parseInt(pointsInput?.value) || 1000);
+  const btn = document.getElementById('pollConfirmBtn');
   btn.textContent = 'Starting…'; btn.disabled = true;
   try {
-    const r = await fetch('https://api.twitch.tv/helix/polls', { method: 'POST', headers: { 'Authorization': 'Bearer ' + twitchToken, 'Client-Id': TWITCH_CLIENT_ID, 'Content-Type': 'application/json' }, body: JSON.stringify({ broadcaster_id: twitchUserId, title: `${pendingPollCat.title} — favourite song?`, choices: opts.map(o => ({ title: o.text })), duration: dur }) });
+    const body = {
+      broadcaster_id: twitchUserId,
+      title: `${pendingPollCat.title} — favourite song?`,
+      choices: opts.map(o => ({ title: o.text })),
+      duration: dur,
+      channel_points_voting_enabled: true,
+      channel_points_per_vote: pointsCost,
+    };
+    const r = await fetch('https://api.twitch.tv/helix/polls', { method: 'POST', headers: { 'Authorization': 'Bearer ' + twitchToken, 'Client-Id': TWITCH_CLIENT_ID, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     if (r.ok) { btn.textContent = 'Poll started!'; btn.classList.add('success'); setTimeout(() => closePollModal(), 1500); }
     else { const err = await r.json(); btn.textContent = 'Failed — try again'; btn.disabled = false; alert(`Poll failed: ${err.message || 'Unknown error'}`); }
   } catch { btn.textContent = 'Error — try again'; btn.disabled = false; }
@@ -456,10 +471,7 @@ function copyPlaylistUrl(url, btn) {
     setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ''; }, 2000);
   });
 }
-function pollBtn(catId) {
-  if (!twitchToken) return '';
-  return `<button class="poll-btn" onclick="openPollModal('${catId}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M3 3h4v18H3V3zm7 6h4v12h-4V9zm7-4h4v16h-4V5z"/></svg>Start poll</button>`;
-}
+
 function render() {
   const el = document.getElementById('setlist');
   let html = '';
