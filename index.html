@@ -152,12 +152,12 @@
 
   <div class="controls">
     <button class="ctrl all-btn active" onclick="toggleAll(this)">All</button>
-    <button class="ctrl active" data-cat="comebacks"        onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Comebacks</button>
-    <button class="ctrl active" data-cat="SparklyBooty"     onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Sparkly Booty</button>
-    <button class="ctrl active" data-cat="DesensitizedCold" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Desensitized Cold</button>
-    <button class="ctrl active" data-cat="Marathon"         onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Marathon</button>
-    <button class="ctrl active" data-cat="CrowdPleaser"     onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Crowd Pleaser</button>
-    <button class="ctrl active" data-cat="Kiii"             onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Kiii</button>
+    <button class="ctrl active" data-cat="comebacks"      onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Comebacks</button>
+    <button class="ctrl active" data-cat="AFriendInMe"    onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">A Friend in Me</button>
+    <button class="ctrl active" data-cat="AliceDeejay"    onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Alice Deejay</button>
+    <button class="ctrl active" data-cat="HelloPlus2"     onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Hello + 2</button>
+    <button class="ctrl active" data-cat="FibPlus22"      onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Fib + 22</button>
+    <button class="ctrl active" data-cat="DealersChoice"  onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Dealer's Choice</button>
     <div class="font-slider-wrap">
       <span class="font-slider-label">A</span>
       <input type="range" min="12" max="28" value="19" class="font-slider" id="fontSlider" oninput="setFontSize(this.value)">
@@ -226,7 +226,7 @@
 const TWITCH_CLIENT_ID    = 'umh17eumefmyh0l2ovp3sqogfo5bi1';
 const TWITCH_REDIRECT_URI = 'https://coldsnapdev.github.io/aftr-setlist/';
 const TWITCH_SCOPES       = 'channel:manage:polls';
-const STREAM_DATE_DEFAULT = '14th July 2026';
+const STREAM_DATE_DEFAULT = '22nd July 2026';
 const POLL_MAX_CHARS      = 25;
 
 const data = {
@@ -234,64 +234,73 @@ const data = {
     id: 'comebacks',
     title: "This week's comebacks",
     sub: "Listed in order of estimated popularity",
-    playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=E1d8dVSs0Bg,ihvuwqlGHXs,wuF8Q_iq7Bo,p3nQgIoLRMI,JebaOMAuIyw',
+    playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=eHUsqmQqvcQ,PuWwh0w4z7c,M6EyUZ3ANuM,QJa8TKXNavc',
     songs: [
-      { artist: 'NCT WISH',         title: 'YO-I-DON',      url: 'https://www.youtube.com/watch?v=E1d8dVSs0Bg' },
-      { artist: 'Yeonjun',          title: 'Ice Cream',     url: 'https://www.youtube.com/watch?v=ihvuwqlGHXs' },
-      { artist: 'Jaehyun',          title: '99 Degrees',    url: 'https://www.youtube.com/watch?v=wuF8Q_iq7Bo' },
-      { artist: 'Lay',              title: 'The Performer', url: 'https://youtu.be/p3nQgIoLRMI' },
-      { artist: 'Super Junior-83z', title: 'Promise',       url: 'https://www.youtube.com/watch?v=JebaOMAuIyw' },
+      { artist: 'WONHO',  title: "Don't Wake Me Up", url: 'https://www.youtube.com/watch?v=eHUsqmQqvcQ' },
+      { artist: '8TURN',  title: 'Stagefright',       url: 'https://www.youtube.com/watch?v=PuWwh0w4z7c' },
+      { artist: 'SUNMI',  title: 'Forever July',      url: 'https://www.youtube.com/watch?v=M6EyUZ3ANuM' },
+      { artist: 'HYOLYN', title: 'Check',             url: 'https://www.youtube.com/watch?v=QJa8TKXNavc' },
     ]
   },
   categories: [
     {
-      id: 'SparklyBooty', title: 'Sparkly Booty', sub: 'Shiny Treasure',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=Xp-peQzrGcI,9K1ea6r20Lk,IA-0avC007E,T9vnI_i32q8',
+      id: 'AFriendInMe',
+      title: 'A Friend in Me',
+      sub: 'Collabs',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=OJoZX6W77qI,cRfbII60IjY,YZS-hF1fm0Y,lEiRlBjxW1Q',
       songs: [
-        { artist: 'SHINee',           title: 'Beautiful',      tag: 'Live',    vibe: 'Chaotic Weather',      submitter: 'Meagan',           freePick: true },
-        { artist: 'Treasure',          title: 'Thank You OT10', tag: 'Live',    vibe: 'GOMAWOOOO',            submitter: 'anne' },
-        { artist: 'Jihoon (Treasure)', title: 'Melbourne Vlog', tag: 'Variety', vibe: '',                     submitter: 'klara086',         freePick: true },
-        { artist: 'SHINee',            title: 'Dream Girl',     tag: 'Live',    vibe: 'The SHINee standard',  submitter: 'Positive thinking' },
+        { artist: 'YAO',                                    title: '777',          tag: '',   vibe: "AWESOME (Japan's new supergroup)",  submitter: 'Niki',  freePick: true },
+        { artist: 'G-Dragon + aespa, BSS and many more',    title: 'Good Day 2025', tag: '',  vibe: 'its gooood dayyy',                 submitter: 'Klára' },
+        { artist: 'Oh My Girl, IVE, Cravity',               title: 'BLUE & BLACK', tag: 'MV', vibe: 'Refreshing',                       submitter: 'Emil' },
+        { artist: 'MC Special (Jungwoo x Minju x Lee Know)', title: 'Walk',        tag: '',   vibe: "They're cute",                     submitter: 'Eri' },
       ]
     },
     {
-      id: 'DesensitizedCold', title: 'Desensitized Cold', sub: 'Numbers (Numb + Burrr)',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=N_vwNEa-Ph8,cCSKkuN9HAQ,wqHX9YmqeyQ,tCNuyxUHlho',
+      id: 'AliceDeejay',
+      title: 'Alice Deejay',
+      sub: 'Do you think you\'re betterrr offff aloneeee',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=ua6F8xSZNK8,lemt8fZiaHI,ltZuC48-PuQ,wVDb6xpA75E',
       songs: [
-        { artist: 'Wanna One', title: 'Never + Pick Me',              tag: 'Live', vibe: "They're backkk",   submitter: 'Jord' },
-        { artist: 'SSAK3',     title: 'Play That Summer + Beach Again', tag: 'Live', vibe: 'Summer vibes',   submitter: 'Niki' },
-        { artist: 'SS501',     title: 'LoveYa',                        tag: '',     vibe: 'Pure 2nd gen',    submitter: 'Rev' },
-        { artist: 'Seventeen', title: 'Lazada Biggest One Day Sale',   tag: 'Live', vibe: 'to make up for my mistake last week please enjoy this really funny video and laugh', submitter: 'wooahaepuffs' },
+        { artist: 'Max Changmin',     title: 'Chocolate', tag: 'Live', vibe: 'Qwenchy',     submitter: 'Rev' },
+        { artist: 'Ateez Jongho',     title: 'Everything', tag: '',    vibe: 'Good',         submitter: 'wooahaepuffs' },
+        { artist: 'Vernon (SVT)',      title: 'mia',       tag: 'MV',  vibe: 'cuteeeee',     submitter: 'kaia' },
+        { artist: 'Lee Minhyuk (Huta)', title: 'Icy & Spicy', tag: '', vibe: 'Vroom Vroom', submitter: 'FickleFairy' },
       ]
     },
     {
-      id: 'Marathon', title: 'Marathon', sub: 'Running - breathless - and the scent of me (sweaty)',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=aBNyHAasnSM,zksevZHYyk0,OhbMVYVNo40,dME6OkwjUKk',
+      id: 'HelloPlus2',
+      title: 'Hello + 2',
+      sub: 'Hybe (Hi + B)',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=gSHObxyBGJA,1pqKLOI1Z9A,IVBN2dnJMGo,uxzxFPvUJAM',
       songs: [
-        { artist: 'Astro',                                   title: 'Breathless',       tag: '',     vibe: 'Summer = Astro or Astro is soda.',                                                   submitter: 'Mercy' },
-        { artist: 'Running Man (Kwang Soo, Se Chan & So Min)', title: 'Woman On The Beach', tag: 'Live', vibe: 'running man maknaes',                                                           submitter: 'Aqilah' },
-        { artist: 'AHOF',                                    title: 'RUN TO YOU',       tag: '',     vibe: 'RUNNING',                                                                           submitter: 'WaterMork' },
-        { artist: '&TEAM',                                   title: 'Scent of You',     tag: 'Live', vibe: "i love seeing them perform songs from debut now that they've all grown so much",    submitter: 'gyukoo' },
+        { artist: 'Tomorrow X Together', title: 'Stick With You', tag: 'Live', vibe: 'Mesmerizing', submitter: 'MOA' },
+        { artist: 'PSY ft. SUGA',         title: 'That That',     tag: '',     vibe: 'madness',      submitter: 'ace_pops' },
+        { artist: 'Santos Bravos',         title: 'VELOCIDADE',   tag: 'PV',   vibe: 'Rhythmic',     submitter: 'Sure!' },
+        { artist: 'BTS',                   title: 'Airplane pt. 2', tag: 'Live', vibe: 'fun',        submitter: 'Kristine' },
       ]
     },
     {
-      id: 'CrowdPleaser', title: 'Crowd Pleaser', sub: 'Performances in front of crowds',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=inNYQUC6dFs,df3ob9MRR3Y,L7PML9UcKwE,kwAhKmSWdx8',
+      id: 'FibPlus22',
+      title: 'Fib + 22',
+      sub: 'Live (Lie + 22)',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=YpYWuZppfCs,Nenx_7bURwM,TdNoL--2mOg,a0LCO8PCpDw',
       songs: [
-        { artist: 'BTS',    title: 'As I Told You',  tag: 'Cover', vibe: 'Iconic',      submitter: 'Deanna',   freePick: true },
-        { artist: 'SUGA',   title: 'First Love',     tag: 'Live',  vibe: 'sentimental', submitter: 'ace_pops' },
-        { artist: 'Dimash', title: 'El Amor En Ti',  tag: 'Live',  vibe: 'Powerful',    submitter: 'Aya' },
-        { artist: 'BTS',    title: 'Dynamite by V',  tag: 'Live',  vibe: 'Chaotic',     submitter: 'Faye' },
+        { artist: 'Lay Zhang',               title: 'Higher',                    tag: 'Live', vibe: 'Banger',                    submitter: 'Leah' },
+        { artist: 'Hwang Minhyun (Nu\'est, Wanna One, AOS)', title: 'Tree',      tag: 'Live', vibe: 'Clarity',                   submitter: 'Mirva' },
+        { artist: 'N.Flying',                title: 'Karaoke',                   tag: 'Live', vibe: 'Fun (time stamp 1:37 to 10:37ish)', submitter: 'CalamityJay', freePick: true },
+        { artist: 'An Shinae x Chenle',      title: "I Can't Make You Love Me",  tag: '',     vibe: '',                          submitter: 'MamaJoss' },
       ]
     },
     {
-      id: 'Kiii', title: 'Kiii', sub: 'First letter of each name (leftover category)',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=aaKYnDVy7k0,bUMLC9lCgHo,Ot1wUyuE3Vo,9_q-kb9MPH0',
+      id: 'DealersChoice',
+      title: "Dealer's Choice",
+      sub: 'Chat gets to come up with a category name (Random category)',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=HNJRjs1uJDk,OWUqHrTYWIg,ei8E5p1sAQQ,AP1QYUzulkY',
       songs: [
-        { artist: 'KEYVITUP', title: 'KEYVITUP',    tag: 'Live', vibe: "This is Kim JaeJoong's new first idol group",                                               submitter: 'holymato' },
-        { artist: 'i-dle',    title: 'Crow',        tag: '',     vibe: "Didn't want to have to use my free pick for this, but this is not a song to let slip by.", submitter: 'MamaJoss',  freePick: true },
-        { artist: 'idntt',    title: 'Kids Return', tag: 'MV',   vibe: 'Noisy goodness',                                                                           submitter: 'lee3two3',  freePick: true },
-        { artist: 'izna',     title: 'R.I.P.',      tag: '',     vibe: '',                                                                                          submitter: 'the one with the melted puddle for a brain after the past couple of weeks' },
+        { artist: 'Running Man',            title: "Don't Make a Noise Challenge", tag: 'Variety', vibe: 'Legendary Funny',                             submitter: 'Aqilah', freePick: true },
+        { artist: 'OMEGA X',                title: 'Play Dumb',                    tag: 'MV',      vibe: '(what\'s more Summer vibe than) Tennis',      submitter: 'taz' },
+        { artist: 'SHINee',                 title: 'Boys Meet U',                  tag: '',        vibe: 'summer shinee',                               submitter: 'error 404 no wit left in brain' },
+        { artist: 'Choutokkyuu (Bullet Train)', title: 'AwA AwA',                 tag: '',        vibe: '',                                             submitter: 'mako' },
       ]
     },
   ]
@@ -525,7 +534,7 @@ function buildPrompt() {
   const context = date?`Stream date: ${date}`:'';
   const sr = `Style rules:\n- Always use "we" not "I"\n- UK English spelling\n- No em dashes\n- No emojis\n- Natural, warm, non-robotic prose\n- No time-based references like "today" or "tonight"\n- No analysis of song content or lyrics\n- Do not reproduce the tracklist as a raw block — instead weave it into the body as a formatted list after the descriptive sentences`;
   if (selectedType==='youtube') {
-    return `You are writing a YouTube stream replay description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry.\n\n${sr}\n\nUse this exact structure, reproducing it precisely:\n\nTITLE\nA descriptive title that names every artist from the comebacks list, followed by "– UK K-Pop Reaction". Use this format: "[Artist1], [Artist2], [Artist3], [Artist4] & [Artist5] – UK K-Pop Reaction". Include all artists — do not use "& More" or truncate. Do not include the date.\n\nOPENING LINE\nA single warm welcome line. Example: "Hello everyone and welcome back to the channel. We're back with another K-Pop reaction for you here."\n\nBODY\nTwo to three sentences describing the stream in general terms — the range of artists, the energy, any standout moments — without analysing lyrics. Then list every comeback on its own line in this format: Artist – Song Title\n\nLINKS\nEach link must include a short introductory sentence before the URL, exactly as shown:\nJoin our Discord to keep the conversation going, take part in future streams, and help shape what we react to next: https://discord.gg/U9U3QAqWQJ\nYou can catch us live on Twitch for reactions, jukebox streams, and album reviews throughout the week: https://www.twitch.tv/alongfortheridereacts\nIf you'd like to support the channel and get access to extra content, early videos, and full replays, you can find us on Patreon: https://patreon.com/alongfortheride899\nFor everything else, including all our links in one place, head over to our Linktree: https://linktr.ee/aftrreacts\nIf you'd like to buy us a coffee and support the channel directly, you can do that here: https://buymeacoffee.com/alongfortheride\n\nCLOSING LINE\nUse this line exactly, word for word: "If it's your birthday, Happy Birthday. We'll see you at the next one"\n\nHASHTAGS\nThree to five lowercase hashtags on one line. Include the artist names and kpop.\n\nTAGS\nA comma-separated tag block of 15 to 20 relevant tags. Include artist names, song titles from the tracklist, and general kpop reaction tags.\n\n${context?context+'\n\n':''}Comebacks list:\n${tracklist}`;
+    return `You are writing a YouTube stream replay description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry.\n\n${sr}\n\nUse this exact structure, reproducing it precisely:\n\nTITLE\nA descriptive title that names every artist from the comebacks list, followed by "– UK K-Pop Reaction". Use this format: "[Artist1], [Artist2], [Artist3] & [Artist4] – UK K-Pop Reaction". Include all artists — do not use "& More" or truncate. Do not include the date.\n\nOPENING LINE\nA single warm welcome line. Example: "Hello everyone and welcome back to the channel. We're back with another K-Pop reaction for you here."\n\nBODY\nTwo to three sentences describing the stream in general terms — the range of artists, the energy, any standout moments — without analysing lyrics. Then list every comeback on its own line in this format: Artist – Song Title\n\nLINKS\nEach link must include a short introductory sentence before the URL, exactly as shown:\nJoin our Discord to keep the conversation going, take part in future streams, and help shape what we react to next: https://discord.gg/U9U3QAqWQJ\nYou can catch us live on Twitch for reactions, jukebox streams, and album reviews throughout the week: https://www.twitch.tv/alongfortheridereacts\nIf you'd like to support the channel and get access to extra content, early videos, and full replays, you can find us on Patreon: https://patreon.com/alongfortheride899\nFor everything else, including all our links in one place, head over to our Linktree: https://linktr.ee/aftrreacts\nIf you'd like to buy us a coffee and support the channel directly, you can do that here: https://buymeacoffee.com/alongfortheride\n\nCLOSING LINE\nUse this line exactly, word for word: "If it's your birthday, Happy Birthday. We'll see you at the next one"\n\nHASHTAGS\nThree to five lowercase hashtags on one line. Include the artist names and kpop.\n\nTAGS\nA comma-separated tag block of 15 to 20 relevant tags. Include artist names, song titles from the tracklist, and general kpop reaction tags.\n\n${context?context+'\n\n':''}Comebacks list:\n${tracklist}`;
   } else {
     return `You are writing a Patreon post for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is for their Wednesday Jukebox stream where the community submits songs in themed categories.\n\n${sr}\n\nFormat:\nTitle: Wednesday Jukebox | ${date||'[date]'}\n\nOne short, casual, warm intro sentence about the stream. Do not explain or describe what the category names mean. Do not spoil which songs won. Do not analyse song content or lyrics.\n\nAfter the intro sentence, include the full tracklist grouped by category. Put a blank line between categories. Format each category exactly like this, using a bullet point (•) before each song:\n\nCategory Name\n• Artist – Song Title\n• Artist – Song Title\n\nCategory Name\n• Artist – Song Title\n• Artist – Song Title\n\nThen add a short warm closing line followed by the free pick winner names as a simple list, formatted exactly like this:\n\nThis week's free pick winners are:\nName\nName\nName\n\n[ADD THE 5 FREE PICK WINNER NAMES HERE BEFORE SENDING]\n\nNo links. No hashtags.\n\n${context?context+'\n\n':''}Categories and songs:\n${tracklist}`;
   }
