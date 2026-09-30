@@ -153,11 +153,11 @@
   <div class="controls">
     <button class="ctrl all-btn active" onclick="toggleAll(this)">All</button>
     <button class="ctrl active" data-cat="comebacks"      onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Comebacks</button>
-    <button class="ctrl active" data-cat="TheMountain"    onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">The Mountain</button>
-    <button class="ctrl active" data-cat="TheConfluence"  onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">The Confluence</button>
-    <button class="ctrl active" data-cat="TheValley"      onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">The Valley</button>
-    <button class="ctrl active" data-cat="TheForest"      onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">The Forest</button>
-    <button class="ctrl active" data-cat="TheOcean"       onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">The Ocean</button>
+    <button class="ctrl active" data-cat="SortItOut"      onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Sort it out!</button>
+    <button class="ctrl active" data-cat="BitDramatic"    onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Bit Dramatic</button>
+    <button class="ctrl active" data-cat="YouAgain"       onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">You Again</button>
+    <button class="ctrl active" data-cat="NotTheMV"       onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Not The MV</button>
+    <button class="ctrl active" data-cat="BroughtAMate"   onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Brought A Mate</button>
     <div class="font-slider-wrap">
       <span class="font-slider-label">A</span>
       <input type="range" min="12" max="28" value="19" class="font-slider" id="fontSlider" oninput="setFontSize(this.value)">
@@ -226,7 +226,7 @@
 const TWITCH_CLIENT_ID    = 'umh17eumefmyh0l2ovp3sqogfo5bi1';
 const TWITCH_REDIRECT_URI = 'https://coldsnapdev.github.io/aftr-setlist/';
 const TWITCH_SCOPES       = 'channel:manage:polls';
-const STREAM_DATE_DEFAULT = '23rd September 2026';
+const STREAM_DATE_DEFAULT = '30th September 2026';
 const POLL_MAX_CHARS      = 25;
 
 const data = {
@@ -234,73 +234,74 @@ const data = {
     id: 'comebacks',
     title: "This week's comebacks",
     sub: "Listed in order of estimated popularity",
-    playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=KzM1arYmO4w,JZ770mBUquE,4JiJEvPJyWA,Q53TqpuiCqU',
+    playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=WI4__7z_dJw,VHA0FMXsQgk,f_aCSvutjwA,3bLurEgiD0c,LNs7GtZR_sk',
     songs: [
-      { artist: 'Jackson',         title: 'Thank You',   url: 'https://www.youtube.com/watch?v=KzM1arYmO4w' },
-      { artist: 'Hendery',         title: 'Thursday',    url: 'https://www.youtube.com/watch?v=JZ770mBUquE' },
-      { artist: 'Close Your Eyes', title: 'Open Your Eyes', url: 'https://www.youtube.com/watch?v=4JiJEvPJyWA' },
-      { artist: 'Hongjoong (ft. Bazzi)', title: 'Enough', url: 'https://www.youtube.com/watch?v=Q53TqpuiCqU' },
+      { artist: 'BOYNEXTDOOR',    title: 'ANIMAL',      url: 'https://www.youtube.com/watch?v=WI4__7z_dJw' },
+      { artist: '&TEAM',          title: 'Good Boy',     url: 'https://www.youtube.com/watch?v=VHA0FMXsQgk' },
+      { artist: 'CRAVITY',        title: 'LOUDER',       url: 'https://www.youtube.com/watch?v=f_aCSvutjwA' },
+      { artist: 'KickFlip',       title: 'Puzzle Piece', url: 'https://www.youtube.com/watch?v=3bLurEgiD0c' },
+      { artist: 'CLOSE YOUR EYES', title: 'Drop That!',  url: 'https://www.youtube.com/watch?v=LNs7GtZR_sk' },
     ]
   },
   categories: [
     {
-      id: 'TheMountain',
-      title: 'The Mountain',
-      sub: 'Soloists',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=hX8ShoBvFzY,hPjxlWym49g,9u7wYEizkK4,dLAziHWQRvo',
+      id: 'SortItOut',
+      title: 'Sort it out!',
+      sub: '',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=7mDDM0eBWR0,vqvo7hyJJHQ,UC5pmyVJ4t4,gZKOmtDjq6k',
       songs: [
-        { artist: 'D.O.',   title: 'Popcorn',   tag: 'Live', vibe: 'Hoping someone requests Guitarist but popcorn was so cute too!', submitter: 'Kayleigh' },
-        { artist: 'Taeyong', title: 'Wacka Wak', tag: '',    vibe: 'ermmmm',  submitter: 'I swear you\'ll get Yuta soon' },
-        { artist: 'Tabber',  title: 'Hysteric Glamour', tag: '', vibe: 'yearning', submitter: 'jaehyunlicker' },
-        { artist: 'D.O.',    title: 'Seasons',   tag: 'Live', vibe: 'D.O.',   submitter: 'sooingkids' },
+        { artist: 'SOYEON',    title: "I'm gonna TOESA",       tag: 'MV',  vibe: '',                                                          submitter: 'Emil' },
+        { artist: 'B1A4',      title: '걸어본다 (Tried To Walk)', tag: '',   vibe: 'My fave 2nd-gen boy group song—produced by the member who sings first!', submitter: 'J' },
+        { artist: 'Epik High', title: 'Here Come the Regrets', tag: '',    vibe: 'Ambiant',                                                   submitter: 'Mirva' },
+        { artist: 'ONF',       title: 'Bad Dream',             tag: 'DP',  vibe: 'mind-blowing',                                              submitter: 'zircadia' },
       ]
     },
     {
-      id: 'TheConfluence',
-      title: 'The Confluence',
-      sub: 'Compilations & covers',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=YCH8YPL4S24,YPMrjbZFO7Y,ZFfQF__pNF0,4ZFzkmShYmA',
+      id: 'BitDramatic',
+      title: 'Bit Dramatic',
+      sub: '',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=OV7jvG8kMWM,nM0xDI5R50E,g1-sFn-j5D0,bTA_F3h0_8Q',
       songs: [
-        { artist: 'NCT Wish',                    title: 'LOVE LANGUAGE is KISSING',   tag: 'Variety', vibe: 'Babies',    submitter: 'Krista' },
-        { artist: 'SHAX (Hyuk x Dojin)',          title: 'Trouble Maker',              tag: 'Cover',   vibe: 'my fav and his fav', submitter: 'wooahaepuffs' },
-        { artist: 'Jihoon (Treasure) & Jiyu (KiiiKiii)', title: 'Comet',              tag: 'Cover',   vibe: 'cuties omg', submitter: 'Klára' },
-        { artist: 'SHINee',                       title: 'SHINee moments that keeps me up at night', tag: 'Variety', vibe: 'icons', submitter: 'I would really like to take this moment to make a deeply sincere statement on how we wronged Diz before, we owe you a Sunday roast and a cruise to the Bahamas. MWAH!' },
+        { artist: 'In A Minute', title: 'Midnight',    tag: 'MV',   vibe: 'underrated',     submitter: 'taz' },
+        { artist: 'IU',          title: 'BBI BBI',     tag: '',     vibe: 'tell them queen!!', submitter: 'Diz' },
+        { artist: 'BTS',         title: 'Black Swan',  tag: 'Live', vibe: 'Beautiful',      submitter: "Simon's Tupeé", freePick: true },
+        { artist: 'N.Flying',    title: 'Born To Be',  tag: '',     vibe: 'Wow',             submitter: 'Byakko' },
       ]
     },
     {
-      id: 'TheValley',
-      title: 'The Valley',
-      sub: 'Mellow',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=CQYxYJbPD10,R3YWaqJ-JL8,1OyI4BSkRDg,Z1OAbFjlxJI',
+      id: 'YouAgain',
+      title: 'You Again',
+      sub: '',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=SLgJm5wMK4g,WzaiHw8a77k,Po3AfEKOmHE,JCLYwQYPt4A',
       songs: [
-        { artist: 'Taemin',      title: 'Itsuka Kokode',              tag: 'Live', vibe: 'Beautiful', submitter: 'Meagan' },
-        { artist: 'ONEW (SHINee)', title: 'KAKERA',                   tag: 'MV',   vibe: '',          submitter: 'taz' },
-        { artist: 'WE GO-6',     title: 'Monster',                    tag: 'MV',   vibe: 'yearning',  submitter: 'Emil' },
-        { artist: 'Lay Zhang',   title: 'The Aroma That Calls Us Home', tag: 'Live', vibe: 'Chill',  submitter: 'Leah' },
+        { artist: '&TEAM',        title: 'Love Jang',           tag: '',     vibe: 'vocals!',     submitter: 'gyukoo' },
+        { artist: 'Seventeen',    title: "Thinkin' About You",  tag: '',     vibe: '',            submitter: 'wooahaepuffs' },
+        { artist: 'Doh Kyung Soo', title: 'Every Moment of You', tag: '',   vibe: 'Sweet voice', submitter: 'Eri' },
+        { artist: 'NCT Wish',     title: 'P.O.V',               tag: 'Live', vibe: 'Proud',      submitter: 'Krista' },
       ]
     },
     {
-      id: 'TheForest',
-      title: 'The Forest',
-      sub: 'Group',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=xAc4-FS-2cA,V0uQO3CTlLw,w3aQ5XsnKp4,kI-ntAp2vPI',
+      id: 'NotTheMV',
+      title: 'Not The MV',
+      sub: '',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=vToM3ReV-qw,IS5Vu2wKSjY,JySm44NtuJc,3E6z8D-fiiQ',
       songs: [
-        { artist: 'MCND',   title: 'Devil Youth Club',   tag: '',     vibe: 'Finally back!',  submitter: 'Romeo' },
-        { artist: '&TEAM',  title: 'Good Boy',           tag: '',     vibe: "Be a good boy, you tighten my leash again' is a real lyric in this song", submitter: 'gyukoo' },
-        { artist: 'AHOF',   title: 'Just Say Yes',       tag: 'Live', vibe: 'FUN',            submitter: 'NeoChampagne' },
-        { artist: 'CORTIS', title: 'Moneymoneymoney',    tag: 'Live', vibe: 'Energetic',      submitter: 'Deanna' },
+        { artist: 'BTS',          title: 'So What',    tag: 'Live', vibe: '',              submitter: 'Sui [Purple Heart] JK' },
+        { artist: 'Girlset',      title: 'Chat',       tag: 'Live', vibe: 'This girls are so underrated', submitter: 'Deanna' },
+        { artist: 'Taemin',       title: 'Pinocchio',  tag: 'Live', vibe: 'Captivating',   submitter: 'Meagan' },
+        { artist: 'Lee Minhyuk',  title: 'KO',         tag: 'Live', vibe: 'Wet / body',    submitter: 'Yes' },
       ]
     },
     {
-      id: 'TheOcean',
-      title: 'The Ocean',
-      sub: 'Non-K-Pop',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=gMkuV5hh7-s,YClS7pfdaoQ,uX1li_A9TVw,r18mhrc0nUo',
+      id: 'BroughtAMate',
+      title: 'Brought A Mate',
+      sub: '',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=iAvA6-nrOrI,sTR1hJS7GPQ,kSnCMqWXfhU,-pS-3jcJzD4',
       songs: [
-        { artist: 'Heartsteel',                   title: 'Live My Life',   tag: '',     vibe: '',             submitter: 'April' },
-        { artist: "SB19's Pablo x Josue",         title: 'Determinado',    tag: 'MV',   vibe: 'Motivational', submitter: 'Lu' },
-        { artist: 'SB19',                         title: 'Mana',           tag: 'Live', vibe: 'Live kings',   submitter: 'Aqilah' },
-        { artist: 'Dicered',                      title: 'Lock Pao',       tag: '',     vibe: 'catchy',       submitter: 'Molly' },
+        { artist: 'Epik High',       title: 'Epikism (ft Crush)',              tag: '',     vibe: 'Epik',          submitter: 'Faye' },
+        { artist: 'Gulf ft JayB (Got7)', title: 'Sweet Baby',                  tag: 'Live', vibe: 'Nice',          submitter: 'Niki' },
+        { artist: 'Sistar',           title: "Give It To Me",                  tag: 'Variety', vibe: 'Fantastic fans', submitter: 'Aqilah', freePick: true },
+        { artist: 'NCT 127',          title: 'Piñata & Fire Truck',            tag: 'Live', vibe: "Wildin'",       submitter: 'MamaJoss', freePick: true },
       ]
     },
   ]
@@ -534,7 +535,7 @@ function buildPrompt() {
   const context = date?`Stream date: ${date}`:'';
   const sr = `Style rules:\n- Always use "we" not "I"\n- UK English spelling\n- No em dashes\n- No emojis\n- Natural, warm, non-robotic prose\n- No time-based references like "today" or "tonight"\n- No analysis of song content or lyrics\n- Do not reproduce the tracklist as a raw block — instead weave it into the body as a formatted list after the descriptive sentences`;
   if (selectedType==='youtube') {
-    return `You are writing a YouTube stream replay description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry.\n\n${sr}\n\nUse this exact structure, reproducing it precisely:\n\nTITLE\nA descriptive title that names every artist from the comebacks list, followed by "– UK K-Pop Reaction". Use this format: "[Artist1], [Artist2], [Artist3] & [Artist4] – UK K-Pop Reaction". Include all artists — do not use "& More" or truncate. Do not include the date.\n\nOPENING LINE\nA single warm welcome line. Example: "Hello everyone and welcome back to the channel. We're back with another K-Pop reaction for you here."\n\nBODY\nTwo to three sentences describing the stream in general terms — the range of artists, the energy, any standout moments — without analysing lyrics. Then list every comeback on its own line in this format: Artist – Song Title\n\nLINKS\nEach link must include a short introductory sentence before the URL, exactly as shown:\nJoin our Discord to keep the conversation going, take part in future streams, and help shape what we react to next: https://discord.gg/U9U3QAqWQJ\nYou can catch us live on Twitch for reactions, jukebox streams, and album reviews throughout the week: https://www.twitch.tv/alongfortheridereacts\nIf you'd like to support the channel and get access to extra content, early videos, and full replays, you can find us on Patreon: https://patreon.com/alongfortheride899\nFor everything else, including all our links in one place, head over to our Linktree: https://linktr.ee/aftrreacts\nIf you'd like to buy us a coffee and support the channel directly, you can do that here: https://buymeacoffee.com/alongfortheride\n\nCLOSING LINE\nUse this line exactly, word for word: "If it's your birthday, Happy Birthday. We'll see you at the next one"\n\nHASHTAGS\nThree to five lowercase hashtags on one line. Include the artist names and kpop.\n\nTAGS\nA comma-separated tag block of 15 to 20 relevant tags. Include artist names, song titles from the tracklist, and general kpop reaction tags.\n\n${context?context+'\n\n':''}Comebacks list:\n${tracklist}`;
+    return `You are writing a YouTube stream replay description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry.\n\n${sr}\n\nUse this exact structure, reproducing it precisely:\n\nTITLE\nA descriptive title that names every artist from the comebacks list, followed by "– UK K-Pop Reaction". Use this format: "[Artist1], [Artist2], [Artist3], [Artist4] & [Artist5] – UK K-Pop Reaction". Include all artists — do not use "& More" or truncate. Do not include the date.\n\nOPENING LINE\nA single warm welcome line. Example: "Hello everyone and welcome back to the channel. We're back with another K-Pop reaction for you here."\n\nBODY\nTwo to three sentences describing the stream in general terms — the range of artists, the energy, any standout moments — without analysing lyrics. Then list every comeback on its own line in this format: Artist – Song Title\n\nLINKS\nEach link must include a short introductory sentence before the URL, exactly as shown:\nJoin our Discord to keep the conversation going, take part in future streams, and help shape what we react to next: https://discord.gg/U9U3QAqWQJ\nYou can catch us live on Twitch for reactions, jukebox streams, and album reviews throughout the week: https://www.twitch.tv/alongfortheridereacts\nIf you'd like to support the channel and get access to extra content, early videos, and full replays, you can find us on Patreon: https://patreon.com/alongfortheride899\nFor everything else, including all our links in one place, head over to our Linktree: https://linktr.ee/aftrreacts\nIf you'd like to buy us a coffee and support the channel directly, you can do that here: https://buymeacoffee.com/alongfortheride\n\nCLOSING LINE\nUse this line exactly, word for word: "If it's your birthday, Happy Birthday. We'll see you at the next one"\n\nHASHTAGS\nThree to five lowercase hashtags on one line. Include the artist names and kpop.\n\nTAGS\nA comma-separated tag block of 15 to 20 relevant tags. Include artist names, song titles from the tracklist, and general kpop reaction tags.\n\n${context?context+'\n\n':''}Comebacks list:\n${tracklist}`;
   } else {
     return `You are writing a Patreon post for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is for their Wednesday Jukebox stream where the community submits songs in themed categories.\n\n${sr}\n\nFormat:\nTitle: Wednesday Jukebox | ${date||'[date]'}\n\nOne short, casual, warm intro sentence about the stream. Do not explain or describe what the category names mean. Do not spoil which songs won. Do not analyse song content or lyrics.\n\nAfter the intro sentence, include the full tracklist grouped by category. Put a blank line between categories. Format each category exactly like this, using a bullet point (•) before each song:\n\nCategory Name\n• Artist – Song Title\n• Artist – Song Title\n\nCategory Name\n• Artist – Song Title\n• Artist – Song Title\n\nThen add a short warm closing line followed by the free pick winner names as a simple list, formatted exactly like this:\n\nThis week's free pick winners are:\nName\nName\nName\n\n[ADD THE 5 FREE PICK WINNER NAMES HERE BEFORE SENDING]\n\nNo links. No hashtags.\n\n${context?context+'\n\n':''}Categories and songs:\n${tracklist}`;
   }
