@@ -10,34 +10,48 @@
     --free-bg: #d4edda; --free-border: #5a9e6f; --free-text: #1a5c33;
     --purple-bg: #EEEDFE; --purple-border: #7F77DD; --purple-text: #3C3489;
     --twitch: #9146FF; --twitch-dark: #5c2d9e;
+    --teal: #1a9e8f; --teal-light: #e0f5f3; --teal-dark: #0f6b60;
+    --orange: #e8671a; --orange-light: #fdf0e8;
+    --aftr-purple: #6c3fa0; --aftr-purple-light: #ede8f7;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f5f5; color: #111; }
   .page { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem; }
-  h1 { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
-  .page-sub { font-size: 12px; color: #888; margin-bottom: 0.9rem; }
-  .top-bar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+
+  /* ── HEADER ── */
+  .page-header { background: linear-gradient(135deg, var(--aftr-purple) 0%, var(--teal) 100%); border-radius: 8px; padding: 14px 20px; margin-bottom: 12px; display: flex; align-items: flex-start; justify-content: space-between; }
+  .page-header h1 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+  .page-header .page-sub { font-size: 12px; color: rgba(255,255,255,0.75); }
   .top-btns { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 0.8rem; align-items: center; padding: 7px 14px; background: #fff; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
+
+  /* ── LEGEND ── */
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 0.8rem; align-items: center; padding: 7px 14px; background: #fff; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; border-left: 4px solid var(--teal); }
   .legend-item { display: flex; align-items: center; gap: 6px; color: #444; }
   .legend-swatch { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── CONTROLS ── */
   .controls { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.9rem; align-items: center; }
   .ctrl { font-size: 12px; padding: 4px 11px; border-radius: 5px; border: 1px solid #bbb; background: #fff; color: #444; cursor: pointer; transition: all 0.12s; }
   .ctrl:hover { background: #eee; }
-  .ctrl.active { background: #111; color: #fff; border-color: #111; }
-  .ctrl.all-btn { border-color: #999; }
+  .ctrl.active { background: var(--aftr-purple); color: #fff; border-color: var(--aftr-purple); }
+  .ctrl.all-btn { border-color: var(--teal); }
+  .ctrl.all-btn.active { background: var(--teal); border-color: var(--teal); }
   .font-slider-wrap { display: flex; align-items: center; gap: 6px; margin-left: 8px; }
   .font-slider-label { font-size: 12px; color: #888; font-weight: 600; line-height: 1; }
-  .font-slider { width: 90px; accent-color: #111; cursor: pointer; }
+  .font-slider { width: 90px; accent-color: var(--aftr-purple); cursor: pointer; }
+
+  /* ── SECTIONS ── */
   .section { margin-bottom: 1rem; }
-  .section-header { margin-bottom: 5px; padding-bottom: 4px; border-bottom: 2px solid #ddd; display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+  .section-header { margin-bottom: 5px; padding-bottom: 4px; border-bottom: 2px solid var(--teal); display: flex; align-items: center; gap: 10px; justify-content: space-between; }
   .section-left { display: flex; align-items: baseline; gap: 10px; flex: 1; min-width: 0; }
-  .section-title { font-size: 19px; font-weight: 700; color: #111; }
+  .section-title { font-size: 19px; font-weight: 700; color: var(--aftr-purple); }
   .section-sub { font-size: 14px; color: #999; font-style: italic; }
   .section-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+
+  /* ── TABLE ── */
   table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; table-layout: fixed; }
   col.c-artist { width: 19%; } col.c-title { width: 30%; } col.c-vibe { width: 27%; } col.c-sub { width: 13%; } col.c-status { width: 11%; }
-  thead th { background: #f0f0f0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #666; padding: 6px 10px; text-align: left; border-bottom: 1px solid #ddd; }
+  thead th { background: var(--aftr-purple-light); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--aftr-purple); padding: 6px 10px; text-align: left; border-bottom: 1px solid #ddd; }
   tbody tr { border-bottom: 1px solid #efefef; cursor: pointer; user-select: none; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { filter: brightness(0.96); }
@@ -48,6 +62,8 @@
   .td-vibe { font-size: 16px; color: #777; font-style: italic; }
   .td-sub { font-size: 16px; color: #555; }
   .td-status { text-align: center; }
+
+  /* ── ROW STATES ── */
   .badge { display: inline-block; font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.02em; white-space: nowrap; }
   .badge-winner { background: var(--gold-light); color: var(--gold-dark); border: 1px solid var(--gold); }
   .badge-free { background: var(--free-bg); color: var(--free-text); border: 1px solid var(--free-border); }
@@ -60,60 +76,74 @@
   tr.winner { background: var(--gold-light); }
   tr.winner td:first-child { border-left: 4px solid var(--gold); }
   tr.winner .td-artist { color: var(--gold-dark); }
-  .top-btn { font-size: 12px; padding: 5px 12px; border-radius: 5px; border: 1px solid #999; background: #fff; cursor: pointer; color: #444; white-space: nowrap; }
-  .top-btn:hover { background: #eee; }
-  .desc-btn { background: #111; color: #fff; border-color: #111; }
-  .desc-btn:hover { background: #333; }
-  .twitch-btn { background: var(--twitch); color: #fff; border-color: var(--twitch-dark); }
+
+  /* ── BUTTONS ── */
+  .top-btn { font-size: 12px; padding: 5px 12px; border-radius: 5px; border: 1px solid #ccc; background: rgba(255,255,255,0.2); cursor: pointer; color: #fff; white-space: nowrap; font-weight: 600; backdrop-filter: blur(4px); transition: background 0.12s; }
+  .top-btn:hover { background: rgba(255,255,255,0.35); }
+  .desc-btn { background: var(--orange); border-color: var(--orange); }
+  .desc-btn:hover { background: #c4561a; border-color: #c4561a; }
+  .twitch-btn { background: var(--twitch); border-color: var(--twitch-dark); }
   .twitch-btn:hover { background: var(--twitch-dark); }
   .twitch-btn.connected { background: #1a7a3a; border-color: #145c2c; }
   .twitch-btn.connected:hover { background: #145c2c; }
-  .playlist-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 3px 10px; border-radius: 4px; border: 1px solid #c00; background: #fff; color: #c00; cursor: pointer; text-decoration: none; font-weight: 600; flex-shrink: 0; transition: all 0.12s; }
-  .playlist-btn:hover { background: #c00; color: #fff; }
+
+  .playlist-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 3px 10px; border-radius: 4px; border: 1px solid var(--teal-dark); background: #fff; color: var(--teal); cursor: pointer; text-decoration: none; font-weight: 600; flex-shrink: 0; transition: all 0.12s; }
+  .playlist-btn:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
   .playlist-btn svg { width: 12px; height: 12px; flex-shrink: 0; }
   .poll-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 3px 10px; border-radius: 4px; border: 1px solid var(--twitch-dark); background: #fff; color: var(--twitch); cursor: pointer; font-weight: 600; flex-shrink: 0; white-space: nowrap; transition: all 0.12s; }
   .poll-btn:hover { background: var(--twitch); color: #fff; }
   .poll-points-input { font-size: 12px; padding: 3px 6px; border: 1px solid var(--twitch-dark); border-radius: 4px; background: #fff; color: var(--twitch-dark); width: 68px; text-align: center; font-weight: 600; }
   .poll-duration-wrap { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #888; }
   .poll-duration { font-size: 12px; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; background: #fff; color: #444; width: 60px; }
-  .twitch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 12px; border-radius: 6px; margin-bottom: 0.8rem; background: #fff; border: 1px solid #ddd; }
-  .twitch-status.connected { background: #f0f8f2; border-color: var(--free-border); color: #1a5c33; }
-  .twitch-status.disconnected { color: #888; }
+
+  /* ── TWITCH STATUS ── */
+  .twitch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 12px; border-radius: 6px; margin-bottom: 0.8rem; background: #fff; border: 1px solid #ddd; border-left: 4px solid #ccc; }
+  .twitch-status.connected { background: #f0f8f2; border-color: var(--free-border); border-left-color: var(--free-border); color: #1a5c33; }
+  .twitch-status.disconnected { color: #888; border-left-color: #ccc; }
   .twitch-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
   .twitch-status.connected .twitch-dot { background: #1a7a3a; }
+
+  /* ── MODALS ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: #fff; border-radius: 10px; width: 680px; max-width: 95vw; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgba(0,0,0,0.25); }
-  .modal-header { padding: 16px 20px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-  .modal-header h2 { font-size: 16px; font-weight: 700; }
+  .modal-header { padding: 16px 20px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: var(--aftr-purple-light); border-radius: 10px 10px 0 0; }
+  .modal-header h2 { font-size: 16px; font-weight: 700; color: var(--aftr-purple); }
   .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #888; line-height: 1; padding: 0 4px; }
   .modal-close:hover { color: #111; }
   .modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
   .modal-footer { padding: 12px 20px; border-top: 1px solid #eee; display: flex; gap: 8px; justify-content: flex-end; flex-shrink: 0; }
   .modal-foot-btn { font-size: 13px; padding: 7px 16px; border-radius: 6px; border: 1px solid #bbb; background: #fff; cursor: pointer; color: #444; }
   .modal-foot-btn:hover { background: #eee; }
-  .modal-foot-btn.primary { background: #111; color: #fff; border-color: #111; }
-  .modal-foot-btn.primary:hover { background: #333; }
+  .modal-foot-btn.primary { background: var(--orange); color: #fff; border-color: var(--orange); }
+  .modal-foot-btn.primary:hover { background: #c4561a; }
   .modal-foot-btn.success { background: #1a7a3a; color: #fff; border-color: #1a7a3a; }
+
   .desc-type-row { display: flex; gap: 8px; margin-bottom: 16px; }
   .desc-type-btn { flex: 1; padding: 10px 8px; border-radius: 6px; border: 1px solid #ccc; background: #f8f8f8; cursor: pointer; font-size: 13px; font-weight: 500; color: #555; transition: all 0.12s; text-align: center; }
-  .desc-type-btn:hover { border-color: #999; background: #f0f0f0; }
-  .desc-type-btn.selected { background: #111; color: #fff; border-color: #111; }
+  .desc-type-btn:hover { border-color: var(--teal); background: var(--teal-light); }
+  .desc-type-btn.selected { background: var(--aftr-purple); color: #fff; border-color: var(--aftr-purple); }
   .field-group { margin-bottom: 16px; }
   .field-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 6px; }
   .field-input { width: 100%; font-size: 14px; padding: 8px 11px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; color: #111; }
-  .field-input:focus { outline: none; border-color: #888; }
+  .field-input:focus { outline: none; border-color: var(--teal); }
   .ai-result { font-size: 14px; line-height: 1.75; color: #222; white-space: pre-wrap; }
   .poll-preview { background: #f8f8f8; border: 1px solid #e0e0e0; border-radius: 6px; padding: 10px 14px; font-size: 13px; margin-top: 8px; }
   .poll-preview-title { font-weight: 600; margin-bottom: 6px; color: #333; }
   .poll-preview-option { padding: 3px 0; color: #555; }
   .poll-preview-option::before { content: '• '; color: var(--twitch); }
   .poll-truncated { color: #aaa; font-size: 11px; margin-left: 6px; }
+
+  /* ── NO COMEBACKS NOTICE ── */
+  .no-comebacks { background: var(--teal-light); border: 1px solid var(--teal); border-left: 4px solid var(--teal); border-radius: 6px; padding: 10px 14px; margin-bottom: 1rem; font-size: 13px; color: var(--teal-dark); font-style: italic; }
+
   @media print {
-    .controls, .top-btn, .legend, .modal-overlay, .playlist-btn, .poll-btn, .poll-points-input, .twitch-status, .poll-duration-wrap { display: none !important; }
+    .controls, .top-btns, .modal-overlay, .playlist-btn, .poll-btn, .poll-points-input, .twitch-status, .poll-duration-wrap { display: none !important; }
     body { background: #fff; }
+    .page-header { background: none; padding: 0 0 8px; border-bottom: 2px solid #333; border-radius: 0; margin-bottom: 8px; }
+    .page-header h1 { color: #111; }
+    .page-header .page-sub { color: #666; }
     .section { break-inside: avoid; }
-    h1 { font-size: 18px; }
     .section-title { font-size: 14px; }
     .td-artist, .td-title { font-size: 13px; }
     .td-vibe, .td-sub { font-size: 12px; }
@@ -123,7 +153,9 @@
 </head>
 <body>
 <div class="page">
-  <div class="top-bar">
+
+  <!-- HEADER -->
+  <div class="page-header">
     <div>
       <h1>Along for the Ride Reacts — Weekly Setlist</h1>
       <p class="page-sub">Left-click a row to toggle <strong>winner</strong> &nbsp;|&nbsp; Right-click a row to toggle <strong>free pick winner</strong> &nbsp;|&nbsp; Right-click a category button to <strong>solo</strong> it</p>
@@ -135,11 +167,13 @@
     </div>
   </div>
 
+  <!-- TWITCH STATUS -->
   <div class="twitch-status disconnected" id="twitchStatus">
     <div class="twitch-dot"></div>
     <span id="twitchStatusText">Not connected to Twitch — connect to enable live polls</span>
   </div>
 
+  <!-- LEGEND -->
   <div class="legend">
     <div class="legend-item"><div class="legend-swatch" style="background:var(--purple-bg);border:1px solid var(--purple-border)"></div> Comeback</div>
     <div class="legend-item"><div class="legend-swatch" style="background:#e8f5ed;border:1px solid var(--free-border)"></div> Free pick winner</div>
@@ -150,20 +184,22 @@
     </div>
   </div>
 
+  <!-- CATEGORY FILTER -->
   <div class="controls">
     <button class="ctrl all-btn active" onclick="toggleAll(this)">All</button>
-    <button class="ctrl active" data-cat="comebacks"      onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Comebacks</button>
-    <button class="ctrl active" data-cat="SortItOut"      onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Sort it out!</button>
-    <button class="ctrl active" data-cat="BitDramatic"    onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Bit Dramatic</button>
-    <button class="ctrl active" data-cat="YouAgain"       onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">You Again</button>
-    <button class="ctrl active" data-cat="NotTheMV"       onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Not The MV</button>
-    <button class="ctrl active" data-cat="BroughtAMate"   onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Brought A Mate</button>
+    <button class="ctrl active" data-cat="SmoothOperators" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Smooth Operators</button>
+    <button class="ctrl active" data-cat="BringYourNeobong" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Bring Your Neobong!</button>
+    <button class="ctrl active" data-cat="CaughtIn720p" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Caught in 720p</button>
+    <button class="ctrl active" data-cat="HeartStringTheory" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Heartstring Theory</button>
+    <button class="ctrl active" data-cat="PluckAround" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Pluck Around and Find Out</button>
     <div class="font-slider-wrap">
       <span class="font-slider-label">A</span>
       <input type="range" min="12" max="28" value="19" class="font-slider" id="fontSlider" oninput="setFontSize(this.value)">
       <span class="font-slider-label" style="font-size:18px">A</span>
     </div>
   </div>
+
+  <div class="no-comebacks">No comebacks this week — jukebox only!</div>
 
   <div id="setlist"></div>
 </div>
@@ -226,82 +262,69 @@
 const TWITCH_CLIENT_ID    = 'umh17eumefmyh0l2ovp3sqogfo5bi1';
 const TWITCH_REDIRECT_URI = 'https://coldsnapdev.github.io/aftr-setlist/';
 const TWITCH_SCOPES       = 'channel:manage:polls';
-const STREAM_DATE_DEFAULT = '30th September 2026';
+const STREAM_DATE_DEFAULT = '14th October 2026';
 const POLL_MAX_CHARS      = 25;
 
 const data = {
-  comebacks: {
-    id: 'comebacks',
-    title: "This week's comebacks",
-    sub: "Listed in order of estimated popularity",
-    playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=WI4__7z_dJw,VHA0FMXsQgk,f_aCSvutjwA,3bLurEgiD0c,LNs7GtZR_sk',
-    songs: [
-      { artist: 'BOYNEXTDOOR',    title: 'ANIMAL',      url: 'https://www.youtube.com/watch?v=WI4__7z_dJw' },
-      { artist: '&TEAM',          title: 'Good Boy',     url: 'https://www.youtube.com/watch?v=VHA0FMXsQgk' },
-      { artist: 'CRAVITY',        title: 'LOUDER',       url: 'https://www.youtube.com/watch?v=f_aCSvutjwA' },
-      { artist: 'KickFlip',       title: 'Puzzle Piece', url: 'https://www.youtube.com/watch?v=3bLurEgiD0c' },
-      { artist: 'CLOSE YOUR EYES', title: 'Drop That!',  url: 'https://www.youtube.com/watch?v=LNs7GtZR_sk' },
-    ]
-  },
   categories: [
     {
-      id: 'SortItOut',
-      title: 'Sort it out!',
-      sub: '',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=7mDDM0eBWR0,vqvo7hyJJHQ,UC5pmyVJ4t4,gZKOmtDjq6k',
+      id: 'SmoothOperators',
+      title: 'Smooth Operators and a Stray Beast',
+      sub: 'Groovy Animal',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=nqBnrY6GrtY,80uKn69OSzQ,KhGcszcFJ_A,pTeGA2TER38',
       songs: [
-        { artist: 'SOYEON',    title: "I'm gonna TOESA",       tag: 'MV',  vibe: '',                                                          submitter: 'Emil' },
-        { artist: 'B1A4',      title: '걸어본다 (Tried To Walk)', tag: '',   vibe: 'My fave 2nd-gen boy group song—produced by the member who sings first!', submitter: 'J' },
-        { artist: 'Epik High', title: 'Here Come the Regrets', tag: '',    vibe: 'Ambiant',                                                   submitter: 'Mirva' },
-        { artist: 'ONF',       title: 'Bad Dream',             tag: 'DP',  vibe: 'mind-blowing',                                              submitter: 'zircadia' },
+        { artist: 'NOWZ',             title: 'Fly to the Youth (feat. YUQI)', tag: '',       vibe: 'Bittersweet',  submitter: 'Emil' },
+        { artist: 'Monsta X',         title: 'Fire & Ice',                    tag: '',       vibe: '',             submitter: 'FickleFairy' },
+        { artist: 'BOYNEXTDOOR',      title: 'ANIMAL',                        tag: 'PV',     vibe: 'Fire',         submitter: 'Yes' },
+        { artist: 'Babyzoo vs Jemin', title: 'Standing Next To You',          tag: 'Live',   vibe: 'hot',          submitter: 'Yuta is coming... eventually' },
       ]
     },
     {
-      id: 'BitDramatic',
-      title: 'Bit Dramatic',
-      sub: '',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=OV7jvG8kMWM,nM0xDI5R50E,g1-sFn-j5D0,bTA_F3h0_8Q',
+      id: 'BringYourNeobong',
+      title: 'Bring Your Neobong!',
+      sub: 'Live performances',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=qkLMPihvKaQ,rKy_tYeBtyo,uPKlHKxmel8,CBouMUgf-MM',
       songs: [
-        { artist: 'In A Minute', title: 'Midnight',    tag: 'MV',   vibe: 'underrated',     submitter: 'taz' },
-        { artist: 'IU',          title: 'BBI BBI',     tag: '',     vibe: 'tell them queen!!', submitter: 'Diz' },
-        { artist: 'BTS',         title: 'Black Swan',  tag: 'Live', vibe: 'Beautiful',      submitter: "Simon's Tupeé", freePick: true },
-        { artist: 'N.Flying',    title: 'Born To Be',  tag: '',     vibe: 'Wow',             submitter: 'Byakko' },
+        { artist: 'BTS',                         title: 'Anpanman',    tag: 'Live', vibe: 'Cuties',    submitter: 'Faye' },
+        { artist: 'BTS',                         title: 'Mikrokosmos', tag: 'Live', vibe: 'Beautiful', submitter: 'Sui \u{1F49C} JK' },
+        { artist: 'IVE Leeseo & &TEAM Nico and EJ', title: 'Be Mine', tag: 'Live', vibe: 'Leeseo and ej are so cute and nico is serving face the whole time', submitter: 'gyukoo' },
+        { artist: 'Key',                         title: 'Born to Shine', tag: 'Live', vibe: 'Insane', submitter: 'NeoChampagne' },
       ]
     },
     {
-      id: 'YouAgain',
-      title: 'You Again',
-      sub: '',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=SLgJm5wMK4g,WzaiHw8a77k,Po3AfEKOmHE,JCLYwQYPt4A',
+      id: 'CaughtIn720p',
+      title: 'Caught in 720p',
+      sub: 'Fancams',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=Qe8Kp5qY9Vk,5Z0dcHbT2P4,DFxI2HTQfC4,3KlIikSic6s',
       songs: [
-        { artist: '&TEAM',        title: 'Love Jang',           tag: '',     vibe: 'vocals!',     submitter: 'gyukoo' },
-        { artist: 'Seventeen',    title: "Thinkin' About You",  tag: '',     vibe: '',            submitter: 'wooahaepuffs' },
-        { artist: 'Doh Kyung Soo', title: 'Every Moment of You', tag: '',   vibe: 'Sweet voice', submitter: 'Eri' },
-        { artist: 'NCT Wish',     title: 'P.O.V',               tag: 'Live', vibe: 'Proud',      submitter: 'Krista' },
+        { artist: 'NCT Wish', title: 'Yushi NASA Fancam',       tag: 'Live',    vibe: 'Rapper Yushi',             submitter: 'Krista' },
+        { artist: 'Taemin',   title: 'Impressionable',          tag: 'Live',    vibe: 'Mysterious',               submitter: 'Meagan' },
+        { artist: 'D.O.',     title: 'D.O. VCR Concert Dayoff', tag: 'Variety', vibe: 'This video is really funny', submitter: 'Bambie' },
+        { artist: 'D.O.',     title: 'Dancing Party',           tag: 'Variety', vibe: 'Cute',                     submitter: 'Eri' },
       ]
     },
     {
-      id: 'NotTheMV',
-      title: 'Not The MV',
-      sub: '',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=vToM3ReV-qw,IS5Vu2wKSjY,JySm44NtuJc,3E6z8D-fiiQ',
+      id: 'HeartStringTheory',
+      title: 'Heartstring Theory',
+      sub: 'Emotional',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=RdUV9Ms5GM4,f-lh1LZ0Iww,Am_2VeKmdOY,oF8kBwaVYb0',
       songs: [
-        { artist: 'BTS',          title: 'So What',    tag: 'Live', vibe: '',              submitter: 'Sui [Purple Heart] JK' },
-        { artist: 'Girlset',      title: 'Chat',       tag: 'Live', vibe: 'This girls are so underrated', submitter: 'Deanna' },
-        { artist: 'Taemin',       title: 'Pinocchio',  tag: 'Live', vibe: 'Captivating',   submitter: 'Meagan' },
-        { artist: 'Lee Minhyuk',  title: 'KO',         tag: 'Live', vibe: 'Wet / body',    submitter: 'Yes' },
+        { artist: 'IU',                    title: 'Dear My Crazy Soulmate', tag: '',     vibe: 'heartwarming',      submitter: 'diz' },
+        { artist: 'Ailee',                 title: "I'll Hold You",          tag: 'Live', vibe: 'Vocals',            submitter: 'Niki' },
+        { artist: 'Lena Park & Song Sohee', title: 'If I Leave',            tag: 'Live', vibe: 'breathtaking',     submitter: '' },
+        { artist: 'Epik High',             title: 'Lesson Zero',            tag: '',     vibe: 'Short and to the point', submitter: 'Mirva' },
       ]
     },
     {
-      id: 'BroughtAMate',
-      title: 'Brought A Mate',
-      sub: '',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=iAvA6-nrOrI,sTR1hJS7GPQ,kSnCMqWXfhU,-pS-3jcJzD4',
+      id: 'PluckAround',
+      title: 'Pluck Around and Find Out',
+      sub: 'Band music',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=Ph-13gyG4S0,EwRNqz4tN1c,xMCdo1CuDug,jUFg1HIGUJI',
       songs: [
-        { artist: 'Epik High',       title: 'Epikism (ft Crush)',              tag: '',     vibe: 'Epik',          submitter: 'Faye' },
-        { artist: 'Gulf ft JayB (Got7)', title: 'Sweet Baby',                  tag: 'Live', vibe: 'Nice',          submitter: 'Niki' },
-        { artist: 'Sistar',           title: "Give It To Me",                  tag: 'Variety', vibe: 'Fantastic fans', submitter: 'Aqilah', freePick: true },
-        { artist: 'NCT 127',          title: 'Piñata & Fire Truck',            tag: 'Live', vibe: "Wildin'",       submitter: 'MamaJoss', freePick: true },
+        { artist: 'Hyde & Yuta', title: 'Honey',          tag: '',   vibe: 'Father & son', submitter: '' },
+        { artist: 'BandCMC',     title: 'Whisper',         tag: '',   vibe: '',             submitter: 'mako' },
+        { artist: 'V01D',        title: 'Ending Credit',   tag: 'MV', vibe: '',             submitter: 'taz' },
+        { artist: 'N.Flying',    title: 'Flower Fantasy',  tag: 'Live', vibe: 'Precious',   submitter: 'Byakko' },
       ]
     },
   ]
@@ -309,10 +332,6 @@ const data = {
 
 const winners = new Set(), freePicks = new Set(), hidden = new Set();
 let selectedType = null, twitchToken = null, twitchUserId = null, twitchUsername = null, pendingPollCat = null;
-
-data.categories.forEach(cat => {
-  cat.songs.forEach((song, i) => { if (song.freePick) freePicks.add(cat.id + '__' + i); });
-});
 
 // ─── Twitch ───────────────────────────────────────────────────────────────────
 function handleTwitchAuth() {
@@ -422,22 +441,19 @@ function soloCat(btn) {
 }
 
 // ─── Render ───────────────────────────────────────────────────────────────────
-function makeTable(catId, songs, isComebacks) {
-  let html = '<table>';
-  if (!isComebacks) html += '<colgroup><col class="c-artist"><col class="c-title"><col class="c-vibe"><col class="c-sub"><col class="c-status"></colgroup>';
-  html += '<thead><tr><th>Artist</th><th>Song</th>' + (isComebacks ? '' : '<th>Vibe</th><th>Submitter</th><th></th>') + '</tr></thead><tbody>';
+function makeTable(catId, songs) {
+  let html = '<table><colgroup><col class="c-artist"><col class="c-title"><col class="c-vibe"><col class="c-sub"><col class="c-status"></colgroup>';
+  html += '<thead><tr><th>Artist</th><th>Song</th><th>Vibe</th><th>Submitter</th><th></th></tr></thead><tbody>';
   songs.forEach((song, i) => {
     const id = rowId(catId, i), isW = winners.has(id), isFP = freePicks.has(id);
-    const rc = isComebacks ? 'comeback' : (isW ? 'winner' : isFP ? 'free-pick' : '');
+    const rc = isW ? 'winner' : isFP ? 'free-pick' : '';
     const tag = song.tag ? `<span class="tag">${song.tag}</span>` : '';
-    html += `<tr class="${rc}" onclick="toggleWinner('${id}')" oncontextmenu="event.preventDefault();toggleFreePick('${id}')"><td class="td-artist">${song.artist}</td><td class="td-title">${song.title}${tag}</td>`;
-    if (!isComebacks) {
-      html += `<td class="td-vibe">${song.vibe || ''}</td><td class="td-sub">${song.submitter || ''}</td><td class="td-status">`;
-      if (isW) html += '<span class="badge badge-winner">Winner</span>';
-      else if (isFP) html += '<span class="badge badge-free">Free pick</span>';
-      html += '</td>';
-    }
-    html += '</tr>';
+    html += `<tr class="${rc}" onclick="toggleWinner('${id}')" oncontextmenu="event.preventDefault();toggleFreePick('${id}')">`;
+    html += `<td class="td-artist">${song.artist}</td><td class="td-title">${song.title}${tag}</td>`;
+    html += `<td class="td-vibe">${song.vibe || ''}</td><td class="td-sub">${song.submitter || ''}</td><td class="td-status">`;
+    if (isW) html += '<span class="badge badge-winner">Winner</span>';
+    else if (isFP) html += '<span class="badge badge-free">Free pick</span>';
+    html += '</td></tr>';
   });
   return html + '</tbody></table>';
 }
@@ -449,7 +465,7 @@ function playlistBtn(url) {
 }
 function copyPlaylistUrl(url, btn) {
   navigator.clipboard.writeText(url).then(() => {
-    const orig = btn.innerHTML; btn.textContent = 'Copied!'; btn.style.cssText = 'background:#1a7a3a;color:#fff;border-color:#145c2c';
+    const orig = btn.innerHTML; btn.textContent = 'Copied!'; btn.style.cssText = 'background:var(--teal);color:#fff;border-color:var(--teal-dark)';
     setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ''; }, 2000);
   });
 }
@@ -461,13 +477,9 @@ function pollBtn(catId) {
 function render() {
   const el = document.getElementById('setlist');
   let html = '';
-  if (!hidden.has('comebacks')) {
-    const cb = data.comebacks;
-    html += `<div class="section"><div class="section-header"><div class="section-left"><span class="section-title">${cb.title}</span><span class="section-sub">${cb.sub}</span></div><div class="section-actions">${playlistBtn(cb.playlistUrl)}</div></div>${makeTable(cb.id, cb.songs, true)}</div>`;
-  }
   data.categories.forEach(cat => {
     if (hidden.has(cat.id)) return;
-    html += `<div class="section"><div class="section-header"><div class="section-left"><span class="section-title">${cat.title}</span>${cat.sub ? `<span class="section-sub">${cat.sub}</span>` : ''}</div><div class="section-actions">${playlistBtn(cat.playlistUrl)}${pollBtn(cat.id)}</div></div>${makeTable(cat.id, cat.songs, false)}</div>`;
+    html += `<div class="section"><div class="section-header"><div class="section-left"><span class="section-title">${cat.title}</span>${cat.sub ? `<span class="section-sub">${cat.sub}</span>` : ''}</div><div class="section-actions">${playlistBtn(cat.playlistUrl)}${pollBtn(cat.id)}</div></div>${makeTable(cat.id, cat.songs)}</div>`;
   });
   el.innerHTML = html;
   const slider = document.getElementById('fontSlider');
@@ -475,11 +487,11 @@ function render() {
 }
 
 // ─── Tracklist builders ───────────────────────────────────────────────────────
-function buildYouTubeTracklist() {
-  return ['COMEBACKS THIS WEEK', ...data.comebacks.songs.map(s => `  ${s.artist} – ${s.title}`)].join('\n');
-}
 function buildPatreonTracklist() {
   return data.categories.map((cat, ci) => (ci > 0 ? '\n' : '') + `${cat.title.toUpperCase()}${cat.sub ? ` (${cat.sub})` : ''}\n` + cat.songs.map(s => `  ${s.artist} – ${s.title}${s.tag ? ` [${s.tag}]` : ''}`).join('\n')).join('\n');
+}
+function buildYouTubeTracklist() {
+  return 'NO COMEBACKS THIS WEEK — JUKEBOX ONLY\n\n' + data.categories.map(cat => `${cat.title.toUpperCase()}\n` + cat.songs.map(s => `  ${s.artist} – ${s.title}`).join('\n')).join('\n\n');
 }
 
 // ─── Date normaliser ──────────────────────────────────────────────────────────
@@ -521,7 +533,7 @@ function selectType(type) {
   selectedType = type;
   ['btnYT','btnPat'].forEach(id=>document.getElementById(id).classList.remove('selected'));
   document.getElementById(type==='youtube'?'btnYT':'btnPat').classList.add('selected');
-  document.getElementById('modalTitle').textContent = type==='youtube'?'YouTube — comebacks replay':'Patreon — Wednesday Jukebox';
+  document.getElementById('modalTitle').textContent = type==='youtube'?'YouTube — no comebacks this week':'Patreon — Wednesday Jukebox';
   goToDetails();
 }
 function showTracklist() {
@@ -535,9 +547,9 @@ function buildPrompt() {
   const context = date?`Stream date: ${date}`:'';
   const sr = `Style rules:\n- Always use "we" not "I"\n- UK English spelling\n- No em dashes\n- No emojis\n- Natural, warm, non-robotic prose\n- No time-based references like "today" or "tonight"\n- No analysis of song content or lyrics\n- Do not reproduce the tracklist as a raw block — instead weave it into the body as a formatted list after the descriptive sentences`;
   if (selectedType==='youtube') {
-    return `You are writing a YouTube stream replay description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry.\n\n${sr}\n\nUse this exact structure, reproducing it precisely:\n\nTITLE\nA descriptive title that names every artist from the comebacks list, followed by "– UK K-Pop Reaction". Use this format: "[Artist1], [Artist2], [Artist3], [Artist4] & [Artist5] – UK K-Pop Reaction". Include all artists — do not use "& More" or truncate. Do not include the date.\n\nOPENING LINE\nA single warm welcome line. Example: "Hello everyone and welcome back to the channel. We're back with another K-Pop reaction for you here."\n\nBODY\nTwo to three sentences describing the stream in general terms — the range of artists, the energy, any standout moments — without analysing lyrics. Then list every comeback on its own line in this format: Artist – Song Title\n\nLINKS\nEach link must include a short introductory sentence before the URL, exactly as shown:\nJoin our Discord to keep the conversation going, take part in future streams, and help shape what we react to next: https://discord.gg/U9U3QAqWQJ\nYou can catch us live on Twitch for reactions, jukebox streams, and album reviews throughout the week: https://www.twitch.tv/alongfortheridereacts\nIf you'd like to support the channel and get access to extra content, early videos, and full replays, you can find us on Patreon: https://patreon.com/alongfortheride899\nFor everything else, including all our links in one place, head over to our Linktree: https://linktr.ee/aftrreacts\nIf you'd like to buy us a coffee and support the channel directly, you can do that here: https://buymeacoffee.com/alongfortheride\n\nCLOSING LINE\nUse this line exactly, word for word: "If it's your birthday, Happy Birthday. We'll see you at the next one"\n\nHASHTAGS\nThree to five lowercase hashtags on one line. Include the artist names and kpop.\n\nTAGS\nA comma-separated tag block of 15 to 20 relevant tags. Include artist names, song titles from the tracklist, and general kpop reaction tags.\n\n${context?context+'\n\n':''}Comebacks list:\n${tracklist}`;
+    return `You are writing a YouTube stream description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. There are no comebacks this week — this is a jukebox-only stream.\n\n${sr}\n\nUse this exact structure:\n\nTITLE\nWednesday Jukebox | ${date||'[date]'} | UK K-Pop Reaction\n\nOPENING LINE\nA single warm welcome line.\n\nBODY\nTwo to three sentences describing the stream, then list the categories and songs.\n\nLINKS\nJoin our Discord to keep the conversation going, take part in future streams, and help shape what we react to next: https://discord.gg/U9U3QAqWQJ\nYou can catch us live on Twitch for reactions, jukebox streams, and album reviews throughout the week: https://www.twitch.tv/alongfortheridereacts\nIf you'd like to support the channel and get access to extra content, early videos, and full replays, you can find us on Patreon: https://patreon.com/alongfortheride899\nFor everything else, including all our links in one place, head over to our Linktree: https://linktr.ee/aftrreacts\nIf you'd like to buy us a coffee and support the channel directly, you can do that here: https://buymeacoffee.com/alongfortheride\n\nCLOSING LINE\nUse this line exactly: "If it's your birthday, Happy Birthday. We'll see you at the next one"\n\nHASHTAGS\nThree to five lowercase hashtags.\n\nTAGS\nA comma-separated tag block of 15 to 20 relevant tags.\n\n${context?context+'\n\n':''}Tracklist:\n${tracklist}`;
   } else {
-    return `You are writing a Patreon post for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is for their Wednesday Jukebox stream where the community submits songs in themed categories.\n\n${sr}\n\nFormat:\nTitle: Wednesday Jukebox | ${date||'[date]'}\n\nOne short, casual, warm intro sentence about the stream. Do not explain or describe what the category names mean. Do not spoil which songs won. Do not analyse song content or lyrics.\n\nAfter the intro sentence, include the full tracklist grouped by category. Put a blank line between categories. Format each category exactly like this, using a bullet point (•) before each song:\n\nCategory Name\n• Artist – Song Title\n• Artist – Song Title\n\nCategory Name\n• Artist – Song Title\n• Artist – Song Title\n\nThen add a short warm closing line followed by the free pick winner names as a simple list, formatted exactly like this:\n\nThis week's free pick winners are:\nName\nName\nName\n\n[ADD THE 5 FREE PICK WINNER NAMES HERE BEFORE SENDING]\n\nNo links. No hashtags.\n\n${context?context+'\n\n':''}Categories and songs:\n${tracklist}`;
+    return `You are writing a Patreon post for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is for their Wednesday Jukebox stream where the community submits songs in themed categories.\n\n${sr}\n\nFormat:\nTitle: Wednesday Jukebox | ${date||'[date]'}\n\nOne short, casual, warm intro sentence about the stream. Do not explain or describe what the category names mean. Do not spoil which songs won. Do not analyse song content or lyrics.\n\nAfter the intro sentence, include the full tracklist grouped by category. Put a blank line between categories. Format each category exactly like this, using a bullet point (•) before each song:\n\nCategory Name\n• Artist – Song Title\n• Artist – Song Title\n\nThen add a short warm closing line followed by the free pick winner names as a simple list, formatted exactly like this:\n\nThis week's free pick winners are:\nName\nName\nName\n\n[ADD THE 5 FREE PICK WINNER NAMES HERE BEFORE SENDING]\n\nNo links. No hashtags.\n\n${context?context+'\n\n':''}Categories and songs:\n${tracklist}`;
   }
 }
 function copyPrompt() {
