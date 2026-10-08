@@ -464,7 +464,7 @@ function playlistBtn(url) {
   return `<a class="playlist-btn" href="${url}" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Open playlist</a><button class="playlist-btn" onclick="copyPlaylistUrl('${e}',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4C3 1 2 2 2 3v14h2V3h12V1zm3 4H8C7 5 6 6 6 7v14c0 1 1 2 2 2h11c1 0 2-1 2-2V7c0-1-1-2-2-2zm0 16H8V7h11v14z"/></svg>Copy URL</button>`;
 }
 function copyPlaylistUrl(url, btn) {
-  copyToClipboard(url).then(() => {
+  navigator.clipboard.writeText(url).then(() => {
     const orig = btn.innerHTML; btn.textContent = 'Copied!'; btn.style.cssText = 'background:var(--teal);color:#fff;border-color:var(--teal-dark)';
     setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ''; }, 2000);
   });
@@ -552,21 +552,11 @@ function buildPrompt() {
     return `You are writing a Patreon post for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is for their Wednesday Jukebox stream where the community submits songs in themed categories.\n\n${sr}\n\nFormat:\nTitle: Wednesday Jukebox | ${date||'[date]'}\n\nOne short, casual, warm intro sentence about the stream. Do not explain or describe what the category names mean. Do not spoil which songs won. Do not analyse song content or lyrics.\n\nAfter the intro sentence, include the full tracklist grouped by category. Put a blank line between categories. Format each category exactly like this, using a bullet point (•) before each song:\n\nCategory Name\n• Artist – Song Title\n• Artist – Song Title\n\nThen add a short warm closing line followed by the free pick winner names as a simple list, formatted exactly like this:\n\nThis week's free pick winners are:\nName\nName\nName\n\n[ADD THE 5 FREE PICK WINNER NAMES HERE BEFORE SENDING]\n\nNo links. No hashtags.\n\n${context?context+'\n\n':''}Categories and songs:\n${tracklist}`;
   }
 }
-function copyToClipboard(text) {
-  if (navigator.clipboard && window.isSecureContext) {
-    return navigator.clipboard.writeText(text);
-  }
-  const ta = document.createElement('textarea');
-  ta.value = text; ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
-  document.body.appendChild(ta); ta.focus(); ta.select();
-  try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
-  return Promise.resolve();
-}
 function copyPrompt() {
-  copyToClipboard(buildPrompt()).then(() => { const btn=document.getElementById('copyPromptBtn'); btn.textContent='Copied! Paste into Claude'; btn.classList.add('success'); setTimeout(()=>{btn.textContent='Copy prompt for Claude';btn.classList.remove('success');},3000); }).catch(()=>alert('Copy failed — please select and copy the text manually.'));
+  navigator.clipboard.writeText(buildPrompt()).then(() => { const btn=document.getElementById('copyPromptBtn'); btn.textContent='Copied! Paste into Claude'; btn.classList.add('success'); setTimeout(()=>{btn.textContent='Copy prompt for Claude';btn.classList.remove('success');},3000); });
 }
 function copyResult() {
-  copyToClipboard(document.getElementById('aiResult').textContent).then(() => { const btn=document.getElementById('copyBtn'); btn.textContent='Copied!'; btn.classList.add('success'); setTimeout(()=>{btn.textContent='Copy to clipboard';btn.classList.remove('success');},2000); }).catch(()=>alert('Copy failed — please select and copy the text manually.'));
+  navigator.clipboard.writeText(document.getElementById('aiResult').textContent).then(() => { const btn=document.getElementById('copyBtn'); btn.textContent='Copied!'; btn.classList.add('success'); setTimeout(()=>{btn.textContent='Copy to clipboard';btn.classList.remove('success');},2000); });
 }
 
 initTwitch();
