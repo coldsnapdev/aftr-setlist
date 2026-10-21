@@ -187,11 +187,10 @@
   <!-- CATEGORY FILTER -->
   <div class="controls">
     <button class="ctrl all-btn active" onclick="toggleAll(this)">All</button>
-    <button class="ctrl active" data-cat="SmoothOperators" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Smooth Operators</button>
-    <button class="ctrl active" data-cat="BringYourNeobong" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Bring Your Neobong!</button>
-    <button class="ctrl active" data-cat="CaughtIn720p" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Caught in 720p</button>
-    <button class="ctrl active" data-cat="HeartStringTheory" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Heartstring Theory</button>
-    <button class="ctrl active" data-cat="PluckAround" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Pluck Around and Find Out</button>
+    <button class="ctrl active" data-cat="QuotingTheDr" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Quoting the Dr</button>
+    <button class="ctrl active" data-cat="ASlideMixedUp" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">A Slide Mixed Up</button>
+    <button class="ctrl active" data-cat="MoreThanBlue" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">More Than Blue</button>
+    <button class="ctrl active" data-cat="CompanyName" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Company Name</button>
     <div class="font-slider-wrap">
       <span class="font-slider-label">A</span>
       <input type="range" min="12" max="28" value="19" class="font-slider" id="fontSlider" oninput="setFontSize(this.value)">
@@ -262,69 +261,61 @@
 const TWITCH_CLIENT_ID    = 'umh17eumefmyh0l2ovp3sqogfo5bi1';
 const TWITCH_REDIRECT_URI = 'https://coldsnapdev.github.io/aftr-setlist/';
 const TWITCH_SCOPES       = 'channel:manage:polls';
-const STREAM_DATE_DEFAULT = '14th October 2026';
+const STREAM_DATE_DEFAULT = '21st October 2026';
 const POLL_MAX_CHARS      = 25;
 
 const data = {
   categories: [
     {
-      id: 'SmoothOperators',
-      title: 'Smooth Operators and a Stray Beast',
-      sub: 'Groovy Animal',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=nqBnrY6GrtY,80uKn69OSzQ,KhGcszcFJ_A,pTeGA2TER38',
+      id: 'QuotingTheDr',
+      title: 'Quoting the Dr',
+      sub: "It's A Live (Frankenstein)",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=jYJwenmYKMM,5TfeBfINJYQ,98u4xC4zkcQ,zY4ET__NqhY,tZYFazhoN6g',
       songs: [
-        { artist: 'NOWZ',             title: 'Fly to the Youth (feat. YUQI)', tag: '',       vibe: 'Bittersweet',  submitter: 'Emil' },
-        { artist: 'Monsta X',         title: 'Fire & Ice',                    tag: '',       vibe: '',             submitter: 'FickleFairy' },
-        { artist: 'BOYNEXTDOOR',      title: 'ANIMAL',                        tag: 'PV',     vibe: 'Fire',         submitter: 'Yes' },
-        { artist: 'Babyzoo vs Jemin', title: 'Standing Next To You',          tag: 'Live',   vibe: 'hot',          submitter: 'Yuta is coming... eventually' },
+        { artist: 'SHINee',                              title: 'Selene 6.23',          tag: 'Live', vibe: 'Yearning',            submitter: 'Meagan' },
+        { artist: 'BewhY & Taemin',                      title: 'Pinocchio',             tag: 'Live', vibe: '2 cool dudes',        submitter: 'Niki' },
+        { artist: 'One Ok Rock ft Chico Carlito & Paledusk', title: 'C.U.R.I.S.I.T.Y.', tag: 'Live', vibe: 'Hype!',              submitter: 'Lu' },
+        { artist: 'JX (Jaejoong & Junsu)',               title: 'Love in the Ice',       tag: 'Live', vibe: 'My life is complete', submitter: "Simon's mum" },
+        { artist: 'NCT WISH',                            title: 'Steady',                tag: 'Live', vibe: 'Lovely!',             submitter: 'Olivia' },
       ]
     },
     {
-      id: 'BringYourNeobong',
-      title: 'Bring Your Neobong!',
-      sub: 'Live performances',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=qkLMPihvKaQ,rKy_tYeBtyo,uPKlHKxmel8,CBouMUgf-MM',
+      id: 'ASlideMixedUp',
+      title: 'A Slide Mixed Up',
+      sub: 'Ladies (Anagram)',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=Ur7aK4FvK-U,eZiCkuXnTRQ,AuVi2ib-0qQ,wSN7OTHs_Es,gh3RtzAEufI',
       songs: [
-        { artist: 'BTS',                         title: 'Anpanman',    tag: 'Live', vibe: 'Cuties',    submitter: 'Faye' },
-        { artist: 'BTS',                         title: 'Mikrokosmos', tag: 'Live', vibe: 'Beautiful', submitter: 'Sui \u{1F49C} JK' },
-        { artist: 'IVE Leeseo & &TEAM Nico and EJ', title: 'Be Mine', tag: 'Live', vibe: 'Leeseo and ej are so cute and nico is serving face the whole time', submitter: 'gyukoo' },
-        { artist: 'Key',                         title: 'Born to Shine', tag: 'Live', vibe: 'Insane', submitter: 'NeoChampagne' },
+        { artist: 'Hearts2Hearts', title: 'Focus',     tag: '',   vibe: 'Sophisticated',        submitter: 'Laker' },
+        { artist: 'Winter (aespa)', title: 'Blue',     tag: '',   vibe: 'wallowing by the ocean', submitter: 'FickleFairy' },
+        { artist: 'BESTie',        title: 'Excuse Me', tag: 'MV', vibe: '',                     submitter: 'Emil' },
+        { artist: 'Hwasa',         title: 'Hwasa',     tag: 'Live', vibe: 'Fire',               submitter: 'agp' },
+        { artist: 'Fromis_9',      title: 'Teacher',   tag: '',   vibe: 'Sultry',               submitter: 'David' },
       ]
     },
     {
-      id: 'CaughtIn720p',
-      title: 'Caught in 720p',
-      sub: 'Fancams',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=Qe8Kp5qY9Vk,5Z0dcHbT2P4,DFxI2HTQfC4,3KlIikSic6s',
+      id: 'MoreThanBlue',
+      title: 'More Than Blue',
+      sub: 'Rare Groups For Us (Steak)',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=JAhjXLzQLEE,xnBPDF0yPLw,5ILRKKeU-Qs,Nrl_2VhSnug,xMCdo1CuDug',
       songs: [
-        { artist: 'NCT Wish', title: 'Yushi NASA Fancam',       tag: 'Live',    vibe: 'Rapper Yushi',             submitter: 'Krista' },
-        { artist: 'Taemin',   title: 'Impressionable',          tag: 'Live',    vibe: 'Mysterious',               submitter: 'Meagan' },
-        { artist: 'D.O.',     title: 'D.O. VCR Concert Dayoff', tag: 'Variety', vibe: 'This video is really funny', submitter: 'Bambie' },
-        { artist: 'D.O.',     title: 'Dancing Party',           tag: 'Variety', vibe: 'Cute',                     submitter: 'Eri' },
+        { artist: 'Gomak Boys',  title: 'Sweet Thing',                    tag: '',   vibe: 'Smooth',          submitter: 'Keeper' },
+        { artist: 'RIIZD',       title: 'Bo Peep Bo Peep & The Eve cover', tag: 'Cover', vibe: 'serve',       submitter: 'jaehyun licker' },
+        { artist: 'P1Harmony',   title: 'Unique',                          tag: 'Live', vibe: 'Iconic',       submitter: 'Yes' },
+        { artist: 'XLOV',        title: 'i=!',                             tag: 'MV',  vibe: 'full drama when', submitter: 'Diz' },
+        { artist: 'V01D',        title: 'Ending Credit',                   tag: 'MV',  vibe: '',              submitter: 'taz' },
       ]
     },
     {
-      id: 'HeartStringTheory',
-      title: 'Heartstring Theory',
-      sub: 'Emotional',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=RdUV9Ms5GM4,f-lh1LZ0Iww,Am_2VeKmdOY,oF8kBwaVYb0',
+      id: 'CompanyName',
+      title: 'Company Name',
+      sub: "Two Word Song Names (Two's Company)",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=5GAksgvR8nM,-xUCeDU30D8,PIVfNz_9zBs,or_weQEBOmg,vvpEQ24EjkY',
       songs: [
-        { artist: 'IU',                    title: 'Dear My Crazy Soulmate', tag: '',     vibe: 'heartwarming',      submitter: 'diz' },
-        { artist: 'Ailee',                 title: "I'll Hold You",          tag: 'Live', vibe: 'Vocals',            submitter: 'Niki' },
-        { artist: 'Lena Park & Song Sohee', title: 'If I Leave',            tag: 'Live', vibe: 'breathtaking',     submitter: '' },
-        { artist: 'Epik High',             title: 'Lesson Zero',            tag: '',     vibe: 'Short and to the point', submitter: 'Mirva' },
-      ]
-    },
-    {
-      id: 'PluckAround',
-      title: 'Pluck Around and Find Out',
-      sub: 'Band music',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=Ph-13gyG4S0,EwRNqz4tN1c,cHhTAI2kAoY,jUFg1HIGUJI',
-      songs: [
-        { artist: 'Hyde & Yuta', title: 'Honey',          tag: '',     vibe: 'Father & son', submitter: '' },
-        { artist: 'BandCMC',     title: 'Whisper',         tag: '',     vibe: '',             submitter: 'mako' },
-        { artist: 'S.E.S.',      title: 'Soul to Soul',    tag: '',     vibe: '',             submitter: 'taz' },
-        { artist: 'N.Flying',    title: 'Flower Fantasy',  tag: 'Live', vibe: 'Precious',     submitter: 'Byakko' },
+        { artist: 'Rocky (ASTRO)', title: 'Ice Flower',  tag: 'Live', vibe: 'Magical',                            submitter: 'Mercy' },
+        { artist: 'Lay Zhang',     title: 'Bad Girl',    tag: '',     vibe: 'Hips',                               submitter: 'Leah' },
+        { artist: 'Kyungsoo',      title: "Don't You",   tag: '',     vibe: "He was LYING when he said he can't do sexy", submitter: 'Kayleigh' },
+        { artist: 'BTS',           title: 'Outro: Wings', tag: '',    vibe: '',                                   submitter: 'Sui\u{1F49C}JK' },
+        { artist: 'Treasure',      title: "It's Okay",   tag: '',     vibe: 'pretty singing',                     submitter: 'Klára' },
       ]
     },
   ]
