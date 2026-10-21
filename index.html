@@ -137,6 +137,32 @@
   /* ── NO COMEBACKS NOTICE ── */
   .no-comebacks { background: var(--teal-light); border: 1px solid var(--teal); border-left: 4px solid var(--teal); border-radius: 6px; padding: 10px 14px; margin-bottom: 1rem; font-size: 13px; color: var(--teal-dark); font-style: italic; }
 
+  /* ── COMEBACKS ── */
+  .comebacks-section { margin-bottom: 1.2rem; }
+  .comebacks-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 6px; border-bottom: 2px solid var(--aftr-purple); margin-bottom: 10px; }
+  .comebacks-title { font-size: 19px; font-weight: 700; color: var(--aftr-purple); }
+  .comebacks-sub { font-size: 13px; color: #999; font-style: italic; margin-left: 10px; }
+  .comebacks-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .comebacks-polls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 700px) { .comebacks-polls { grid-template-columns: 1fr; } }
+  .comeback-poll-group { background: #fff; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
+  .comeback-poll-header { background: var(--aftr-purple-light); padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #ddd; }
+  .comeback-poll-label { font-size: 13px; font-weight: 700; color: var(--aftr-purple); }
+  .comeback-poll-actions { display: flex; gap: 6px; align-items: center; }
+  .comeback-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; user-select: none; transition: background 0.1s; }
+  .comeback-row:last-child { border-bottom: none; }
+  .comeback-row:hover { background: #fafafa; }
+  .comeback-row.selected-comeback { background: var(--purple-bg); }
+  .comeback-row.selected-comeback .comeback-artist { color: var(--purple-text); }
+  .comeback-seed { font-size: 11px; font-weight: 700; color: #bbb; width: 18px; flex-shrink: 0; text-align: center; }
+  .comeback-check { width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--aftr-purple); cursor: pointer; }
+  .comeback-artist { font-size: 14px; font-weight: 600; color: #111; flex: 1; }
+  .comeback-song { font-size: 13px; color: #666; flex: 1; }
+  .comeback-playlist-bar { padding: 10px 12px; background: #f8f8f8; border-top: 1px solid #e0e0e0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .comeback-playlist-label { font-size: 12px; color: #888; flex-shrink: 0; }
+  .comeback-playlist-url { font-size: 11px; color: var(--teal-dark); background: var(--teal-light); border: 1px solid var(--teal); border-radius: 4px; padding: 3px 8px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: monospace; display: none; }
+  .comeback-playlist-url.visible { display: block; }
+
   @media print {
     .controls, .top-btns, .modal-overlay, .playlist-btn, .poll-btn, .poll-points-input, .twitch-status, .poll-duration-wrap { display: none !important; }
     body { background: #fff; }
@@ -198,7 +224,7 @@
     </div>
   </div>
 
-  <div class="no-comebacks">No comebacks this week — jukebox only!</div>
+  <div id="comebacksSection"></div>
 
   <div id="setlist"></div>
 </div>
@@ -214,7 +240,7 @@
       <div id="stepChoose">
         <p style="font-size:13px;color:#666;margin-bottom:14px;">Which platform are you writing for?</p>
         <div class="desc-type-row">
-          <div class="desc-type-btn" id="btnYT" onclick="selectType('youtube')"><div style="font-size:15px;margin-bottom:3px;">▶ YouTube</div><div style="font-size:11px;opacity:0.7">Comebacks stream replay</div></div>
+          <div class="desc-type-btn" id="btnYT" onclick="selectType('youtube')"><div style="font-size:15px;margin-bottom:3px;">▶ YouTube</div><div style="font-size:11px;opacity:0.7">Stream replay description</div></div>
           <div class="desc-type-btn" id="btnPat" onclick="selectType('patreon')"><div style="font-size:15px;margin-bottom:3px;">&#9733; Patreon</div><div style="font-size:11px;opacity:0.7">Wednesday Jukebox stream</div></div>
         </div>
       </div>
@@ -321,8 +347,28 @@ const data = {
   ]
 };
 
+// ─── Comebacks data ───────────────────────────────────────────────────────────
+// Set to null for no comebacks; array of {seed,artist,title,videoId} for active week
+const comebacks = [
+  { seed: 1,  artist: 'IVE',              title: 'Looks Can Kill',       videoId: 'rsNhWkC4neE' },
+  { seed: 2,  artist: 'NMIXX',            title: 'Birthday Wish',        videoId: 'roHWN9fL2SM' },
+  { seed: 3,  artist: 'PLAVE',            title: 'Star Trace',           videoId: 'TBmE7m0yEwY' },
+  { seed: 4,  artist: 'SUNG HANBIN',      title: 'UNDEAD',               videoId: 'CWewoEBGIos' },
+  { seed: 5,  artist: 'MEOVV',            title: 'GO HARD',              videoId: '8aKR2Ho--5k' },
+  { seed: 6,  artist: 'ONEW',             title: 'Illusion',             videoId: 'z_Y932BHvUE' },
+  { seed: 7,  artist: 'Xdinary Heroes',   title: 'Obsessed with Youth',  videoId: '10_1vuZAeP0' },
+  { seed: 8,  artist: 'WOODZ',            title: 'Come into my world',   videoId: 'cwLCZQHm06o' },
+  { seed: 9,  artist: 'Hearts2Hearts',    title: 'Next Chapter',         videoId: 'lu9GinsuyUQ' },
+  { seed: 10, artist: 'LNGSHOT',          title: 'Masterpiece',          videoId: 'Cu6JU-kNmOU' },
+];
+// Snake seeding: odd seeds → poll 1, even seeds → poll 2
+const COMEBACK_POLLS = 2;
+function getComebackPoll(seed) { return ((seed - 1) % COMEBACK_POLLS) + 1; }
+
+const selectedComebacks = new Set(); // tracks which comeback videoIds are checked
+
 const winners = new Set(), freePicks = new Set(), hidden = new Set();
-let selectedType = null, twitchToken = null, twitchUserId = null, twitchUsername = null, pendingPollCat = null;
+let selectedType = null, twitchToken = null, twitchUserId = null, twitchUsername = null, pendingPollCat = null, pendingComebackPoll = null;
 
 // ─── Twitch ───────────────────────────────────────────────────────────────────
 function handleTwitchAuth() {
@@ -368,6 +414,7 @@ function buildPollOptions(songs) { return songs.map(s => { const raw = `${s.arti
 function openPollModal(catId) {
   const cat = data.categories.find(c => c.id === catId); if (!cat) return;
   pendingPollCat = cat;
+  pendingComebackPoll = null;
   const opts = buildPollOptions(cat.songs);
   const dur = parseInt(document.getElementById('pollDuration').value) || 120;
   const pointsInput = document.getElementById('pollPoints_' + catId);
@@ -378,26 +425,152 @@ function openPollModal(catId) {
   const btn = document.getElementById('pollConfirmBtn'); btn.textContent = 'Start poll'; btn.disabled = false; btn.classList.remove('success');
   document.getElementById('pollModal').classList.add('open');
 }
-function closePollModal() { document.getElementById('pollModal').classList.remove('open'); pendingPollCat = null; }
+function closePollModal() { document.getElementById('pollModal').classList.remove('open'); pendingPollCat = null; pendingComebackPoll = null; }
 function handlePollOverlayClick(e) { if (e.target === document.getElementById('pollModal')) closePollModal(); }
 
-async function confirmPoll() {
-  if (!pendingPollCat || !twitchToken) return;
-  const opts = buildPollOptions(pendingPollCat.songs);
+// ─── Comeback poll modal ──────────────────────────────────────────────────────
+function openComebackPollModal(pollNum) {
+  if (!comebacks) return;
+  const group = comebacks.filter(c => getComebackPoll(c.seed) === pollNum);
+  pendingComebackPoll = { pollNum, songs: group };
+  const opts = buildPollOptions(group);
   const dur = parseInt(document.getElementById('pollDuration').value) || 120;
-  const pointsInput = document.getElementById('pollPoints_' + pendingPollCat.id);
+  const pointsInput = document.getElementById('comebackPollPoints_' + pollNum);
   const pointsCost = Math.max(1, parseInt(pointsInput?.value) || 1000);
+  document.getElementById('pollModalTitle').textContent = `Comeback Poll ${pollNum}`;
+  document.getElementById('pollPreview').innerHTML = `<div class="poll-preview-title">Which comeback was your favourite?</div>` + opts.map(o => `<div class="poll-preview-option">${o.text}${o.truncated ? `<span class="poll-truncated">(from: ${o.original})</span>` : ''}</div>`).join('');
+  document.getElementById('pollDurationNote').textContent = `Poll will run for ${dur} seconds. Extra votes cost ${pointsCost.toLocaleString()} Channel Points each.`;
+  const btn = document.getElementById('pollConfirmBtn'); btn.textContent = 'Start poll'; btn.disabled = false; btn.classList.remove('success');
+  pendingPollCat = null; // clear jukebox pending so confirmPoll knows it's a comeback poll
+  document.getElementById('pollModal').classList.add('open');
+}
+
+async function confirmPoll() {
+  const isComeback = !!pendingComebackPoll;
+  const target = isComeback ? pendingComebackPoll : pendingPollCat;
+  if (!target || !twitchToken) return;
+  const songs = isComeback ? pendingComebackPoll.songs : pendingPollCat.songs;
+  const opts = buildPollOptions(songs);
+  const dur = parseInt(document.getElementById('pollDuration').value) || 120;
+  let pointsCost;
+  if (isComeback) {
+    const pointsInput = document.getElementById('comebackPollPoints_' + pendingComebackPoll.pollNum);
+    pointsCost = Math.max(1, parseInt(pointsInput?.value) || 1000);
+  } else {
+    const pointsInput = document.getElementById('pollPoints_' + pendingPollCat.id);
+    pointsCost = Math.max(1, parseInt(pointsInput?.value) || 1000);
+  }
+  const title = isComeback ? `Comeback Poll ${pendingComebackPoll.pollNum} — favourite?` : `${pendingPollCat.title} — favourite song?`;
   const btn = document.getElementById('pollConfirmBtn');
   btn.textContent = 'Starting…'; btn.disabled = true;
   try {
     const r = await fetch('https://api.twitch.tv/helix/polls', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + twitchToken, 'Client-Id': TWITCH_CLIENT_ID, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ broadcaster_id: twitchUserId, title: `${pendingPollCat.title} — favourite song?`, choices: opts.map(o => ({ title: o.text })), duration: dur, channel_points_voting_enabled: true, channel_points_per_vote: pointsCost })
+      body: JSON.stringify({ broadcaster_id: twitchUserId, title, choices: opts.map(o => ({ title: o.text })), duration: dur, channel_points_voting_enabled: true, channel_points_per_vote: pointsCost })
     });
     if (r.ok) { btn.textContent = 'Poll started!'; btn.classList.add('success'); setTimeout(() => closePollModal(), 1500); }
     else { const err = await r.json(); btn.textContent = 'Failed — try again'; btn.disabled = false; alert(`Poll failed: ${err.message || 'Unknown error'}`); }
   } catch { btn.textContent = 'Error — try again'; btn.disabled = false; }
+}
+
+// ─── Comeback selection & playlist ────────────────────────────────────────────
+function toggleComebackSelection(videoId) {
+  if (selectedComebacks.has(videoId)) selectedComebacks.delete(videoId);
+  else selectedComebacks.add(videoId);
+  updateComebackPlaylist();
+}
+function updateComebackPlaylist() {
+  if (!comebacks) return;
+  const bar = document.getElementById('comebackPlaylistBar');
+  const urlEl = document.getElementById('comebackPlaylistUrl');
+  const btn = document.getElementById('comebackPlaylistBtn');
+  const openBtn = document.getElementById('comebackPlaylistOpenBtn');
+  const label = document.getElementById('comebackPlaylistLabel');
+  if (!bar) return;
+  // keep checkbox states in sync
+  comebacks.forEach(c => {
+    const cb = document.getElementById('cb_' + c.videoId);
+    if (cb) cb.checked = selectedComebacks.has(c.videoId);
+    const row = document.getElementById('cbrow_' + c.videoId);
+    if (row) row.classList.toggle('selected-comeback', selectedComebacks.has(c.videoId));
+  });
+  const ids = [...selectedComebacks];
+  if (ids.length === 0) {
+    urlEl.classList.remove('visible');
+    btn.disabled = true;
+    openBtn.style.display = 'none';
+    label.textContent = 'Select comebacks above to build a playlist';
+  } else {
+    const url = 'https://www.youtube.com/watch_videos?video_ids=' + ids.join(',');
+    urlEl.textContent = url;
+    urlEl.classList.add('visible');
+    btn.disabled = false;
+    openBtn.style.display = '';
+    openBtn.href = url;
+    label.textContent = `${ids.length} selected:`;
+  }
+}
+function copyComebackPlaylist(btn) {
+  const ids = [...selectedComebacks];
+  if (!ids.length) return;
+  const url = 'https://www.youtube.com/watch_videos?video_ids=' + ids.join(',');
+  copyToClipboard(url).then(() => {
+    const orig = btn.innerHTML; btn.textContent = 'Copied!'; btn.style.cssText = 'background:var(--teal);color:#fff;border-color:var(--teal-dark)';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ''; }, 2000);
+  });
+}
+
+// ─── Comebacks render ─────────────────────────────────────────────────────────
+function renderComebacks() {
+  const el = document.getElementById('comebacksSection');
+  if (!comebacks || comebacks.length === 0) {
+    el.innerHTML = '<div class="no-comebacks">No comebacks this week — jukebox only!</div>';
+    return;
+  }
+  const pollGroups = [];
+  for (let p = 1; p <= COMEBACK_POLLS; p++) pollGroups.push(comebacks.filter(c => getComebackPoll(c.seed) === p));
+
+  const pollPair = pollGroups.map((group, idx) => {
+    const pollNum = idx + 1;
+    const pollBtnHtml = twitchToken
+      ? `<input type="number" class="poll-points-input" id="comebackPollPoints_${pollNum}" value="1000" min="1" max="1000000" title="Channel Points per extra vote"><button class="poll-btn" onclick="openComebackPollModal(${pollNum})"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M3 3h4v18H3V3zm7 6h4v12h-4V9zm7-4h4v16h-4V5z"/></svg>Start Poll ${pollNum}</button>`
+      : '';
+    const rows = group.map(c => `
+      <div class="comeback-row${selectedComebacks.has(c.videoId) ? ' selected-comeback' : ''}" id="cbrow_${c.videoId}" onclick="toggleComebackSelection('${c.videoId}')">
+        <span class="comeback-seed">${c.seed}</span>
+        <input type="checkbox" class="comeback-check" id="cb_${c.videoId}" ${selectedComebacks.has(c.videoId) ? 'checked' : ''} onclick="event.stopPropagation();toggleComebackSelection('${c.videoId}')">
+        <span class="comeback-artist">${c.artist}</span>
+        <span class="comeback-song">${c.title}</span>
+      </div>`).join('');
+    return `<div class="comeback-poll-group">
+      <div class="comeback-poll-header">
+        <span class="comeback-poll-label">Poll ${pollNum}</span>
+        <div class="comeback-poll-actions">${pollBtnHtml}</div>
+      </div>
+      ${rows}
+    </div>`;
+  }).join('');
+
+  const ids = [...selectedComebacks];
+  const playlistUrl = ids.length ? 'https://www.youtube.com/watch_videos?video_ids=' + ids.join(',') : '';
+
+  el.innerHTML = `
+    <div class="comebacks-section">
+      <div class="comebacks-header">
+        <div style="display:flex;align-items:baseline;gap:10px;flex:1;min-width:0">
+          <span class="comebacks-title">Comebacks</span>
+          <span class="comebacks-sub">Tick the winners to build a YouTube playlist</span>
+        </div>
+      </div>
+      <div class="comebacks-polls">${pollPair}</div>
+      <div class="comeback-playlist-bar" id="comebackPlaylistBar">
+        <span class="comeback-playlist-label" id="comebackPlaylistLabel">${ids.length ? ids.length + ' selected:' : 'Select comebacks above to build a playlist'}</span>
+        ${ids.length ? `<span class="comeback-playlist-url visible" id="comebackPlaylistUrl">${playlistUrl}</span>` : `<span class="comeback-playlist-url" id="comebackPlaylistUrl"></span>`}
+        <a class="playlist-btn" id="comebackPlaylistOpenBtn" href="${playlistUrl || '#'}" target="_blank" style="${ids.length ? '' : 'display:none'}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Open</a>
+        <button class="playlist-btn" onclick="copyComebackPlaylist(this)" id="comebackPlaylistBtn" ${ids.length ? '' : 'disabled'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4C3 1 2 2 2 3v14h2V3h12V1zm3 4H8C7 5 6 6 6 7v14c0 1 1 2 2 2h11c1 0 2-1 2-2V7c0-1-1-2-2-2zm0 16H8V7h11v14z"/></svg>Copy URL</button>
+      </div>
+    </div>`;
 }
 
 // ─── Font ─────────────────────────────────────────────────────────────────────
@@ -473,6 +646,7 @@ function render() {
     html += `<div class="section"><div class="section-header"><div class="section-left"><span class="section-title">${cat.title}</span>${cat.sub ? `<span class="section-sub">${cat.sub}</span>` : ''}</div><div class="section-actions">${playlistBtn(cat.playlistUrl)}${pollBtn(cat.id)}</div></div>${makeTable(cat.id, cat.songs)}</div>`;
   });
   el.innerHTML = html;
+  renderComebacks();
   const slider = document.getElementById('fontSlider');
   if (slider) setFontSize(slider.value);
 }
@@ -482,7 +656,10 @@ function buildPatreonTracklist() {
   return data.categories.map((cat, ci) => (ci > 0 ? '\n' : '') + `${cat.title.toUpperCase()}${cat.sub ? ` (${cat.sub})` : ''}\n` + cat.songs.map(s => `  ${s.artist} – ${s.title}${s.tag ? ` [${s.tag}]` : ''}`).join('\n')).join('\n');
 }
 function buildYouTubeTracklist() {
-  return 'NO COMEBACKS THIS WEEK — JUKEBOX ONLY\n\n' + data.categories.map(cat => `${cat.title.toUpperCase()}\n` + cat.songs.map(s => `  ${s.artist} – ${s.title}`).join('\n')).join('\n\n');
+  const comebacksBlock = comebacks && comebacks.length
+    ? 'COMEBACKS\n' + comebacks.map(c => `  ${c.artist} – ${c.title}`).join('\n') + '\n\n'
+    : 'NO COMEBACKS THIS WEEK — JUKEBOX ONLY\n\n';
+  return comebacksBlock + data.categories.map(cat => `${cat.title.toUpperCase()}\n` + cat.songs.map(s => `  ${s.artist} – ${s.title}`).join('\n')).join('\n\n');
 }
 
 // ─── Date normaliser ──────────────────────────────────────────────────────────
@@ -524,7 +701,7 @@ function selectType(type) {
   selectedType = type;
   ['btnYT','btnPat'].forEach(id=>document.getElementById(id).classList.remove('selected'));
   document.getElementById(type==='youtube'?'btnYT':'btnPat').classList.add('selected');
-  document.getElementById('modalTitle').textContent = type==='youtube'?'YouTube — no comebacks this week':'Patreon — Wednesday Jukebox';
+  document.getElementById('modalTitle').textContent = type==='youtube'?'YouTube — stream description':'Patreon — Wednesday Jukebox';
   goToDetails();
 }
 function showTracklist() {
@@ -538,7 +715,10 @@ function buildPrompt() {
   const context = date?`Stream date: ${date}`:'';
   const sr = `Style rules:\n- Always use "we" not "I"\n- UK English spelling\n- No em dashes\n- No emojis\n- Natural, warm, non-robotic prose\n- No time-based references like "today" or "tonight"\n- No analysis of song content or lyrics\n- Do not reproduce the tracklist as a raw block — instead weave it into the body as a formatted list after the descriptive sentences`;
   if (selectedType==='youtube') {
-    return `You are writing a YouTube stream description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. There are no comebacks this week — this is a jukebox-only stream.\n\n${sr}\n\nUse this exact structure:\n\nTITLE\nWednesday Jukebox | ${date||'[date]'} | UK K-Pop Reaction\n\nOPENING LINE\nA single warm welcome line.\n\nBODY\nTwo to three sentences describing the stream, then list the categories and songs.\n\nLINKS\nJoin our Discord to keep the conversation going, take part in future streams, and help shape what we react to next: https://discord.gg/U9U3QAqWQJ\nYou can catch us live on Twitch for reactions, jukebox streams, and album reviews throughout the week: https://www.twitch.tv/alongfortheridereacts\nIf you'd like to support the channel and get access to extra content, early videos, and full replays, you can find us on Patreon: https://patreon.com/alongfortheride899\nFor everything else, including all our links in one place, head over to our Linktree: https://linktr.ee/aftrreacts\nIf you'd like to buy us a coffee and support the channel directly, you can do that here: https://buymeacoffee.com/alongfortheride\n\nCLOSING LINE\nUse this line exactly: "If it's your birthday, Happy Birthday. We'll see you at the next one"\n\nHASHTAGS\nThree to five lowercase hashtags.\n\nTAGS\nA comma-separated tag block of 15 to 20 relevant tags.\n\n${context?context+'\n\n':''}Tracklist:\n${tracklist}`;
+    const ytIntro = comebacks && comebacks.length
+      ? `You are writing a YouTube stream description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This stream features comebacks voted on by the community, as well as the regular jukebox categories.`
+      : `You are writing a YouTube stream description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. There are no comebacks this week — this is a jukebox-only stream.`;
+    return `${ytIntro}\n\n${sr}\n\nUse this exact structure:\n\nTITLE\nWednesday Jukebox | ${date||'[date]'} | UK K-Pop Reaction\n\nOPENING LINE\nA single warm welcome line.\n\nBODY\nTwo to three sentences describing the stream, then list the categories and songs.\n\nLINKS\nJoin our Discord to keep the conversation going, take part in future streams, and help shape what we react to next: https://discord.gg/U9U3QAqWQJ\nYou can catch us live on Twitch for reactions, jukebox streams, and album reviews throughout the week: https://www.twitch.tv/alongfortheridereacts\nIf you'd like to support the channel and get access to extra content, early videos, and full replays, you can find us on Patreon: https://patreon.com/alongfortheride899\nFor everything else, including all our links in one place, head over to our Linktree: https://linktr.ee/aftrreacts\nIf you'd like to buy us a coffee and support the channel directly, you can do that here: https://buymeacoffee.com/alongfortheride\n\nCLOSING LINE\nUse this line exactly: "If it's your birthday, Happy Birthday. We'll see you at the next one"\n\nHASHTAGS\nThree to five lowercase hashtags.\n\nTAGS\nA comma-separated tag block of 15 to 20 relevant tags.\n\n${context?context+'\n\n':''}Tracklist:\n${tracklist}`;
   } else {
     return `You are writing a Patreon post for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is for their Wednesday Jukebox stream where the community submits songs in themed categories.\n\n${sr}\n\nFormat:\nTitle: Wednesday Jukebox | ${date||'[date]'}\n\nOne short, casual, warm intro sentence about the stream. Do not explain or describe what the category names mean. Do not spoil which songs won. Do not analyse song content or lyrics.\n\nAfter the intro sentence, include the full tracklist grouped by category. Put a blank line between categories. Format each category exactly like this, using a bullet point (•) before each song:\n\nCategory Name\n• Artist – Song Title\n• Artist – Song Title\n\nThen add a short warm closing line followed by the free pick winner names as a simple list, formatted exactly like this:\n\nThis week's free pick winners are:\nName\nName\nName\n\n[ADD THE 5 FREE PICK WINNER NAMES HERE BEFORE SENDING]\n\nNo links. No hashtags.\n\n${context?context+'\n\n':''}Categories and songs:\n${tracklist}`;
   }
