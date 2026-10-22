@@ -510,11 +510,13 @@ function updateComebackPlaylist() {
     if (row) row.classList.toggle('selected-comeback', selectedComebacks.has(c.videoId));
   });
   const ids = [...selectedComebacks];
+  const confirmBtn = document.getElementById('comebackConfirmBtn');
   if (ids.length === 0) {
     urlEl.classList.remove('visible');
     btn.disabled = true;
     openBtn.style.display = 'none';
     label.textContent = 'Select comebacks above to build a playlist';
+    if (confirmBtn && !confirmBtn.classList.contains('saved')) confirmBtn.disabled = true;
   } else {
     const url = 'https://www.youtube.com/watch_videos?video_ids=' + ids.join(',');
     urlEl.textContent = url;
@@ -523,8 +525,63 @@ function updateComebackPlaylist() {
     openBtn.style.display = '';
     openBtn.href = url;
     label.textContent = `${ids.length} selected:`;
+    if (confirmBtn && !confirmBtn.classList.contains('saved')) confirmBtn.disabled = false;
   }
 }
+async function confirmComebacks(btn) {
+  const chosenVideoIds = [...selectedComebacks]; // insertion-ordered
+  if (!chosenVideoIds.length) return;
+
+  // Map videoIds → sheetRow for chosen and unchosen
+  const chosen = chosenVideoIds.map(vid => comebacks.find(c => c.videoId === vid)).filter(Boolean).map(c => c.sheetRow);
+  const unchosen = comebacks.filter(c => !selectedComebacks.has(c.videoId)).map(c => c.sheetRow);
+
+  btn.disabled = true;
+  btn.classList.add('saving');
+  btn.textContent = 'Confirming…';
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'confirm_comebacks', sheetName: SHEET_NAME, chosen, unchosen }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+
+    btn.classList.remove('saving');
+    btn.classList.add('saved');
+    btn.textContent = '✓ Confirmed!';
+    btn.disabled = true; // stays disabled — one-shot action
+
+    // Sort comebacks: chosen first in tick order, unchosen at bottom
+    comebacks.sort((a, b) => {
+      const ai = chosenVideoIds.indexOf(a.videoId);
+      const bi = chosenVideoIds.indexOf(b.videoId);
+      if (ai !== -1 && bi !== -1) return ai - bi;   // both chosen: tick order
+      if (ai !== -1) return -1;                       // a chosen, b not
+      if (bi !== -1) return 1;                        // b chosen, a not
+      return a.seed - b.seed;                         // both unchosen: original seed order
+    });
+
+    renderComebacks();
+    // Re-find the button after re-render and keep it confirmed
+    const newBtn = document.getElementById('comebackConfirmBtn');
+    if (newBtn) { newBtn.classList.add('saved'); newBtn.textContent = '✓ Confirmed!'; newBtn.disabled = true; }
+
+  } catch (err) {
+    btn.classList.remove('saving');
+    btn.classList.add('error');
+    btn.textContent = '✗ Error';
+    console.error('Confirm comebacks error:', err);
+    setTimeout(() => {
+      btn.classList.remove('error');
+      btn.disabled = false;
+      btn.textContent = 'Confirm Comebacks';
+    }, 4000);
+  }
+}
+
 function copyComebackPlaylist(btn) {
   const ids = [...selectedComebacks];
   if (!ids.length) return;
@@ -593,6 +650,7 @@ function renderComebacks() {
         ${ids.length ? `<span class="comeback-playlist-url visible" id="comebackPlaylistUrl">${playlistUrl}</span>` : `<span class="comeback-playlist-url" id="comebackPlaylistUrl"></span>`}
         <a class="playlist-btn" id="comebackPlaylistOpenBtn" href="${playlistUrl || '#'}" target="_blank" style="${ids.length ? '' : 'display:none'}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Open</a>
         <button class="playlist-btn" onclick="copyComebackPlaylist(this)" id="comebackPlaylistBtn" ${ids.length ? '' : 'disabled'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4C3 1 2 2 2 3v14h2V3h12V1zm3 4H8C7 5 6 6 6 7v14c0 1 1 2 2 2h11c1 0 2-1 2-2V7c0-1-1-2-2-2zm0 16H8V7h11v14z"/></svg>Copy URL</button>
+        <button class="sheet-btn" id="comebackConfirmBtn" onclick="confirmComebacks(this)" ${ids.length ? '' : 'disabled'} style="margin-left:8px;font-size:12px;padding:3px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Confirm Comebacks</button>
       </div>
     </div>`;
 }
