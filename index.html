@@ -223,10 +223,11 @@
   <!-- CATEGORY FILTER -->
   <div class="controls">
     <button class="ctrl all-btn active" onclick="toggleAll(this)">All</button>
-    <button class="ctrl active" data-cat="QuotingTheDr" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Quoting the Dr</button>
-    <button class="ctrl active" data-cat="ASlideMixedUp" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">A Slide Mixed Up</button>
-    <button class="ctrl active" data-cat="MoreThanBlue" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">More Than Blue</button>
-    <button class="ctrl active" data-cat="CompanyName" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Company Name</button>
+    <button class="ctrl active" data-cat="comebacks" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Comebacks</button>
+    <button class="ctrl active" data-cat="ConfusedAsIdle" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Confused as i-dle</button>
+    <button class="ctrl active" data-cat="FiftyFivePointFive" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">55.5% of a cat</button>
+    <button class="ctrl active" data-cat="DigitalSounds" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Digital Sounds</button>
+    <button class="ctrl active" data-cat="SwipedLeft" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Swiped Left</button>
     <div class="font-slider-wrap">
       <span class="font-slider-label">A</span>
       <input type="range" min="12" max="28" value="19" class="font-slider" id="fontSlider" oninput="setFontSize(this.value)">
@@ -594,6 +595,8 @@ function copyComebackPlaylist(btn) {
 // ─── Comebacks render ─────────────────────────────────────────────────────────
 function renderComebacks() {
   const el = document.getElementById('comebacksSection');
+  if (hidden.has('comebacks')) { el.style.display = 'none'; return; }
+  el.style.display = '';
   if (!comebacks || comebacks.length === 0) {
     el.innerHTML = '<div class="no-comebacks">No comebacks this week — jukebox only!</div>';
     return;
