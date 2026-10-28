@@ -297,63 +297,63 @@
 const TWITCH_CLIENT_ID    = 'umh17eumefmyh0l2ovp3sqogfo5bi1';
 const TWITCH_REDIRECT_URI = 'https://coldsnapdev.github.io/aftr-setlist/';
 const TWITCH_SCOPES       = 'channel:manage:polls';
-const STREAM_DATE_DEFAULT = '21st October 2026';
-const SHEET_NAME = 'October 14 Playlist';
+const STREAM_DATE_DEFAULT = '28th October 2026';
+const SHEET_NAME = 'October 28 Playlist';
 const WORKER_URL = 'https://aftr-setlist.simon-chilley.workers.dev';
 const POLL_MAX_CHARS      = 25;
 
 const data = {
   categories: [
     {
-      id: 'QuotingTheDr',
-      title: 'Quoting the Dr',
-      sub: "It's A Live (Frankenstein)",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=jYJwenmYKMM,5TfeBfINJYQ,98u4xC4zkcQ,zY4ET__NqhY,tZYFazhoN6g',
-      songs: [
-        { artist: 'SHINee',                              title: 'Selene 6.23',          tag: 'Live', vibe: 'Yearning',            submitter: 'Meagan',       sheetRow: 14 },
-        { artist: 'BewhY & Taemin',                      title: 'Pinocchio',             tag: 'Live', vibe: '2 cool dudes',        submitter: 'Niki',         sheetRow: 15 },
-        { artist: 'One Ok Rock ft Chico Carlito & Paledusk', title: 'C.U.R.I.S.I.T.Y.', tag: 'Live', vibe: 'Hype!',              submitter: 'Lu',           sheetRow: 16 },
-        { artist: 'JX (Jaejoong & Junsu)',               title: 'Love in the Ice',       tag: 'Live', vibe: 'My life is complete', submitter: "Simon's mum",  sheetRow: 17 },
-        { artist: 'NCT WISH',                            title: 'Steady',                tag: 'Live', vibe: 'Lovely!',             submitter: 'Olivia',       sheetRow: 18 },
-      ]
-    },
-    {
-      id: 'ASlideMixedUp',
-      title: 'A Slide Mixed Up',
+      id: 'ConfusedAsIdle',
+      title: 'Confused as i-dle',
       sub: 'Ladies (Anagram)',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=Ur7aK4FvK-U,eZiCkuXnTRQ,AuVi2ib-0qQ,wSN7OTHs_Es,gh3RtzAEufI',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=YmOrSdAzRfE,p6XLNsJ9YrA,4MRWylsQjLk,TNWMZIf7eSg,MHqy1JsVvIE',
       songs: [
-        { artist: 'Hearts2Hearts', title: 'Focus',     tag: '',   vibe: 'Sophisticated',        submitter: 'Laker',       sheetRow: 20 },
-        { artist: 'Winter (aespa)', title: 'Blue',     tag: '',   vibe: 'wallowing by the ocean', submitter: 'FickleFairy', sheetRow: 21 },
-        { artist: 'BESTie',        title: 'Excuse Me', tag: 'MV', vibe: '',                     submitter: 'Emil',        sheetRow: 22 },
-        { artist: 'Hwasa',         title: 'Hwasa',     tag: 'Live', vibe: 'Fire',               submitter: 'agp',         sheetRow: 23 },
-        { artist: 'Fromis_9',      title: 'Teacher',   tag: '',   vibe: 'Sultry',               submitter: 'David',       sheetRow: 24 },
+        { artist: 'Rolling Quartz',             title: 'Holler',                        tag: '',      vibe: 'Gothic',                               submitter: 'Mercy',        sheetRow: 14 },
+        { artist: 'SISTAR',                     title: 'Give It To Me',                 tag: '',      vibe: 'Classy',                               submitter: 'Neo Champagne', sheetRow: 15 },
+        { artist: 'Purple Kiss (Swan & Goeun)', title: 'Stay',                          tag: 'Cover', vibe: 'witchy',                               submitter: 'diz',          sheetRow: 16 },
+        { artist: 'Sunmi',                      title: 'Siren',                         tag: '',      vibe: 'WARNING',                              submitter: 'Romeo',        sheetRow: 17 },
+        { artist: 'Taeyeon',                    title: 'I Got Love',                    tag: '',      vibe: '',                                     submitter: 'Laker',        sheetRow: 18 },
       ]
     },
     {
-      id: 'MoreThanBlue',
-      title: 'More Than Blue',
-      sub: 'Rare Groups For Us (Steak)',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=JAhjXLzQLEE,xnBPDF0yPLw,5ILRKKeU-Qs,Nrl_2VhSnug,xMCdo1CuDug',
+      id: 'FiftyFivePointFive',
+      title: '55.5% of a cat',
+      sub: 'Lives (5/9)',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=il1zGJaQbOs,e3XbxzVaHMI,SW0a8yAf1eI,ODGOtBk4zz4,gpR00fwn6pY',
       songs: [
-        { artist: 'Gomak Boys',  title: 'Sweet Thing',                    tag: '',   vibe: 'Smooth',          submitter: 'Keeper',         sheetRow: 26 },
-        { artist: 'RIIZD',       title: 'Bo Peep Bo Peep & The Eve cover', tag: 'Cover', vibe: 'serve',       submitter: 'jaehyun licker', sheetRow: 27 },
-        { artist: 'P1Harmony',   title: 'Unique',                          tag: 'Live', vibe: 'Iconic',       submitter: 'Yes',            sheetRow: 28 },
-        { artist: 'XLOV',        title: 'i=!',                             tag: 'MV',  vibe: 'full drama when', submitter: 'Diz',          sheetRow: 29 },
-        { artist: 'V01D',        title: 'Ending Credit',                   tag: 'MV',  vibe: '',              submitter: 'taz',            sheetRow: 30 },
+        { artist: 'Epik High & Lee Hi', title: 'HATE Mental Hospital @ MAMA 2012', tag: 'Live', vibe: 'Why so serious?',                  submitter: 'Faye',   sheetRow: 20 },
+        { artist: 'VIXX',               title: 'Voodoo Doll',                       tag: 'Live', vibe: 'Classic',                         submitter: 'Lu',     sheetRow: 21 },
+        { artist: 'Treasure',           title: 'Everyday',                          tag: '',     vibe: 'Every day so adorable, on monday SHOCK.', submitter: 'Klára',  sheetRow: 22 },
+        { artist: 'TXT',                title: 'When the day comes',                tag: '',     vibe: 'Youthful',                        submitter: 'Kandi',  sheetRow: 23 },
+        { artist: 'N.Flying',           title: 'Fading Away',                       tag: '',     vibe: '',                                submitter: 'Byakko', sheetRow: 24 },
       ]
     },
     {
-      id: 'CompanyName',
-      title: 'Company Name',
-      sub: "Two Word Song Names (Two's Company)",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=5GAksgvR8nM,-xUCeDU30D8,PIVfNz_9zBs,or_weQEBOmg,vvpEQ24EjkY',
+      id: 'DigitalSounds',
+      title: 'Digital Sounds',
+      sub: 'Numbers',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=F7sGJVUrkjQ,zZbR2bBXD7o,gUy-TMnwbqE,ZsKRAlcjjP4,hjG8GIhqouE',
       songs: [
-        { artist: 'Rocky (ASTRO)', title: 'Ice Flower',  tag: 'Live', vibe: 'Magical',                            submitter: 'Mercy',    sheetRow: 32 },
-        { artist: 'Lay Zhang',     title: 'Bad Girl',    tag: '',     vibe: 'Hips',                               submitter: 'Leah',     sheetRow: 33 },
-        { artist: 'Kyungsoo',      title: "Don't You",   tag: '',     vibe: "He was LYING when he said he can't do sexy", submitter: 'Kayleigh', sheetRow: 34 },
-        { artist: 'BTS',           title: 'Outro: Wings', tag: '',    vibe: '',                                   submitter: 'Sui\u{1F49C}JK', sheetRow: 35 },
-        { artist: 'Treasure',      title: "It's Okay",   tag: '',     vibe: 'pretty singing',                     submitter: 'Klára',    sheetRow: 36 },
+        { artist: 'Hearts2Hearts', title: 'Rude',                          tag: '',   vibe: '',                        submitter: 'MamaJoss', sheetRow: 26 },
+        { artist: 'Fly to the Sky', title: 'Sea of Love',                  tag: 'MV', vibe: 'Throwback to the early 00s', submitter: 'Niki',    sheetRow: 27 },
+        { artist: 'Ten',            title: 'Outwest',                      tag: '',   vibe: 'Dangerous 👀',            submitter: 'Aya',      sheetRow: 28 },
+        { artist: 'Seventeen',      title: 'svt kissing each other',       tag: '',   vibe: 'spooky?',                 submitter: '',         sheetRow: 29 },
+        { artist: 'ATEEZ',          title: 'Black Cat Nero (Halloween ver.)', tag: '', vibe: 'Rent was due',           submitter: 'Sure',     sheetRow: 30 },
+      ]
+    },
+    {
+      id: 'SwipedLeft',
+      title: 'Swiped Left',
+      sub: 'No Connection',
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=fPlcZsCOugA,-uz1MkI6YW0,Mmw-PpWhKFg,x1tAVUAs4Kc,GK0qmS5H7gI',
+      songs: [
+        { artist: 'VICTON',       title: 'Howling',         tag: '',   vibe: 'awoooooo',    submitter: 'kaia',        sheetRow: 32 },
+        { artist: 'SUPERKIND',    title: 'MOODY',           tag: 'MV', vibe: 'eerie',       submitter: 'taz',         sheetRow: 33 },
+        { artist: 'K/DA',         title: 'FIRESTARTER',     tag: 'MV', vibe: 'Fire',        submitter: 'Emil',        sheetRow: 34 },
+        { artist: 'BTS Jungkook', title: 'Still With You',  tag: 'MV', vibe: 'Emotional 😥', submitter: 'Sui \u{1F49C}JK', sheetRow: 35 },
+        { artist: 'NCT WISH',     title: 'Why',             tag: '',   vibe: 'Dark Yushi',  submitter: 'J',           sheetRow: 36 },
       ]
     },
   ]
@@ -363,16 +363,15 @@ const data = {
 // Set to null for no comebacks; array of {seed,artist,title,videoId,sheetRow} for active week
 // sheetRow is 0-based index into the sheet
 const comebacks = [
-  { seed: 1,  artist: 'IVE',              title: 'Looks Can Kill',       videoId: 'rsNhWkC4neE', sheetRow: 3  },
-  { seed: 2,  artist: 'NMIXX',            title: 'Birthday Wish',        videoId: 'roHWN9fL2SM', sheetRow: 4  },
-  { seed: 3,  artist: 'PLAVE',            title: 'Star Trace',           videoId: 'TBmE7m0yEwY', sheetRow: 6  },
-  { seed: 4,  artist: 'SUNG HANBIN',      title: 'UNDEAD',               videoId: 'CWewoEBGIos', sheetRow: 8  },
-  { seed: 5,  artist: 'MEOVV',            title: 'GO HARD',              videoId: '8aKR2Ho--5k', sheetRow: 7  },
-  { seed: 6,  artist: 'ONEW',             title: 'Illusion',             videoId: 'z_Y932BHvUE', sheetRow: 2  },
-  { seed: 7,  artist: 'Xdinary Heroes',   title: 'Obsessed with Youth',  videoId: '10_1vuZAeP0', sheetRow: 9  },
-  { seed: 8,  artist: 'WOODZ',            title: 'Come into my world',   videoId: 'cwLCZQHm06o', sheetRow: 1  },
-  { seed: 9,  artist: 'Hearts2Hearts',    title: 'Next Chapter',         videoId: 'lu9GinsuyUQ', sheetRow: 5  },
-  { seed: 10, artist: 'LNGSHOT',          title: 'Masterpiece',          videoId: 'Cu6JU-kNmOU', sheetRow: 0  },
+  { seed: 1,  artist: 'RIIZE',           title: 'Insomnia',            videoId: 'RgkoXU4BlOE', sheetRow: 5 },
+  { seed: 2,  artist: 'XLOV',            title: 'Hush',                videoId: 'ae9Xvl-eln8', sheetRow: 1 },
+  { seed: 3,  artist: 'ATEEZ',           title: 'Drip',                videoId: 'iqQWCYMlMw0', sheetRow: 9 },
+  { seed: 4,  artist: 'IVE',             title: 'Looks Can Kill',      videoId: 'rsNhWkC4neE', sheetRow: 7 },
+  { seed: 5,  artist: 'ILLIT',           title: "You're Under Arrest", videoId: 'V2V9-9VhYJo', sheetRow: 6 },
+  { seed: 6,  artist: 'AND2BLE',         title: 'French Kissing',      videoId: 'WbNnbiB_Wt8', sheetRow: 3 },
+  { seed: 7,  artist: 'Xiaojun',         title: 'Hey, Somebody',       videoId: 'JvzbFG4-5W4', sheetRow: 8 },
+  { seed: 8,  artist: 'JayB',            title: 'Honeydew',            videoId: 'jmi0FN4aLLs', sheetRow: 2 },
+  { seed: 9,  artist: 'Alpha Drive One', title: 'Talk to me',          videoId: 'BM_8ArZiD7k', sheetRow: 4 },
 ];
 // Snake seeding: odd seeds → poll 1, even seeds → poll 2
 const COMEBACK_POLLS = 2;
