@@ -224,10 +224,10 @@
   <div class="controls">
     <button class="ctrl all-btn active" onclick="toggleAll(this)">All</button>
     <button class="ctrl active" data-cat="comebacks" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Comebacks</button>
-    <button class="ctrl active" data-cat="ConfusedAsIdle" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Confused as i-dle</button>
-    <button class="ctrl active" data-cat="FiftyFivePointFive" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">55.5% of a cat</button>
-    <button class="ctrl active" data-cat="DigitalSounds" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Digital Sounds</button>
-    <button class="ctrl active" data-cat="SwipedLeft" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Swiped Left</button>
+    <button class="ctrl active" data-cat="Elements" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">By Your Powers Combined</button>
+    <button class="ctrl active" data-cat="Trouble" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Breaking Bad</button>
+    <button class="ctrl active" data-cat="Dance" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Shall We?</button>
+    <button class="ctrl active" data-cat="Vocals" onclick="toggleCat(this)" oncontextmenu="event.preventDefault();soloCat(this)">Mic Drop</button>
     <div class="font-slider-wrap">
       <span class="font-slider-label">A</span>
       <input type="range" min="12" max="28" value="19" class="font-slider" id="fontSlider" oninput="setFontSize(this.value)">
@@ -298,63 +298,63 @@
 const TWITCH_CLIENT_ID    = 'umh17eumefmyh0l2ovp3sqogfo5bi1';
 const TWITCH_REDIRECT_URI = 'https://coldsnapdev.github.io/aftr-setlist/';
 const TWITCH_SCOPES       = 'channel:manage:polls';
-const STREAM_DATE_DEFAULT = '28th October 2026';
-const SHEET_NAME = 'October 28 Playlist';
+const STREAM_DATE_DEFAULT = '4th November 2026';
+const SHEET_NAME = 'November 4th Playlist';
 const WORKER_URL = 'https://aftr-setlist.simon-chilley.workers.dev';
 const POLL_MAX_CHARS      = 25;
 
 const data = {
   categories: [
     {
-      id: 'ConfusedAsIdle',
-      title: 'Confused as i-dle',
-      sub: 'Ladies (Anagram)',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=YmOrSdAzRfE,p6XLNsJ9YrA,4MRWylsQjLk,TNWMZIf7eSg,MHqy1JsVvIE',
+      id: "Elements",
+      title: "By Your Powers Combined",
+      sub: "Elements",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=lzmy64v1aqk,3vKhnTAsLhE,Itq5xeOVKK0,umVi_Ql8egY,APRCgeXwc3o',
       songs: [
-        { artist: 'Rolling Quartz',             title: 'Holler',                        tag: '',      vibe: 'Gothic',                               submitter: 'Mercy',        sheetRow: 14 },
-        { artist: 'SISTAR',                     title: 'Give It To Me',                 tag: '',      vibe: 'Classy',                               submitter: 'Neo Champagne', sheetRow: 15 },
-        { artist: 'Purple Kiss (Swan & Goeun)', title: 'Stay',                          tag: 'Cover', vibe: 'witchy',                               submitter: 'diz',          sheetRow: 16 },
-        { artist: 'Sunmi',                      title: 'Siren',                         tag: '',      vibe: 'WARNING',                              submitter: 'Romeo',        sheetRow: 17 },
-        { artist: 'Taeyeon',                    title: 'I Got Love',                    tag: '',      vibe: '',                                     submitter: 'Laker',        sheetRow: 18 },
+        { artist: "B.I", title: "Keep the Fire Alive", tag: "Short Film", vibe: "Lethal", submitter: "Missing my boy Hanbinnie 😭", sheetRow: 11 },
+        { artist: "Yeri, Renjun, Jeno & Jaemin", title: "Hair in the Air", tag: "OST", vibe: "Zoo before Zoo", submitter: "BabyTokki", sheetRow: 12 },
+        { artist: "SHINee", title: "Green Rain", tag: "", vibe: "", submitter: "Laker", sheetRow: 13 },
+        { artist: "Haechan", title: "Taste of Sun", tag: "", vibe: "evil twin", submitter: "dudahyucklover", sheetRow: 14 },
+        { artist: "Jaehee & Oishi Masayoshi", title: "Butter-fly", tag: "OST", vibe: "Dream comes true for our Digimon Fanboy", submitter: "Neo", sheetRow: 15 },
       ]
     },
     {
-      id: 'FiftyFivePointFive',
-      title: '55.5% of a cat',
-      sub: 'Lives (5/9)',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=ft0BqZ2sBzA,e3XbxzVaHMI,SW0a8yAf1eI,ODGOtBk4zz4,gpR00fwn6pY',
+      id: "Trouble",
+      title: "Breaking Bad",
+      sub: "Trouble",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=eB-IK2wPWzw,gMe1c4UegBY,clcrKvhU9DA,c-E9F4x6Lrw,EyTGLRuyzCU',
       songs: [
-        { artist: 'Sound Horizon',      title: 'Meiou',                             tag: '',     vibe: 'Theatric potato?',                submitter: 'Mirva',  sheetRow: 20 },
-        { artist: 'VIXX',               title: 'Voodoo Doll',                       tag: 'Live', vibe: 'Classic',                         submitter: 'Lu',     sheetRow: 21 },
-        { artist: 'Treasure',           title: 'Everyday',                          tag: '',     vibe: 'Every day so adorable, on monday SHOCK.', submitter: 'Klára',  sheetRow: 22 },
-        { artist: 'TXT',                title: 'When the day comes',                tag: '',     vibe: 'Youthful',                        submitter: 'Kandi',  sheetRow: 23 },
-        { artist: 'N.Flying',           title: 'Fading Away',                       tag: '',     vibe: '',                                submitter: 'Byakko', sheetRow: 24 },
+        { artist: "ATEEZ", title: "BAD", tag: "Live", vibe: "Hot", submitter: "Yes", sheetRow: 17 },
+        { artist: "STAYC", title: "SO BAD", tag: "", vibe: "Youthful", submitter: "min", sheetRow: 18 },
+        { artist: "N.Flying", title: "Dangerously", tag: "", vibe: "Sexy", submitter: "Byakko", sheetRow: 19 },
+        { artist: "RYUGUJO", title: "LOVEgurui", tag: "MV", vibe: "dramatic", submitter: "taz", sheetRow: 20 },
+        { artist: "TREASURE", title: "Yamai", tag: "", vibe: "written by Asahi", submitter: "Klára", sheetRow: 21 },
       ]
     },
     {
-      id: 'DigitalSounds',
-      title: 'Digital Sounds',
-      sub: 'Numbers',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=F7sGJVUrkjQ,zZbR2bBXD7o,gUy-TMnwbqE,ZsKRAlcjjP4,hjG8GIhqouE',
+      id: "Dance",
+      title: "Shall We?",
+      sub: "Dance",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=NAW0idSQ6Zs,dnH5tSx8xuQ,tM3wRP6vQRo,hfDrBfGmzqo,AAOOKbk-knM',
       songs: [
-        { artist: 'Hearts2Hearts', title: 'Rude',                          tag: '',   vibe: '',                        submitter: 'MamaJoss', sheetRow: 26 },
-        { artist: 'Fly to the Sky', title: 'Sea of Love',                  tag: 'MV', vibe: 'Throwback to the early 00s', submitter: 'Niki',    sheetRow: 27 },
-        { artist: 'Ten',            title: 'Outwest',                      tag: '',   vibe: 'Dangerous 👀',            submitter: 'Aya',      sheetRow: 28 },
-        { artist: 'Seventeen',      title: 'svt kissing each other',       tag: '',   vibe: 'spooky?',                 submitter: '',         sheetRow: 29 },
-        { artist: 'ATEEZ',          title: 'Black Cat Nero (Halloween ver.)', tag: '', vibe: 'Rent was due',           submitter: 'Sure',     sheetRow: 30 },
+        { artist: "DAY6", title: "Dance Dance", tag: "MV", vibe: "Fun!", submitter: "Lu", sheetRow: 23 },
+        { artist: "Dino & Picheolin", title: "Party Rock Rock", tag: "", vibe: "Picheolin-ing", submitter: "ace", sheetRow: 24 },
+        { artist: "MC Special", title: "Jumpo Mambo", tag: "", vibe: "Cute", submitter: "Eri", sheetRow: 25 },
+        { artist: "XLOV", title: "Hush", tag: "DP", vibe: "Bendy!", submitter: "Romeo", sheetRow: 26 },
+        { artist: "YooA", title: "Bon Voyage", tag: "", vibe: "DISNEY", submitter: "mini", sheetRow: 27 },
       ]
     },
     {
-      id: 'SwipedLeft',
-      title: 'Swiped Left',
-      sub: 'No Connection',
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=fPlcZsCOugA,-uz1MkI6YW0,Mmw-PpWhKFg,x1tAVUAs4Kc,GK0qmS5H7gI',
+      id: "Vocals",
+      title: "Mic Drop",
+      sub: "Vocals",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=RATia54v6nY,alWYHKK_Ag0,22VOzqS_9ms,FwWuFn0nGec,rhHX-nnhP-Q',
       songs: [
-        { artist: 'VICTON',       title: 'Howling',         tag: '',   vibe: 'awoooooo',    submitter: 'kaia',        sheetRow: 32 },
-        { artist: 'SUPERKIND',    title: 'MOODY',           tag: 'MV', vibe: 'eerie',       submitter: 'taz',         sheetRow: 33 },
-        { artist: 'K/DA',         title: 'FIRESTARTER',     tag: 'MV', vibe: 'Fire',        submitter: 'Emil',        sheetRow: 34 },
-        { artist: 'BTS Jungkook', title: 'Still With You',  tag: 'MV', vibe: 'Emotional 😥', submitter: 'Sui \u{1F49C}JK', sheetRow: 35 },
-        { artist: 'NCT WISH',     title: 'Why',             tag: '',   vibe: 'Dark Yushi',  submitter: 'J',           sheetRow: 36 },
+        { artist: "RIIZE", title: "Insomnia", tag: "Live", vibe: "Vocals!!!", submitter: "MamaJoss", sheetRow: 29 },
+        { artist: "SB19", title: "Live at Rappler", tag: "Live", vibe: "Emotional", submitter: "Po", sheetRow: 30 },
+        { artist: "Jungkook", title: "Falling", tag: "Cover", vibe: "", submitter: "Sui💜JK", sheetRow: 31 },
+        { artist: "BTOB", title: "You Are the Only One for Me", tag: "Live", vibe: "Happy place", submitter: "I like feet", sheetRow: 32 },
+        { artist: "Hwangtaeji", title: "Mapsosa", tag: "Live", vibe: "2nd gen supremacy", submitter: "Niki", sheetRow: 33 },
       ]
     },
   ]
@@ -364,15 +364,12 @@ const data = {
 // Set to null for no comebacks; array of {seed,artist,title,videoId,sheetRow} for active week
 // sheetRow is 0-based index into the sheet
 const comebacks = [
-  { seed: 1,  artist: 'RIIZE',           title: 'Insomnia',            videoId: 'RgkoXU4BlOE', sheetRow: 1 },
-  { seed: 2,  artist: 'XLOV',            title: 'Hush',                videoId: 'ae9Xvl-eln8', sheetRow: 2 },
-  { seed: 3,  artist: 'ATEEZ',           title: 'Drip',                videoId: 'iqQWCYMlMw0', sheetRow: 3 },
-  { seed: 4,  artist: 'IVE',             title: 'Looks Can Kill',      videoId: 'rsNhWkC4neE', sheetRow: 4 },
-  { seed: 5,  artist: 'ILLIT',           title: "You're Under Arrest", videoId: 'V2V9-9VhYJo', sheetRow: 5 },
-  { seed: 6,  artist: 'AND2BLE',         title: 'French Kissing',      videoId: 'WbNnbiB_Wt8', sheetRow: 6 },
-  { seed: 7,  artist: 'Xiaojun',         title: 'Hey, Somebody',       videoId: 'JvzbFG4-5W4', sheetRow: 7 },
-  { seed: 8,  artist: 'JayB',            title: 'Honeydew',            videoId: 'jmi0FN4aLLs', sheetRow: 8 },
-  { seed: 9,  artist: 'Alpha Drive One', title: 'Talk to me',          videoId: 'BM_8ArZiD7k', sheetRow: 9 },
+  { seed: 1, artist: "JISOO", title: "ADDICTED", videoId: "309SGGv2OGU", sheetRow: 1 },
+  { seed: 2, artist: "DINO", title: "AUTOMATIC", videoId: "qCF3_Xk_ZXQ", sheetRow: 2 },
+  { seed: 3, artist: "ZEROBASEONE EMP", title: "RUN (with Dynamicduo)", videoId: "EMP_RUN_TBC", sheetRow: 3 },
+  { seed: 4, artist: "TWS", title: "Call My Name", videoId: "h6xpzXZ2FBA", sheetRow: 4 },
+  { seed: 5, artist: "xikers", title: "DIENAMITE", videoId: "5Tpf7oV-5Js", sheetRow: 5 },
+  { seed: 6, artist: "RESCENE", title: "With", videoId: "pey3E47eSc8", sheetRow: 6 },
 ];
 // Snake seeding: odd seeds → poll 1, even seeds → poll 2
 const COMEBACK_POLLS = 2;
