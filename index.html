@@ -483,6 +483,7 @@ function startObs(pw) {
   if (obs) { obs.stopped = true; try { obs.ws && obs.ws.close(); } catch {} }
   obs = new OBSClient({ host: '127.0.0.1', port: 4455, password: pw, subs: 1,
     onEvent: (type, d) => {
+      if (type === 'CustomEvent' && d && d.aftr === 'yt-loaded') { videoAck(d); return; }
       if (type !== 'CustomEvent' || !d || d.aftr !== 'live-overlay-hb') return;
       // The overlay has just (re)loaded: send it what it should be showing.
       if (d.fresh || Date.now() - overlaySeen > 12000) syncObs();
@@ -503,7 +504,7 @@ function updateObsUI() {
   if (s === 'connected') {
     btn.textContent = 'OBS connected'; btn.classList.add('connected'); st.className = 'twitch-status connected';
     tx.textContent = (overlayUp ? 'Connected to OBS — stream overlay is live' : 'Connected to OBS — waiting for the stream overlay (is the AFTR Live Overlays scene in use?)')
-      + (onAir ? ` · On screen: ${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : '');
+      + (onAir ? ` · On screen: ${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : '') + (videoNote ? ` · ${videoNote}` : '');
   } else {
     btn.textContent = 'Connect OBS'; btn.classList.remove('connected'); st.className = 'twitch-status disconnected';
     tx.textContent = s === 'auth-failed' ? 'OBS rejected the password — click Connect OBS to enter it again'
@@ -513,6 +514,26 @@ function updateObsUI() {
 }
 setInterval(updateObsUI, 3000);
 
+// ─── Loading the video in the capture window ──────────────────────────────────
+// Each song's video comes from song.videoId if set, otherwise its position in the category playlist.
+let videoNote = '', videoTimer = null;
+function playlistIds(url) { const m = /video_ids=([^&]+)/.exec(url || ''); return m ? decodeURIComponent(m[1]).split(',').map(x => x.trim()).filter(Boolean) : []; }
+function videoIdFor(cat, i) {
+  const song = cat.songs[i];
+  if (song && song.videoId) return song.videoId;
+  const ids = playlistIds(cat.playlistUrl);
+  return ids.length === cat.songs.length ? ids[i] : null;
+}
+function loadVideo(videoId) {
+  clearTimeout(videoTimer);
+  if (!videoId) { videoNote = 'no video link for this song, so the YouTube window was left as it is'; updateObsUI(); return; }
+  if (!obs || !obs.ready) return;
+  videoNote = 'loading video…'; updateObsUI();
+  obs.call('BroadcastCustomEvent', { eventData: { aftr: 'yt-cmd', cmd: 'load', videoId } }).catch(() => {});
+  videoTimer = setTimeout(() => { videoNote = 'the YouTube window didn\'t respond (is the AFTR YouTube userscript running there?)'; updateObsUI(); }, 4000);
+}
+function videoAck(d) { clearTimeout(videoTimer); videoNote = d.navigating ? 'opening video…' : 'video ready, press play'; updateObsUI(); }
+
 function setOnAir(info) {
   onAir = info;
   if (info) localStorage.setItem(ONAIR_KEY, JSON.stringify(info)); else localStorage.removeItem(ONAIR_KEY);
@@ -521,17 +542,19 @@ function setOnAir(info) {
 }
 function toggleOnAir(catId, i) {
   const id = rowId(catId, i);
-  if (onAir && onAir.key === id) return setOnAir(null);
+  if (onAir && onAir.key === id) { videoNote = ''; return setOnAir(null); }
   const cat = data.categories.find(c => c.id === catId), song = cat && cat.songs[i];
   if (!song) return;
   setOnAir({ key: id, category: cat.title, categorySub: cat.sub || '', artist: song.artist, title: song.title, tag: song.tag || '', submitter: (song.submitter || '').trim() });
+  loadVideo(videoIdFor(cat, i));
 }
 function toggleComebackOnAir(videoId) {
   const key = 'cb__' + videoId;
-  if (onAir && onAir.key === key) return setOnAir(null);
+  if (onAir && onAir.key === key) { videoNote = ''; return setOnAir(null); }
   const c = (comebacks || []).find(x => x.videoId === videoId);
   if (!c) return;
   setOnAir({ key, category: 'Comebacks', categorySub: '', artist: c.artist, title: c.title, tag: '', submitter: '' });
+  loadVideo(c.videoId);
 }
 
 // ─── Live poll results for the overlay ────────────────────────────────────────
