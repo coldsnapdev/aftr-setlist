@@ -484,12 +484,14 @@ function startObs(pw) {
   obs = new OBSClient({ host: '127.0.0.1', port: 4455, password: pw, subs: 1,
     onEvent: (type, d) => {
       if (type === 'CustomEvent' && d && d.aftr === 'yt-loaded') { videoAck(d); return; }
+      if (type === 'CustomEvent' && d && d.aftr === 'yt' && d.ev === 'ended') { onVideoEnded(d); return; }
+      if (type === 'CustomEvent' && d && d.aftr === 'live-autoplay') { autoplay = { ...autoplay, ...d, seen: Date.now() }; return; }
       if (type !== 'CustomEvent' || !d || d.aftr !== 'live-overlay-hb') return;
       // The overlay has just (re)loaded: send it what it should be showing.
       if (d.fresh || Date.now() - overlaySeen > 12000) syncObs();
       overlaySeen = Date.now(); updateObsUI();
     },
-    onStatus: s => { if (s === 'connected') syncObs(); updateObsUI(); } });
+    onStatus: s => { if (s === 'connected') { syncObs(); obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-autoplay-request' } }).catch(() => {}); } updateObsUI(); } });
   obs.connect();
 }
 function obsSend(data) { if (obs && obs.ready) obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live', ...data } }).catch(() => {}); }
@@ -504,7 +506,7 @@ function updateObsUI() {
   if (s === 'connected') {
     btn.textContent = 'OBS connected'; btn.classList.add('connected'); st.className = 'twitch-status connected';
     tx.textContent = (overlayUp ? 'Connected to OBS — stream overlay is live' : 'Connected to OBS — waiting for the stream overlay (is the AFTR Live Overlays scene in use?)')
-      + (onAir ? ` · On screen: ${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : '') + (videoNote ? ` · ${videoNote}` : '');
+      + (onAir ? ` · On screen: ${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : '') + (videoNote ? ` · ${videoNote}` : '') + (Date.now() - autoplay.seen < 15000 ? (autoplay.enabled ? (autoplay.stopAfter ? ' · autoplay will stop after this song' : ' · autoplay on') : ' · autoplay off') : '');
   } else {
     btn.textContent = 'Connect OBS'; btn.classList.remove('connected'); st.className = 'twitch-status disconnected';
     tx.textContent = s === 'auth-failed' ? 'OBS rejected the password — click Connect OBS to enter it again'
@@ -524,37 +526,91 @@ function videoIdFor(cat, i) {
   const ids = playlistIds(cat.playlistUrl);
   return ids.length === cat.songs.length ? ids[i] : null;
 }
-function loadVideo(videoId) {
+function loadVideo(videoId, play) {
   clearTimeout(videoTimer);
+  if (onAir) { onAir.videoId = videoId || null; localStorage.setItem(ONAIR_KEY, JSON.stringify(onAir)); }
   if (!videoId) { videoNote = 'no video link for this song, so the YouTube window was left as it is'; updateObsUI(); return; }
   if (!obs || !obs.ready) return;
   videoNote = 'loading video…'; updateObsUI();
-  obs.call('BroadcastCustomEvent', { eventData: { aftr: 'yt-cmd', cmd: 'load', videoId } }).catch(() => {});
+  obs.call('BroadcastCustomEvent', { eventData: { aftr: 'yt-cmd', cmd: 'load', videoId, autoplay: !!play } }).catch(() => {});
   videoTimer = setTimeout(() => { videoNote = 'the YouTube window didn\'t respond (is the AFTR YouTube userscript running there?)'; updateObsUI(); }, 4000);
 }
-function videoAck(d) { clearTimeout(videoTimer); videoNote = d.navigating ? 'opening video…' : 'video ready, press play'; updateObsUI(); }
+function videoAck(d) { clearTimeout(videoTimer); videoNote = d.navigating ? 'opening video…' : (autoplayStarting ? 'playing' : 'video ready, press play'); autoplayStarting = false; updateObsUI(); }
+
+// ─── Category autoplay ────────────────────────────────────────────────────────
+// When a video ends, the next song in the same category (or comeback poll group) goes on screen and plays.
+// The AFTR Live dock in OBS switches this on and off and can ask it to stop after the current song.
+let autoplay = { enabled: true, stopAfter: false, gapSec: 3, seen: 0 }, autoplayTimer = null, autoplayStarting = false, lastEnded = null;
+function nextOf(key) {
+  if (!key) return null;
+  if (key.startsWith('cb__')) {
+    const c = (comebacks || []).find(x => 'cb__' + x.videoId === key); if (!c) return null;
+    const group = comebacks.filter(x => getComebackPoll(x.seed) === getComebackPoll(c.seed)).sort((a, b) => a.seed - b.seed);
+    const n = group[group.findIndex(x => x.videoId === c.videoId) + 1];
+    return n ? { type: 'cb', videoId: n.videoId, label: `${n.artist} – ${n.title}` } : null;
+  }
+  const [catId, idx] = key.split('__'); const i = Number(idx);
+  const cat = data.categories.find(c => c.id === catId); if (!cat || !cat.songs[i + 1]) return null;
+  const n = cat.songs[i + 1];
+  return { type: 'song', catId, i: i + 1, label: `${n.artist} – ${n.title}` };
+}
+function onVideoEnded(d) {
+  if (!onAir || !onAir.videoId || d.videoId !== onAir.videoId) return;   // only the song we put on screen
+  if (lastEnded === onAir.key) return;
+  lastEnded = onAir.key;
+  if (!autoplay.enabled) return;
+  if (autoplay.stopAfter) {
+    obs && obs.ready && obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-autoplay-consumed' } }).catch(() => {});
+    autoplay.stopAfter = false; videoNote = 'stopped after that song, as asked'; updateObsUI(); return;
+  }
+  const next = nextOf(onAir.key);
+  if (!next) { videoNote = 'end of the category'; updateObsUI(); return; }
+  const gap = Math.max(0, Number(autoplay.gapSec) || 0);
+  videoNote = `next song in ${gap} s`; updateObsUI();
+  clearTimeout(autoplayTimer);
+  const from = onAir.key;
+  autoplayTimer = setTimeout(() => {
+    if (!onAir || onAir.key !== from) return;   // something else went on screen meanwhile
+    autoplayStarting = true;
+    if (next.type === 'cb') toggleComebackOnAir(next.videoId, true); else toggleOnAir(next.catId, next.i, true);
+  }, gap * 1000);
+}
+function announceNext() {
+  if (!obs || !obs.ready) return;
+  const nx = onAir ? nextOf(onAir.key) : null;
+  obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-next',
+    current: onAir ? `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : null, next: nx ? nx.label : null } }).catch(() => {});
+}
+setInterval(announceNext, 5000);
 
 function setOnAir(info) {
   onAir = info;
+  if (info) info.videoId = info.videoId || null;
   if (info) localStorage.setItem(ONAIR_KEY, JSON.stringify(info)); else localStorage.removeItem(ONAIR_KEY);
   if (info) obsSend({ cmd: 'np-show', ...info }); else obsSend({ cmd: 'np-hide' });
   render(); updateObsUI();
 }
-function toggleOnAir(catId, i) {
+function toggleOnAir(catId, i, fromAutoplay) {
+  if (!fromAutoplay) { clearTimeout(autoplayTimer); autoplayStarting = false; }
   const id = rowId(catId, i);
-  if (onAir && onAir.key === id) { videoNote = ''; return setOnAir(null); }
+  if (onAir && onAir.key === id) { videoNote = ''; setOnAir(null); announceNext(); return; }
   const cat = data.categories.find(c => c.id === catId), song = cat && cat.songs[i];
   if (!song) return;
   setOnAir({ key: id, category: cat.title, categorySub: cat.sub || '', artist: song.artist, title: song.title, tag: song.tag || '', submitter: (song.submitter || '').trim() });
-  loadVideo(videoIdFor(cat, i));
+  lastEnded = null;
+  loadVideo(videoIdFor(cat, i), fromAutoplay);
+  announceNext();
 }
-function toggleComebackOnAir(videoId) {
+function toggleComebackOnAir(videoId, fromAutoplay) {
+  if (!fromAutoplay) { clearTimeout(autoplayTimer); autoplayStarting = false; }
   const key = 'cb__' + videoId;
-  if (onAir && onAir.key === key) { videoNote = ''; return setOnAir(null); }
+  if (onAir && onAir.key === key) { videoNote = ''; setOnAir(null); announceNext(); return; }
   const c = (comebacks || []).find(x => x.videoId === videoId);
   if (!c) return;
   setOnAir({ key, category: 'Comebacks', categorySub: '', artist: c.artist, title: c.title, tag: '', submitter: '' });
-  loadVideo(c.videoId);
+  lastEnded = null;
+  loadVideo(c.videoId, fromAutoplay);
+  announceNext();
 }
 
 // ─── Live poll results for the overlay ────────────────────────────────────────
