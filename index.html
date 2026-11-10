@@ -583,7 +583,11 @@ function announceNext() {
 }
 setInterval(announceNext, 5000);
 
+// The category of the last song put on screen, kept across reloads, so "New category" only shows when it really changes.
+const LASTCAT_KEY = 'aftr_lastcat__' + SHEET_NAME;
+let lastCategory = localStorage.getItem(LASTCAT_KEY);
 function setOnAir(info) {
+  if (info) { info.announce = info.category !== lastCategory; lastCategory = info.category; localStorage.setItem(LASTCAT_KEY, lastCategory); }
   onAir = info;
   if (info) info.videoId = info.videoId || null;
   if (info) localStorage.setItem(ONAIR_KEY, JSON.stringify(info)); else localStorage.removeItem(ONAIR_KEY);
