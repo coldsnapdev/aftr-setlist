@@ -111,6 +111,9 @@
   .obs-btn.connected { background: #1a7a3a; border-color: #145c2c; }
   .onair-btn { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-right: 8px; border-radius: 50%; border: 1px solid #ccc; background: #fff; color: #888; font-size: 10px; cursor: pointer; vertical-align: middle; flex-shrink: 0; padding: 0 0 0 2px; }
   .onair-btn:hover { border-color: #e5484d; color: #e5484d; }
+  .comeback-row.cb-unchosen { opacity: .35; cursor: default; }
+  .comeback-row.cb-unchosen:hover { background: transparent; }
+  .onair-btn:disabled { cursor: default; border-color: #ddd; color: #ccc; }
   tr.on-air td, .comeback-row.on-air { box-shadow: inset 0 2px 0 #e5484d, inset 0 -2px 0 #e5484d; }
   tr.on-air .onair-btn, .comeback-row.on-air .onair-btn { background: #e5484d; border-color: #e5484d; color: #fff; }
   .twitch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 12px; border-radius: 6px; margin-bottom: 0.8rem; background: #fff; border: 1px solid #ddd; border-left: 4px solid #ccc; }
@@ -390,6 +393,24 @@ const COMEBACK_POLLS = 2;
 function getComebackPoll(seed) { return ((seed - 1) % COMEBACK_POLLS) + 1; }
 
 const selectedComebacks = new Set(); // tracks which comeback videoIds are checked for playlist
+// Ticks and the confirmed state survive a page reload mid-stream.
+const CB_KEY = 'aftr_comebacks__' + SHEET_NAME;
+let comebacksConfirmed = false;
+try { const saved = JSON.parse(localStorage.getItem(CB_KEY) || 'null'); if (saved) { (saved.selected || []).forEach(v => selectedComebacks.add(v)); comebacksConfirmed = !!saved.confirmed; } } catch {}
+function saveComebacks() { localStorage.setItem(CB_KEY, JSON.stringify({ selected: [...selectedComebacks], confirmed: comebacksConfirmed })); }
+// Chosen comebacks first, in tick order; unchosen after, in seed order.
+function sortConfirmedComebacks() {
+  if (!comebacks) return;
+  const order = [...selectedComebacks];
+  comebacks.sort((a, b) => {
+    const ai = order.indexOf(a.videoId), bi = order.indexOf(b.videoId);
+    if (ai !== -1 && bi !== -1) return ai - bi;
+    if (ai !== -1) return -1;
+    if (bi !== -1) return 1;
+    return a.seed - b.seed;
+  });
+}
+if (comebacksConfirmed) sortConfirmedComebacks();
 const comebackWinners = new Set();   // tracks which comeback videoIds are marked as poll winners
 
 const winners = new Set(), freePicks = new Set(), hidden = new Set();
@@ -544,12 +565,7 @@ function videoAck(d) { clearTimeout(videoTimer); videoNote = d.navigating ? 'ope
 let autoplay = { enabled: true, stopAfter: false, gapSec: 3, seen: 0 }, autoplayTimer = null, autoplayStarting = false, lastEnded = null;
 function nextOf(key) {
   if (!key) return null;
-  if (key.startsWith('cb__')) {
-    const c = (comebacks || []).find(x => 'cb__' + x.videoId === key); if (!c) return null;
-    const group = comebacks.filter(x => getComebackPoll(x.seed) === getComebackPoll(c.seed)).sort((a, b) => a.seed - b.seed);
-    const n = group[group.findIndex(x => x.videoId === c.videoId) + 1];
-    return n ? { type: 'cb', videoId: n.videoId, label: `${n.artist} – ${n.title}` } : null;
-  }
+  if (key.startsWith('cb__')) return null;   // comebacks are reacted to one at a time: nothing follows on
   const [catId, idx] = key.split('__'); const i = Number(idx);
   const cat = data.categories.find(c => c.id === catId); if (!cat || !cat.songs[i + 1]) return null;
   const n = cat.songs[i + 1];
@@ -565,7 +581,7 @@ function onVideoEnded(d) {
     autoplay.stopAfter = false; videoNote = 'stopped after that song, as asked'; updateObsUI(); return;
   }
   const next = nextOf(onAir.key);
-  if (!next) { videoNote = 'end of the category'; updateObsUI(); return; }
+  if (!next) { videoNote = onAir.key.startsWith('cb__') ? 'comeback finished' : 'end of the category'; updateObsUI(); return; }
   const gap = Math.max(0, Number(autoplay.gapSec) || 0);
   videoNote = `next song in ${gap} s`; updateObsUI();
   clearTimeout(autoplayTimer);
@@ -587,7 +603,7 @@ function announceNext() {
   if (!obs || !obs.ready) return;
   const nx = onAir ? nextOf(onAir.key) : null;
   obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-next',
-    current: onAir ? `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : null, next: nx ? nx.label : null, videoId: onAir ? onAir.videoId : null } }).catch(() => {});
+    current: onAir ? `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : null, next: nx ? nx.label : null, videoId: onAir ? onAir.videoId : null, single: !!(onAir && onAir.key.startsWith('cb__')) } }).catch(() => {});
 }
 setInterval(announceNext, 5000);
 
@@ -736,8 +752,10 @@ async function confirmPoll() {
 
 // ─── Comeback selection & playlist ────────────────────────────────────────────
 function toggleComebackSelection(videoId) {
+  if (comebacksConfirmed) return;   // the choice is written to the sheet; locked from here
   if (selectedComebacks.has(videoId)) selectedComebacks.delete(videoId);
   else selectedComebacks.add(videoId);
+  saveComebacks();
   updateComebackPlaylist();
 }
 function updateComebackPlaylist() {
@@ -800,20 +818,10 @@ async function confirmComebacks(btn) {
     btn.textContent = '✓ Confirmed!';
     btn.disabled = true; // stays disabled — one-shot action
 
-    // Sort comebacks: chosen first in tick order, unchosen at bottom
-    comebacks.sort((a, b) => {
-      const ai = chosenVideoIds.indexOf(a.videoId);
-      const bi = chosenVideoIds.indexOf(b.videoId);
-      if (ai !== -1 && bi !== -1) return ai - bi;   // both chosen: tick order
-      if (ai !== -1) return -1;                       // a chosen, b not
-      if (bi !== -1) return 1;                        // b chosen, a not
-      return a.seed - b.seed;                         // both unchosen: original seed order
-    });
-
+    // Chosen first in tick order, unchosen greyed out at the bottom; the button stays confirmed on every redraw.
+    comebacksConfirmed = true; saveComebacks();
+    sortConfirmedComebacks();
     renderComebacks();
-    // Re-find the button after re-render and keep it confirmed
-    const newBtn = document.getElementById('comebackConfirmBtn');
-    if (newBtn) { newBtn.classList.add('saved'); newBtn.textContent = '✓ Confirmed!'; newBtn.disabled = true; }
 
   } catch (err) {
     btn.classList.remove('saving');
@@ -858,16 +866,17 @@ function renderComebacks() {
     const rows = group.map(c => {
       const isWinner = comebackWinners.has(c.videoId);
       const isSelected = selectedComebacks.has(c.videoId);
-      const classes = ['comeback-row', isSelected ? 'selected-comeback' : '', isWinner ? 'comeback-winner' : '', onAir && onAir.key === 'cb__' + c.videoId ? 'on-air' : ''].filter(Boolean).join(' ');
+      const unchosen = comebacksConfirmed && !isSelected;
+      const classes = ['comeback-row', isSelected ? 'selected-comeback' : '', isWinner ? 'comeback-winner' : '', onAir && onAir.key === 'cb__' + c.videoId ? 'on-air' : '', unchosen ? 'cb-unchosen' : ''].filter(Boolean).join(' ');
       const sheetBtn = (isWinner && c.sheetRow !== undefined)
         ? `<button class="sheet-btn" style="margin-left:auto" onclick="event.stopPropagation();markWinnerInSheet(${c.sheetRow},this)">${sheetBtnInner()}</button>`
         : '';
       const winnerBadge = isWinner ? `<span class="badge badge-winner" style="font-size:10px;padding:2px 6px;margin-left:4px">Winner</span>` : '';
       return `
       <div class="${classes}" id="cbrow_${c.videoId}" title="Left-click: add to playlist  |  Right-click: mark as winner" onclick="toggleComebackSelection('${c.videoId}')" oncontextmenu="event.preventDefault();toggleComebackWinner('${c.videoId}')">
-        <button class="onair-btn" style="margin-right:0" title="Show on stream" onclick="event.stopPropagation();toggleComebackOnAir('${c.videoId}')">&#9654;</button>
+        <button class="onair-btn" style="margin-right:0" title="${unchosen ? 'Not chosen' : 'Show on stream'}" ${unchosen ? 'disabled' : ''} onclick="event.stopPropagation();toggleComebackOnAir('${c.videoId}')">&#9654;</button>
         <span class="comeback-seed">${c.seed}</span>
-        <input type="checkbox" class="comeback-check" id="cb_${c.videoId}" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation();toggleComebackSelection('${c.videoId}')">
+        <input type="checkbox" class="comeback-check" id="cb_${c.videoId}" ${isSelected ? 'checked' : ''} ${comebacksConfirmed ? 'disabled' : ''} onclick="event.stopPropagation();toggleComebackSelection('${c.videoId}')">
         <span class="comeback-artist">${c.artist}</span>
         <span class="comeback-song">${c.title}</span>
         ${winnerBadge}${sheetBtn}
@@ -899,7 +908,7 @@ function renderComebacks() {
         ${ids.length ? `<span class="comeback-playlist-url visible" id="comebackPlaylistUrl">${playlistUrl}</span>` : `<span class="comeback-playlist-url" id="comebackPlaylistUrl"></span>`}
         <a class="playlist-btn" id="comebackPlaylistOpenBtn" href="${playlistUrl || '#'}" target="_blank" style="${ids.length ? '' : 'display:none'}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Open</a>
         <button class="playlist-btn" onclick="copyComebackPlaylist(this)" id="comebackPlaylistBtn" ${ids.length ? '' : 'disabled'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4C3 1 2 2 2 3v14h2V3h12V1zm3 4H8C7 5 6 6 6 7v14c0 1 1 2 2 2h11c1 0 2-1 2-2V7c0-1-1-2-2-2zm0 16H8V7h11v14z"/></svg>Copy URL</button>
-        <button class="sheet-btn" id="comebackConfirmBtn" onclick="confirmComebacks(this)" ${ids.length ? '' : 'disabled'} style="margin-left:8px;font-size:12px;padding:3px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Confirm Comebacks</button>
+        ${comebacksConfirmed ? `<button class="sheet-btn saved" id="comebackConfirmBtn" disabled style="margin-left:8px;font-size:12px;padding:3px 12px">✓ Confirmed!</button>` : `<button class="sheet-btn" id="comebackConfirmBtn" onclick="confirmComebacks(this)" ${ids.length ? '' : 'disabled'} style="margin-left:8px;font-size:12px;padding:3px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Confirm Comebacks</button>`}
       </div>
     </div>`;
 }
