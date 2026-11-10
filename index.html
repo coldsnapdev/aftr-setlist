@@ -579,7 +579,7 @@ function announceNext() {
   if (!obs || !obs.ready) return;
   const nx = onAir ? nextOf(onAir.key) : null;
   obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-next',
-    current: onAir ? `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : null, next: nx ? nx.label : null } }).catch(() => {});
+    current: onAir ? `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : null, next: nx ? nx.label : null, videoId: onAir ? onAir.videoId : null } }).catch(() => {});
 }
 setInterval(announceNext, 5000);
 
@@ -587,7 +587,7 @@ function setOnAir(info) {
   onAir = info;
   if (info) info.videoId = info.videoId || null;
   if (info) localStorage.setItem(ONAIR_KEY, JSON.stringify(info)); else localStorage.removeItem(ONAIR_KEY);
-  if (info) obsSend({ cmd: 'np-show', ...info }); else obsSend({ cmd: 'np-hide' });
+  if (info) obsSend({ cmd: 'np-show', ...info, announceMs: (autoplay.catSec || 6) * 1000 }); else obsSend({ cmd: 'np-hide' });
   render(); updateObsUI();
 }
 function toggleOnAir(catId, i, fromAutoplay) {
