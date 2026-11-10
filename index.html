@@ -112,6 +112,14 @@
   .onair-btn { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-right: 8px; border-radius: 50%; border: 1px solid #ccc; background: #fff; color: #888; font-size: 10px; cursor: pointer; vertical-align: middle; flex-shrink: 0; padding: 0 0 0 2px; }
   .onair-btn:hover { border-color: #e5484d; color: #e5484d; }
   .comeback-row.cb-unchosen { opacity: .35; cursor: default; }
+  .album-head { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; padding-bottom: 8px; border-bottom: 2px solid var(--teal); }
+  .album-art { width: 72px; height: 72px; border-radius: 6px; object-fit: cover; background: #eee; flex-shrink: 0; }
+  .album-art.missing { visibility: hidden; }
+  .album-meta { flex: 1; min-width: 0; }
+  .album-title { font-size: 20px; font-weight: 700; color: var(--aftr-purple); }
+  .album-artist { font-size: 13px; color: #666; margin-top: 2px; }
+  .td-num { width: 44px; color: #999; font-variant-numeric: tabular-nums; text-align: right; padding-right: 10px !important; }
+  body.album-mode .legend, body.album-mode .ctrl, body.album-mode #twitchStatus, body.album-mode #twitchAuthBtn, body.album-mode #comebacksSection, body.album-mode .page-sub { display: none !important; }
   .comeback-row.cb-unchosen:hover { background: transparent; }
   .onair-btn:disabled { cursor: default; border-color: #ddd; color: #ccc; }
   tr.on-air td, .comeback-row.on-air { box-shadow: inset 0 2px 0 #e5484d, inset 0 -2px 0 #e5484d; }
@@ -314,80 +322,53 @@
 const TWITCH_CLIENT_ID    = 'umh17eumefmyh0l2ovp3sqogfo5bi1';
 const TWITCH_REDIRECT_URI = 'https://coldsnapdev.github.io/aftr-setlist/';
 const TWITCH_SCOPES       = 'channel:manage:polls';
-const STREAM_DATE_DEFAULT = '4th November 2026';
-const SHEET_NAME = 'November 4th Playlist';
+const STREAM_DATE_DEFAULT = '13th November 2026';
+const SHEET_NAME = 'November 13th Albums';
 const WORKER_URL = 'https://aftr-setlist.simon-chilley.workers.dev';
 const POLL_MAX_CHARS      = 25;
 
 const data = {
   categories: [
-    {
-      id: "Elements",
-      title: "By Your Powers Combined",
-      sub: "Elements",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=lzmy64v1aqk,3vKhnTAsLhE,Itq5xeOVKK0,umVi_Ql8egY,APRCgeXwc3o',
-      songs: [
-        { artist: "B.I", title: "Keep the Fire Alive", tag: "Short Film", vibe: "Lethal", submitter: "Missing my boy Hanbinnie 😭", sheetRow: 11 },
-        { artist: "Yeri, Renjun, Jeno & Jaemin", title: "Hair in the Air", tag: "OST", vibe: "Zoo before Zoo", submitter: "BabyTokki", sheetRow: 12 },
-        { artist: "SHINee", title: "Green Rain", tag: "", vibe: "", submitter: "Laker", sheetRow: 13 },
-        { artist: "Haechan", title: "Taste of Sun", tag: "", vibe: "evil twin", submitter: "dudahyucklover", sheetRow: 14 },
-        { artist: "Jaehee & Oishi Masayoshi", title: "Butter-fly", tag: "OST", vibe: "Dream comes true for our Digimon Fanboy", submitter: "Neo", sheetRow: 15 },
-      ]
-    },
-    {
-      id: "Trouble",
-      title: "Breaking Bad",
-      sub: "Trouble",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=eB-IK2wPWzw,gMe1c4UegBY,clcrKvhU9DA,c-E9F4x6Lrw,EyTGLRuyzCU',
-      songs: [
-        { artist: "ATEEZ", title: "BAD", tag: "Live", vibe: "Hot", submitter: "Yes", sheetRow: 17 },
-        { artist: "STAYC", title: "SO BAD", tag: "", vibe: "Youthful", submitter: "min", sheetRow: 18 },
-        { artist: "N.Flying", title: "Dangerously", tag: "", vibe: "Sexy", submitter: "Byakko", sheetRow: 19 },
-        { artist: "RYUGUJO", title: "LOVEgurui", tag: "MV", vibe: "dramatic", submitter: "taz", sheetRow: 20 },
-        { artist: "TREASURE", title: "Yamai", tag: "", vibe: "written by Asahi", submitter: "Klára", sheetRow: 21 },
-      ]
-    },
-    {
-      id: "Dance",
-      title: "Shall We?",
-      sub: "Dance",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=5dqboUFoIGc,dnH5tSx8xuQ,tM3wRP6vQRo,hfDrBfGmzqo,AAOOKbk-knM',
-      songs: [
-        { artist: "Golden Child", title: "K-Pop Mash Up: Boys", tag: "Live", vibe: "", submitter: "Emil", sheetRow: 23 },
-        { artist: "Dino & Picheolin", title: "Party Rock Rock", tag: "", vibe: "Picheolin-ing", submitter: "ace", sheetRow: 24 },
-        { artist: "MC Special", title: "Jumpo Mambo", tag: "", vibe: "Cute", submitter: "Eri", sheetRow: 25 },
-        { artist: "XLOV", title: "Hush", tag: "DP", vibe: "Bendy!", submitter: "Romeo", sheetRow: 26 },
-        { artist: "YooA", title: "Bon Voyage", tag: "", vibe: "DISNEY", submitter: "mini", sheetRow: 27 },
-      ]
-    },
-    {
-      id: "Vocals",
-      title: "Black Belts",
-      sub: "Vocals",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=RATia54v6nY,alWYHKK_Ag0,22VOzqS_9ms,FwWuFn0nGec,rhHX-nnhP-Q',
-      songs: [
-        { artist: "RIIZE", title: "Insomnia", tag: "Live", vibe: "Vocals!!!", submitter: "MamaJoss", sheetRow: 29 },
-        { artist: "SB19", title: "Live at Rappler", tag: "Live", vibe: "Emotional", submitter: "Po", sheetRow: 30 },
-        { artist: "Jungkook", title: "Falling", tag: "Cover", vibe: "", submitter: "Sui💜JK", sheetRow: 31 },
-        { artist: "BTOB", title: "You Are the Only One for Me", tag: "Live", vibe: "Happy place", submitter: "I like feet", sheetRow: 32 },
-        { artist: "Hwangtaeji", title: "Mapsosa", tag: "Live", vibe: "2nd gen supremacy", submitter: "Niki", sheetRow: 33 },
-      ]
-    },
+    // Jukebox weeks: one entry per category, e.g.
+    // { id: "Dance", title: "Shall We?", sub: "Dance", playlistUrl: '...', songs: [ { artist, title, tag, vibe, submitter, sheetRow }, ... ] },
   ]
 };
 
 // ─── Comebacks data ───────────────────────────────────────────────────────────
 // Set to null for no comebacks; array of {seed,artist,title,videoId,sheetRow} for active week
 // sheetRow is 0-based index into the sheet
-const comebacks = [
-  { seed: 1, artist: "JISOO", title: "ADDICTED", videoId: "Pksr9T8m_aA", sheetRow: 1 },
-  { seed: 2, artist: "DINO", title: "AUTOMATIC", videoId: "qCF3_Xk_ZXQ", sheetRow: 2 },
-  { seed: 3, artist: "ZEROBASEONE EMP", title: "RUN (with Dynamicduo)", videoId: "sMazlfiJN_w", sheetRow: 3 },
-  { seed: 4, artist: "TWS", title: "Call My Name", videoId: "3MPUCncZBR0", sheetRow: 4 },
-  { seed: 5, artist: "xikers", title: "DIENAMITE", videoId: "1EGDSdhCCi8", sheetRow: 5 },
-  { seed: 6, artist: "RESCENE", title: "With", videoId: "pey3E47eSc8", sheetRow: 6 },
-  { seed: 7, artist: "Irene & Seulgi", title: "Cheetah", videoId: "Ts8HTHBRxvw", sheetRow: 7 },
+const comebacks = null;
+
+// ─── Album streams ────────────────────────────────────────────────────────────
+// For an album stream, list the albums here (in play order) and leave data.categories empty and comebacks null.
+// The page then switches to its album layout: no categories or polls, and each album plays through as one unit.
+// From the sheet: each block's first row is "Artist | Album", then one row per track "Track | YouTube link".
+// artwork is optional: leave it out and the cover is looked up automatically from Apple's catalogue.
+// For jukebox weeks, set ALBUMS = null.
+const ALBUMS = [
+  { artist: "NCT DREAM", title: "Dream After Dream", tracks: [
+    { title: "The Sun", videoId: "LFbU0A1-IH8" },
+    { title: "Boogie Woogie", videoId: "wG7pnZttup8" },
+    { title: "Dream After Dream", videoId: "EYQbuQLZo5I" },
+    { title: "Skydive", videoId: "BZSQu1mVwHw" },
+    { title: "Pressure", videoId: "iYgyQ-jtCio" },
+    { title: "Watch U Watch Me", videoId: "v4PGohOBliU" },
+    { title: "Cool for Me", videoId: "9yaBJ148cpA" },
+    { title: "Tumbler", videoId: "XOMWLibS4YA" },
+    { title: "Smile for U", videoId: "vpeC3eIAA84" },
+    { title: "This Is Your World", videoId: "Y5EdQd9I1iw" },
+  ] },
+  { artist: "NCT WISH", title: "I Spy", tracks: [
+    { title: "I Spy", videoId: "xIlFjHHUfI0" },
+    { title: "We Own This Street", videoId: "soTHZFums4U" },
+    { title: "Upgrade", videoId: "Y4sgKIFkiEM" },
+    { title: "Super Major", videoId: "xv7-Z6KBQaI" },
+    { title: "Hubble Time", videoId: "EosEjcts25U" },
+    { title: "Like A Dream", videoId: "Po9-sbsDSsQ" },
+  ] },
 ];
+const isAlbumStream = () => Array.isArray(ALBUMS) && ALBUMS.length > 0;
+
 // Snake seeding: odd seeds → poll 1, even seeds → poll 2
 const COMEBACK_POLLS = 2;
 function getComebackPoll(seed) { return ((seed - 1) % COMEBACK_POLLS) + 1; }
@@ -566,6 +547,11 @@ let autoplay = { enabled: true, stopAfter: false, gapSec: 3, seen: 0 }, autoplay
 function nextOf(key) {
   if (!key) return null;
   if (key.startsWith('cb__')) return null;   // comebacks are reacted to one at a time: nothing follows on
+  if (key.startsWith('al__')) {
+    const [, a, i] = key.split('__').map(Number);
+    const n = ALBUMS && ALBUMS[a] && ALBUMS[a].tracks[i + 1];
+    return n ? { type: 'al', a, i: i + 1, label: n.title } : null;
+  }
   const [catId, idx] = key.split('__'); const i = Number(idx);
   const cat = data.categories.find(c => c.id === catId); if (!cat || !cat.songs[i + 1]) return null;
   const n = cat.songs[i + 1];
@@ -581,7 +567,7 @@ function onVideoEnded(d) {
     autoplay.stopAfter = false; videoNote = 'stopped after that song, as asked'; updateObsUI(); return;
   }
   const next = nextOf(onAir.key);
-  if (!next) { videoNote = onAir.key.startsWith('cb__') ? 'comeback finished' : 'end of the category'; updateObsUI(); return; }
+  if (!next) { videoNote = onAir.key.startsWith('cb__') ? 'comeback finished' : onAir.key.startsWith('al__') ? 'end of the album' : 'end of the category'; updateObsUI(); return; }
   const gap = Math.max(0, Number(autoplay.gapSec) || 0);
   videoNote = `next song in ${gap} s`; updateObsUI();
   clearTimeout(autoplayTimer);
@@ -589,7 +575,7 @@ function onVideoEnded(d) {
   autoplayTimer = setTimeout(() => {
     if (!onAir || onAir.key !== from) return;   // something else went on screen meanwhile
     autoplayStarting = true;
-    if (next.type === 'cb') toggleComebackOnAir(next.videoId, true); else toggleOnAir(next.catId, next.i, true);
+    if (next.type === 'al') toggleAlbumOnAir(next.a, next.i, true); else if (next.type === 'cb') toggleComebackOnAir(next.videoId, true); else toggleOnAir(next.catId, next.i, true);
   }, gap * 1000);
 }
 // Keypad "Next song": put the next song in the category on screen now, and play it.
@@ -597,13 +583,13 @@ function skipToNext() {
   const next = onAir ? nextOf(onAir.key) : null;
   if (!next) return;
   clearTimeout(autoplayTimer); autoplayStarting = true;
-  if (next.type === 'cb') toggleComebackOnAir(next.videoId, true); else toggleOnAir(next.catId, next.i, true);
+  if (next.type === 'al') toggleAlbumOnAir(next.a, next.i, true); else if (next.type === 'cb') toggleComebackOnAir(next.videoId, true); else toggleOnAir(next.catId, next.i, true);
 }
 function announceNext() {
   if (!obs || !obs.ready) return;
   const nx = onAir ? nextOf(onAir.key) : null;
   obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-next',
-    current: onAir ? `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : null, next: nx ? nx.label : null, videoId: onAir ? onAir.videoId : null, single: !!(onAir && onAir.key.startsWith('cb__')) } }).catch(() => {});
+    current: onAir ? (onAir.kind === 'album' ? `${onAir.title} (${onAir.trackNo}/${onAir.trackCount})` : `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}`) : null, album: !!(onAir && onAir.kind === 'album'), next: nx ? nx.label : null, videoId: onAir ? onAir.videoId : null, single: !!(onAir && onAir.key.startsWith('cb__')) } }).catch(() => {});
 }
 setInterval(announceNext, 5000);
 
@@ -627,6 +613,17 @@ function toggleOnAir(catId, i, fromAutoplay) {
   setOnAir({ key: id, category: cat.title, categorySub: cat.sub || '', artist: song.artist, title: song.title, tag: song.tag || '', submitter: (song.submitter || '').trim() });
   lastEnded = null;
   loadVideo(videoIdFor(cat, i), fromAutoplay);
+  announceNext();
+}
+function toggleAlbumOnAir(a, i, fromAutoplay) {
+  if (!fromAutoplay) { clearTimeout(autoplayTimer); autoplayStarting = false; }
+  const key = 'al__' + a + '__' + i;
+  if (onAir && onAir.key === key) { videoNote = ''; setOnAir(null); announceNext(); return; }
+  const al = ALBUMS[a], t = al && al.tracks[i]; if (!t) return;
+  setOnAir({ key, kind: 'album', category: al.title, categorySub: al.artist, artist: al.artist, title: t.title, album: al.title,
+    trackNo: i + 1, trackCount: al.tracks.length, artwork: artworkFor(a), tag: '', submitter: '' });
+  lastEnded = null;
+  loadVideo(t.videoId, fromAutoplay);
   announceNext();
 }
 function toggleComebackOnAir(videoId, fromAutoplay) {
@@ -1025,6 +1022,8 @@ function pollBtn(catId) {
 }
 
 function render() {
+  document.body.classList.toggle('album-mode', isAlbumStream());
+  if (isAlbumStream()) return renderAlbums();
   const el = document.getElementById('setlist');
   let html = '';
   data.categories.forEach(cat => {
@@ -1037,11 +1036,63 @@ function render() {
   if (slider) setFontSize(slider.value);
 }
 
+function renderAlbums() {
+  const el = document.getElementById('setlist');
+  el.innerHTML = ALBUMS.map((al, a) => {
+    const ids = al.tracks.map(t => t.videoId).filter(Boolean);
+    const url = ids.length ? 'https://www.youtube.com/watch_videos?video_ids=' + ids.join(',') : '';
+    const art = artworkFor(a);
+    const rows = al.tracks.map((t, i) => {
+      const key = 'al__' + a + '__' + i;
+      return `<tr class="${onAir && onAir.key === key ? 'on-air' : ''}"><td class="td-num">${i + 1}</td><td class="td-title"><button class="onair-btn" title="Show on stream" onclick="event.stopPropagation();toggleAlbumOnAir(${a},${i})">&#9654;</button>${t.title}</td></tr>`;
+    }).join('');
+    return `<div class="section"><div class="album-head"><img class="album-art${art ? '' : ' missing'}" id="art_${a}" src="${art}" alt="">` +
+      `<div class="album-meta"><div class="album-title">${al.title}</div><div class="album-artist">${al.artist} · ${al.tracks.length} tracks</div></div>` +
+      `<div class="section-actions">${playlistBtn(url)}</div></div><table><tbody>${rows}</tbody></table></div>`;
+  }).join('');
+  const slider = document.getElementById('fontSlider');
+  if (slider) setFontSize(slider.value);
+}
+
+// ─── Album artwork (Apple's public catalogue, looked up from this page and cached) ──
+const ART_KEY = 'aftr_artwork_v1';
+let artCache = {}; try { artCache = JSON.parse(localStorage.getItem(ART_KEY) || '{}'); } catch {}
+const artKey = al => (al.artist + '|' + al.title).toLowerCase();
+function artworkFor(a) { const al = ALBUMS && ALBUMS[a]; return al ? (al.artwork || artCache[artKey(al)] || '') : ''; }
+const norm = x => String(x || '').toLowerCase().replace(/\(.*?\)|\[.*?\]/g, '').replace(/ - .*$/, '').replace(/[^a-z0-9가-힣]/g, '');
+function lookupArtwork(a, country) {
+  const al = ALBUMS[a]; if (!al || al.artwork || artCache[artKey(al)]) return;
+  const cb = '__aftrArt' + a + '_' + Date.now();
+  const script = document.createElement('script');
+  window[cb] = res => {
+    delete window[cb]; script.remove();
+    const results = (res && res.results) || [];
+    const wantAlbum = norm(al.title), wantArtist = norm(al.artist);
+    const byArtist = results.filter(r => norm(r.artistName).includes(wantArtist) || wantArtist.includes(norm(r.artistName)));
+    const hit = byArtist.find(r => norm(r.collectionName) === wantAlbum) || byArtist.find(r => norm(r.collectionName).includes(wantAlbum) || wantAlbum.includes(norm(r.collectionName)));
+    if (hit && hit.artworkUrl100) {
+      artCache[artKey(al)] = hit.artworkUrl100.replace(/\/\d+x\d+bb\./, '/600x600bb.');
+      try { localStorage.setItem(ART_KEY, JSON.stringify(artCache)); } catch {}
+      const img = document.getElementById('art_' + a); if (img) { img.src = artCache[artKey(al)]; img.classList.remove('missing'); }
+      // If this album is on screen, send the card again with its cover.
+      if (onAir && onAir.key.startsWith('al__' + a + '__')) { onAir.artwork = artCache[artKey(al)]; obsSend({ cmd: 'np-show', ...onAir, announce: false }); }
+    } else if (country !== 'us') lookupArtwork(a, 'us');
+    else console.warn('[AFTR] No cover found for', al.artist, '–', al.title, '. Add artwork: "https://…" to the album to set one.');
+  };
+  script.onerror = () => { delete window[cb]; script.remove(); };
+  script.src = 'https://itunes.apple.com/search?' + new URLSearchParams({ term: al.artist + ' ' + al.title, media: 'music', entity: 'album', country: country || 'gb', limit: '15', callback: cb });
+  document.head.append(script);
+}
+if (isAlbumStream()) ALBUMS.forEach((_, a) => setTimeout(() => lookupArtwork(a), a * 400));
+
 // ─── Tracklist builders ───────────────────────────────────────────────────────
 function buildPatreonTracklist() {
+  if (isAlbumStream()) return buildAlbumTracklist();
   return data.categories.map((cat, ci) => (ci > 0 ? '\n' : '') + `${cat.title.toUpperCase()}${cat.sub ? ` (${cat.sub})` : ''}\n` + cat.songs.map(s => `  ${s.artist} – ${s.title}${s.tag ? ` [${s.tag}]` : ''}`).join('\n')).join('\n');
 }
+function buildAlbumTracklist() { return ALBUMS.map(al => `${al.artist} – ${al.title}\n` + al.tracks.map((t, i) => `  ${i + 1}. ${t.title}`).join('\n')).join('\n\n'); }
 function buildYouTubeTracklist() {
+  if (isAlbumStream()) return buildAlbumTracklist();
   const comebacksBlock = comebacks && comebacks.length
     ? 'COMEBACKS\n' + comebacks.map(c => `  ${c.artist} – ${c.title}`).join('\n') + '\n\n'
     : 'NO COMEBACKS THIS WEEK — JUKEBOX ONLY\n\n';
@@ -1087,7 +1138,7 @@ function selectType(type) {
   selectedType = type;
   ['btnYT','btnPat'].forEach(id=>document.getElementById(id).classList.remove('selected'));
   document.getElementById(type==='youtube'?'btnYT':'btnPat').classList.add('selected');
-  document.getElementById('modalTitle').textContent = type==='youtube'?'YouTube — stream description':'Patreon — Wednesday Jukebox';
+  document.getElementById('modalTitle').textContent = type==='youtube'?'YouTube — stream description':(isAlbumStream()?'Patreon — album stream':'Patreon — Wednesday Jukebox');
   goToDetails();
 }
 function showTracklist() {
@@ -1100,6 +1151,9 @@ function buildPrompt() {
   const tracklist = selectedType==='youtube'?buildYouTubeTracklist():buildPatreonTracklist();
   const context = date?`Stream date: ${date}`:'';
   const sr = `Style rules:\n- Always use "we" not "I"\n- UK English spelling\n- No em dashes\n- No emojis\n- Natural, warm, non-robotic prose\n- No time-based references like "today" or "tonight"\n- No analysis of song content or lyrics\n- Do not reproduce the tracklist as a raw block — instead weave it into the body as a formatted list after the descriptive sentences`;
+  if (isAlbumStream()) {
+    return `You are writing a ${selectedType==='youtube'?'YouTube':'Patreon'} description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is an album stream: full listen-throughs of the albums below, recorded live. Follow the AFTR rules for album reviews (write about each album as a body of work: atmosphere, cohesion, pacing, identity; no invented track-by-track detail) and the ${selectedType==='youtube'?'YouTube':'Patreon'} format and style rules.\n\n${sr}\n\n${context?context+'\n\n':''}Albums:\n${tracklist}`;
+  }
   if (selectedType==='youtube') {
     const ytIntro = comebacks && comebacks.length
       ? `You are writing a YouTube stream description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This stream features comebacks voted on by the community, as well as the regular jukebox categories.`
