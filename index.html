@@ -107,6 +107,12 @@
   .poll-duration { font-size: 12px; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; background: #fff; color: #444; width: 60px; }
 
   /* ── TWITCH STATUS ── */
+  .obs-btn { background: #302e45; border-color: #1f1d30; }
+  .obs-btn.connected { background: #1a7a3a; border-color: #145c2c; }
+  .onair-btn { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-right: 8px; border-radius: 50%; border: 1px solid #ccc; background: #fff; color: #888; font-size: 10px; cursor: pointer; vertical-align: middle; flex-shrink: 0; padding: 0 0 0 2px; }
+  .onair-btn:hover { border-color: #e5484d; color: #e5484d; }
+  tr.on-air td, .comeback-row.on-air { box-shadow: inset 0 2px 0 #e5484d, inset 0 -2px 0 #e5484d; }
+  tr.on-air .onair-btn, .comeback-row.on-air .onair-btn { background: #e5484d; border-color: #e5484d; color: #fff; }
   .twitch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 12px; border-radius: 6px; margin-bottom: 0.8rem; background: #fff; border: 1px solid #ddd; border-left: 4px solid #ccc; }
   .twitch-status.connected { background: #f0f8f2; border-color: var(--free-border); border-left-color: var(--free-border); color: #1a5c33; }
   .twitch-status.disconnected { color: #888; border-left-color: #ccc; }
@@ -174,7 +180,7 @@
   .comeback-playlist-url.visible { display: block; }
 
   @media print {
-    .controls, .top-btns, .modal-overlay, .playlist-btn, .poll-btn, .poll-points-input, .twitch-status, .poll-duration-wrap, .sheet-btn { display: none !important; }
+    .controls, .top-btns, .modal-overlay, .playlist-btn, .poll-btn, .poll-points-input, .twitch-status, .onair-btn, .poll-duration-wrap, .sheet-btn { display: none !important; }
     body { background: #fff; }
     .page-header { background: none; padding: 0 0 8px; border-bottom: 2px solid #333; border-radius: 0; margin-bottom: 8px; }
     .page-header h1 { color: #111; }
@@ -198,9 +204,16 @@
     </div>
     <div class="top-btns">
       <button class="top-btn twitch-btn" id="twitchAuthBtn" onclick="handleTwitchAuth()">Connect Twitch</button>
+      <button class="top-btn obs-btn" id="obsBtn" onclick="handleObsConnect()">Connect OBS</button>
       <button class="top-btn desc-btn" onclick="openDescModal()">Generate description</button>
       <button class="top-btn" onclick="window.print()">Print / Save PDF</button>
     </div>
+  </div>
+
+  <!-- OBS STATUS -->
+  <div class="twitch-status disconnected" id="obsStatus">
+    <div class="twitch-dot"></div>
+    <span id="obsStatusText">Not connected to OBS — connect to show songs and polls on stream</span>
   </div>
 
   <!-- TWITCH STATUS -->
@@ -412,11 +425,150 @@ async function initTwitch() {
     if (saved) { const info = await validateToken(saved); if (info) { twitchToken = saved; twitchUserId = info.user_id; twitchUsername = info.login; } else { ['twitch_token','twitch_user_id','twitch_username'].forEach(k => localStorage.removeItem(k)); } }
   }
   updateTwitchUI(); render();
+  resumePollWatch();
 }
 function updateTwitchUI() {
   const btn = document.getElementById('twitchAuthBtn'), status = document.getElementById('twitchStatus'), text = document.getElementById('twitchStatusText');
   if (twitchToken) { btn.textContent = `Disconnect (${twitchUsername})`; btn.classList.add('connected'); status.className = 'twitch-status connected'; text.textContent = `Connected as ${twitchUsername} — poll buttons are live`; }
   else { btn.textContent = 'Connect Twitch'; btn.classList.remove('connected'); status.className = 'twitch-status disconnected'; text.textContent = 'Not connected to Twitch — connect to enable live polls'; }
+}
+
+// ─── OBS (on-stream overlays) ─────────────────────────────────────────────────
+// Talks to OBS on this PC. The AFTR Live overlay in OBS shows what this sends.
+class OBSClient{
+  constructor(opts){Object.assign(this,{subs:1,onEvent(){},onStatus(){}},opts);this.ws=null;this.ready=false;this.pending=new Map();this.seq=0;this.status='idle';this.stopped=false}
+  setStatus(s){this.status=s;this.onStatus(s)}
+  connect(){
+    this.stopped=false;clearTimeout(this.retry);
+    let ws;try{ws=new WebSocket(`ws://${this.host}:${this.port}`)}catch(e){return this.scheduleRetry()}
+    this.ws=ws;this.setStatus('connecting');
+    ws.onmessage=async(m)=>{
+      let msg;try{msg=JSON.parse(m.data)}catch{return}
+      if(msg.op===0){const d={rpcVersion:1,eventSubscriptions:this.subs};const a=msg.d&&msg.d.authentication;if(a)d.authentication=await obsAuth(this.password||'',a.salt,a.challenge);ws.send(JSON.stringify({op:1,d}))}
+      else if(msg.op===2){this.ready=true;this.setStatus('connected')}
+      else if(msg.op===5){const et=msg.d.eventType;if(et==='CurrentSceneCollectionChanging'||et==='CurrentProfileChanging')this.pause();else if(et==='CurrentSceneCollectionChanged'||et==='CurrentProfileChanged')this.resumeSoon();try{this.onEvent(et,msg.d.eventData||{})}catch(e){console.error(e)}}
+      else if(msg.op===7){const p=this.pending.get(msg.d.requestId);if(!p)return;this.pending.delete(msg.d.requestId);clearTimeout(p.t);const st=msg.d.requestStatus||{};if(st.result)p.res(msg.d.responseData||{});else p.rej(new Error(`${msg.d.requestType} failed: ${st.comment||('code '+st.code)}`))}
+    };
+    ws.onclose=(e)=>{if(this.ws!==ws)return;this.ready=false;this.paused=false;clearTimeout(this.pt);for(const p of this.pending.values()){clearTimeout(p.t);p.rej(new Error('connection closed'))}this.pending.clear();this.setStatus(e.code===4009?'auth-failed':'disconnected');this.scheduleRetry(e.code===4009?10000:2000)};
+    ws.onerror=()=>{};
+  }
+  pause(){this.paused=true;clearTimeout(this.pt);this.pt=setTimeout(()=>{this.paused=false;this.onResume&&this.onResume()},20000)}
+  resumeSoon(){clearTimeout(this.pt);this.pt=setTimeout(()=>{this.paused=false;this.onResume&&this.onResume()},1500)}
+  scheduleRetry(ms=2000){if(this.stopped)return;clearTimeout(this.retry);this.retry=setTimeout(()=>this.connect(),ms)}
+  reconnect(opts){Object.assign(this,opts);const old=this.ws;this.ws=null;this.ready=false;if(old){try{old.close()}catch{}}this.connect()}
+  call(requestType,requestData={}){
+    if(!this.ready||!this.ws)return Promise.reject(new Error('OBS not connected'));
+    if(this.paused)return Promise.reject(new Error('OBS is switching scene collection'));
+    const requestId='r'+(++this.seq);
+    return new Promise((res,rej)=>{const t=setTimeout(()=>{this.pending.delete(requestId);rej(new Error(requestType+' timed out'))},5000);this.pending.set(requestId,{res,rej,t});this.ws.send(JSON.stringify({op:6,d:{requestType,requestId,requestData}}))});
+  }
+}
+async function obsAuth(pw,salt,challenge){const enc=new TextEncoder();const b64=async s=>{const h=new Uint8Array(await crypto.subtle.digest('SHA-256',enc.encode(s)));let bin='';for(const b of h)bin+=String.fromCharCode(b);return btoa(bin)};return b64((await b64(pw+salt))+challenge)}
+const OBS_PW_KEY = 'aftr_obs_password';
+const ONAIR_KEY = 'aftr_onair__' + SHEET_NAME;
+let obs = null, onAir = null, overlaySeen = 0;
+try { onAir = JSON.parse(localStorage.getItem(ONAIR_KEY) || 'null'); } catch { onAir = null; }
+
+function handleObsConnect() {
+  if (obs && obs.status === 'connected') { if (confirm('Disconnect from OBS?')) { obs.stopped = true; const ws = obs.ws; obs.ws = null; try { ws && ws.close(); } catch {} obs.setStatus('disconnected'); } return; }
+  let pw = localStorage.getItem(OBS_PW_KEY);
+  if (pw === null || (obs && obs.status === 'auth-failed')) {
+    pw = prompt('OBS WebSocket password (OBS: Tools > WebSocket Server Settings)', pw || '');
+    if (pw === null) return;
+    localStorage.setItem(OBS_PW_KEY, pw);
+  }
+  startObs(pw);
+}
+function startObs(pw) {
+  if (obs) { obs.stopped = true; try { obs.ws && obs.ws.close(); } catch {} }
+  obs = new OBSClient({ host: '127.0.0.1', port: 4455, password: pw, subs: 1,
+    onEvent: (type, d) => {
+      if (type !== 'CustomEvent' || !d || d.aftr !== 'live-overlay-hb') return;
+      // The overlay has just (re)loaded: send it what it should be showing.
+      if (d.fresh || Date.now() - overlaySeen > 12000) syncObs();
+      overlaySeen = Date.now(); updateObsUI();
+    },
+    onStatus: s => { if (s === 'connected') syncObs(); updateObsUI(); } });
+  obs.connect();
+}
+function obsSend(data) { if (obs && obs.ready) obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live', ...data } }).catch(() => {}); }
+function syncObs() {
+  if (onAir) obsSend({ cmd: 'np-show', ...onAir, announce: false });
+  if (pollWatch && pollWatch.last) obsSend(pollWatch.last);
+}
+function updateObsUI() {
+  const btn = document.getElementById('obsBtn'), st = document.getElementById('obsStatus'), tx = document.getElementById('obsStatusText');
+  const s = obs ? obs.status : 'idle';
+  const overlayUp = Date.now() - overlaySeen < 12000;
+  if (s === 'connected') {
+    btn.textContent = 'OBS connected'; btn.classList.add('connected'); st.className = 'twitch-status connected';
+    tx.textContent = (overlayUp ? 'Connected to OBS — stream overlay is live' : 'Connected to OBS — waiting for the stream overlay (is the AFTR Live Overlays scene in use?)')
+      + (onAir ? ` · On screen: ${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}` : '');
+  } else {
+    btn.textContent = 'Connect OBS'; btn.classList.remove('connected'); st.className = 'twitch-status disconnected';
+    tx.textContent = s === 'auth-failed' ? 'OBS rejected the password — click Connect OBS to enter it again'
+      : s === 'connecting' ? 'Connecting to OBS…'
+      : obs ? 'Can\'t reach OBS — is it open, with the WebSocket server on?' : 'Not connected to OBS — connect to show songs and polls on stream';
+  }
+}
+setInterval(updateObsUI, 3000);
+
+function setOnAir(info) {
+  onAir = info;
+  if (info) localStorage.setItem(ONAIR_KEY, JSON.stringify(info)); else localStorage.removeItem(ONAIR_KEY);
+  if (info) obsSend({ cmd: 'np-show', ...info }); else obsSend({ cmd: 'np-hide' });
+  render(); updateObsUI();
+}
+function toggleOnAir(catId, i) {
+  const id = rowId(catId, i);
+  if (onAir && onAir.key === id) return setOnAir(null);
+  const cat = data.categories.find(c => c.id === catId), song = cat && cat.songs[i];
+  if (!song) return;
+  setOnAir({ key: id, category: cat.title, categorySub: cat.sub || '', artist: song.artist, title: song.title, tag: song.tag || '', submitter: (song.submitter || '').trim() });
+}
+function toggleComebackOnAir(videoId) {
+  const key = 'cb__' + videoId;
+  if (onAir && onAir.key === key) return setOnAir(null);
+  const c = (comebacks || []).find(x => x.videoId === videoId);
+  if (!c) return;
+  setOnAir({ key, category: 'Comebacks', categorySub: '', artist: c.artist, title: c.title, tag: '', submitter: '' });
+}
+
+// ─── Live poll results for the overlay ────────────────────────────────────────
+let pollWatch = null;
+function watchPoll(id, labels) {
+  if (pollWatch) clearInterval(pollWatch.timer);
+  try { localStorage.setItem('aftr_poll_labels__' + id, JSON.stringify(labels || [])); } catch {}
+  pollWatch = { id, labels: labels || [], last: null, timer: setInterval(checkPoll, 2000) };
+  checkPoll();
+}
+async function checkPoll() {
+  if (!pollWatch || !twitchToken) return;
+  const w = pollWatch;
+  try {
+    const r = await fetch(`https://api.twitch.tv/helix/polls?broadcaster_id=${twitchUserId}&id=${w.id}`, { headers: { 'Authorization': 'Bearer ' + twitchToken, 'Client-Id': TWITCH_CLIENT_ID } });
+    if (!r.ok) return;
+    const p = ((await r.json()).data || [])[0];
+    if (!p || pollWatch !== w) return;
+    w.last = { cmd: 'poll-update', id: p.id, title: p.title, status: p.status,
+      choices: p.choices.map(c => ({ title: c.title, votes: c.votes || 0 })), labels: w.labels,
+      endsAt: new Date(p.started_at).getTime() + p.duration * 1000, holdMs: 20000 };
+    obsSend(w.last);
+    if (p.status !== 'ACTIVE') { clearInterval(w.timer); w.timer = null; }
+  } catch {}
+}
+// After a page reload mid-poll, pick the running poll back up.
+async function resumePollWatch() {
+  if (!twitchToken || pollWatch) return;
+  try {
+    const r = await fetch(`https://api.twitch.tv/helix/polls?broadcaster_id=${twitchUserId}&first=1`, { headers: { 'Authorization': 'Bearer ' + twitchToken, 'Client-Id': TWITCH_CLIENT_ID } });
+    if (!r.ok) return;
+    const p = ((await r.json()).data || [])[0];
+    if (p && p.status === 'ACTIVE') {
+      let labels = []; try { labels = JSON.parse(localStorage.getItem('aftr_poll_labels__' + p.id) || '[]'); } catch {}
+      watchPoll(p.id, labels);
+    }
+  } catch {}
 }
 
 // ─── Poll helpers ─────────────────────────────────────────────────────────────
@@ -481,7 +633,12 @@ async function confirmPoll() {
       headers: { 'Authorization': 'Bearer ' + twitchToken, 'Client-Id': TWITCH_CLIENT_ID, 'Content-Type': 'application/json' },
       body: JSON.stringify({ broadcaster_id: twitchUserId, title, choices: opts.map(o => ({ title: o.text })), duration: dur, channel_points_voting_enabled: true, channel_points_per_vote: pointsCost })
     });
-    if (r.ok) { btn.textContent = 'Poll started!'; btn.classList.add('success'); setTimeout(() => closePollModal(), 1500); }
+    if (r.ok) {
+      btn.textContent = 'Poll started!'; btn.classList.add('success'); setTimeout(() => closePollModal(), 1500);
+      const started = await r.json().catch(() => null);
+      const poll = started && started.data && started.data[0];
+      if (poll) watchPoll(poll.id, opts.map(o => o.original));
+    }
     else { const err = await r.json(); btn.textContent = 'Failed — try again'; btn.disabled = false; alert(`Poll failed: ${err.message || 'Unknown error'}`); }
   } catch { btn.textContent = 'Error — try again'; btn.disabled = false; }
 }
@@ -610,13 +767,14 @@ function renderComebacks() {
     const rows = group.map(c => {
       const isWinner = comebackWinners.has(c.videoId);
       const isSelected = selectedComebacks.has(c.videoId);
-      const classes = ['comeback-row', isSelected ? 'selected-comeback' : '', isWinner ? 'comeback-winner' : ''].filter(Boolean).join(' ');
+      const classes = ['comeback-row', isSelected ? 'selected-comeback' : '', isWinner ? 'comeback-winner' : '', onAir && onAir.key === 'cb__' + c.videoId ? 'on-air' : ''].filter(Boolean).join(' ');
       const sheetBtn = (isWinner && c.sheetRow !== undefined)
         ? `<button class="sheet-btn" style="margin-left:auto" onclick="event.stopPropagation();markWinnerInSheet(${c.sheetRow},this)">${sheetBtnInner()}</button>`
         : '';
       const winnerBadge = isWinner ? `<span class="badge badge-winner" style="font-size:10px;padding:2px 6px;margin-left:4px">Winner</span>` : '';
       return `
       <div class="${classes}" id="cbrow_${c.videoId}" title="Left-click: add to playlist  |  Right-click: mark as winner" onclick="toggleComebackSelection('${c.videoId}')" oncontextmenu="event.preventDefault();toggleComebackWinner('${c.videoId}')">
+        <button class="onair-btn" style="margin-right:0" title="Show on stream" onclick="event.stopPropagation();toggleComebackOnAir('${c.videoId}')">&#9654;</button>
         <span class="comeback-seed">${c.seed}</span>
         <input type="checkbox" class="comeback-check" id="cb_${c.videoId}" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation();toggleComebackSelection('${c.videoId}')">
         <span class="comeback-artist">${c.artist}</span>
@@ -734,10 +892,10 @@ function makeTable(catId, songs) {
   html += '<thead><tr><th>Artist</th><th>Song</th><th>Vibe</th><th>Submitter</th><th></th></tr></thead><tbody>';
   songs.forEach((song, i) => {
     const id = rowId(catId, i), isW = winners.has(id), isFP = freePicks.has(id);
-    const rc = isW ? 'winner' : isFP ? 'free-pick' : '';
+    const rc = [isW ? 'winner' : isFP ? 'free-pick' : '', onAir && onAir.key === id ? 'on-air' : ''].filter(Boolean).join(' ');
     const tag = song.tag ? `<span class="tag">${song.tag}</span>` : '';
     html += `<tr class="${rc}" onclick="toggleWinner('${id}')" oncontextmenu="event.preventDefault();toggleFreePick('${id}')">`;
-    html += `<td class="td-artist">${song.artist}</td><td class="td-title">${song.title}${tag}</td>`;
+    html += `<td class="td-artist"><button class="onair-btn" title="Show on stream" onclick="event.stopPropagation();toggleOnAir('${catId}',${i})">&#9654;</button>${song.artist}</td><td class="td-title">${song.title}${tag}</td>`;
     html += `<td class="td-vibe">${song.vibe || ''}</td><td class="td-sub">${song.submitter || ''}</td><td class="td-status">`;
     if (isW) {
       html += '<span class="badge badge-winner">Winner</span>';
@@ -882,6 +1040,8 @@ function copyResult() {
 }
 
 initTwitch();
+if (localStorage.getItem(OBS_PW_KEY) !== null) startObs(localStorage.getItem(OBS_PW_KEY));
+updateObsUI();
 </script>
 </body>
 </html>
