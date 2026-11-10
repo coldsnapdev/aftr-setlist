@@ -485,6 +485,7 @@ function startObs(pw) {
     onEvent: (type, d) => {
       if (type === 'CustomEvent' && d && d.aftr === 'yt-loaded') { videoAck(d); return; }
       if (type === 'CustomEvent' && d && d.aftr === 'yt' && d.ev === 'ended') { onVideoEnded(d); return; }
+      if (type === 'CustomEvent' && d && d.aftr === 'live-cmd' && d.cmd === 'next') { skipToNext(); return; }
       if (type === 'CustomEvent' && d && d.aftr === 'live-autoplay') { autoplay = { ...autoplay, ...d, seen: Date.now() }; return; }
       if (type !== 'CustomEvent' || !d || d.aftr !== 'live-overlay-hb') return;
       // The overlay has just (re)loaded: send it what it should be showing.
@@ -574,6 +575,13 @@ function onVideoEnded(d) {
     autoplayStarting = true;
     if (next.type === 'cb') toggleComebackOnAir(next.videoId, true); else toggleOnAir(next.catId, next.i, true);
   }, gap * 1000);
+}
+// Keypad "Next song": put the next song in the category on screen now, and play it.
+function skipToNext() {
+  const next = onAir ? nextOf(onAir.key) : null;
+  if (!next) return;
+  clearTimeout(autoplayTimer); autoplayStarting = true;
+  if (next.type === 'cb') toggleComebackOnAir(next.videoId, true); else toggleOnAir(next.catId, next.i, true);
 }
 function announceNext() {
   if (!obs || !obs.ready) return;
