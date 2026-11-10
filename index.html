@@ -589,14 +589,19 @@ function announceNext() {
   if (!obs || !obs.ready) return;
   const nx = onAir ? nextOf(onAir.key) : null;
   obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-next',
-    current: onAir ? (onAir.kind === 'album' ? `${onAir.title} (${onAir.trackNo}/${onAir.trackCount})` : `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}`) : null, album: !!(onAir && onAir.kind === 'album'), next: nx ? nx.label : null, videoId: onAir ? onAir.videoId : null, single: !!(onAir && onAir.key.startsWith('cb__')) } }).catch(() => {});
+    current: onAir ? (onAir.kind === 'album' ? `${onAir.title} (${onAir.trackNo}/${onAir.trackCount})` : `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}`) : null, album: !!(onAir && onAir.kind === 'album'), next: nx ? nx.label : null, videoId: onAir ? onAir.videoId : null, changedAt: onAirChangedAt, single: !!(onAir && onAir.key.startsWith('cb__')) } }).catch(() => {});
 }
 setInterval(announceNext, 5000);
 
 // The category of the last song put on screen, kept across reloads, so "New category" only shows when it really changes.
 const LASTCAT_KEY = 'aftr_lastcat__' + SHEET_NAME;
 let lastCategory = localStorage.getItem(LASTCAT_KEY);
+// When the on-screen song last changed in this page. Sent with every update so that, if the setlist is open in more than
+// one tab, the AFTR Live dock follows the one in actual use rather than flipping between them.
+const ONAIR_AT_KEY = 'aftr_onair_at__' + SHEET_NAME;
+let onAirChangedAt = Number(localStorage.getItem(ONAIR_AT_KEY)) || 0;
 function setOnAir(info) {
+  onAirChangedAt = Date.now(); localStorage.setItem(ONAIR_AT_KEY, String(onAirChangedAt));
   if (info) { info.announce = info.category !== lastCategory; lastCategory = info.category; localStorage.setItem(LASTCAT_KEY, lastCategory); }
   onAir = info;
   if (info) info.videoId = info.videoId || null;
