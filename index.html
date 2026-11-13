@@ -378,7 +378,11 @@ const isAlbumStream = () => Array.isArray(ALBUMS) && ALBUMS.length > 0;
 // this page measures each video's exact length (and reads its title) itself. artist and title are optional, and
 // replace YouTube's title on the stream's now-playing card. dur ("3:34") is only needed for a video the page can't
 // measure (its owner blocks embedding: the list shows a ?). Set PRESHOW = null for a week without one.
-const PRESHOW = null;
+const PRESHOW = [
+  { videoId: "PkKnp4SdE-w", artist: "NCT DREAM", title: "Hot Sauce" },
+  { videoId: "LNETckymbzk", artist: "NCT WISH", title: "poppop" },
+  { videoId: "F0veX7ix4x4", artist: "NCT DREAM", title: "Chiller" },
+];
 
 // Snake seeding: odd seeds → poll 1, even seeds → poll 2
 const COMEBACK_POLLS = 2;
