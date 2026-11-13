@@ -122,6 +122,9 @@
   body.album-mode .legend, body.album-mode .ctrl, body.album-mode #twitchStatus, body.album-mode #twitchAuthBtn, body.album-mode #comebacksSection, body.album-mode .page-sub { display: none !important; }
   .comeback-row.cb-unchosen:hover { background: transparent; }
   .onair-btn:disabled { cursor: default; border-color: #ddd; color: #ccc; }
+  .pre-len { width: 70px; color: #999; font-variant-numeric: tabular-nums; text-align: right; }
+  .pre-warn { color: #b45309; font-size: 12px; }
+  #preHiddenPlayer { position: fixed; left: -10000px; top: 0; width: 320px; height: 180px; }
   tr.on-air td, .comeback-row.on-air { box-shadow: inset 0 2px 0 #e5484d, inset 0 -2px 0 #e5484d; }
   tr.on-air .onair-btn, .comeback-row.on-air .onair-btn { background: #e5484d; border-color: #e5484d; color: #fff; }
   .twitch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 12px; border-radius: 6px; margin-bottom: 0.8rem; background: #fff; border: 1px solid #ddd; border-left: 4px solid #ccc; }
@@ -259,6 +262,7 @@
     </div>
   </div>
 
+  <div id="preshowSection"></div>
   <div id="comebacksSection"></div>
 
   <div id="setlist"></div>
@@ -368,6 +372,13 @@ const ALBUMS = [
   ] },
 ];
 const isAlbumStream = () => Array.isArray(ALBUMS) && ALBUMS.length > 0;
+
+// ─── Pre-show ─────────────────────────────────────────────────────────────────
+// Videos played back to back after "Go live" in the AFTR Live dock, with a countdown on screen. Only videoId is needed:
+// this page measures each video's exact length (and reads its title) itself. artist and title are optional, and
+// replace YouTube's title on the stream's now-playing card. dur ("3:34") is only needed for a video the page can't
+// measure (its owner blocks embedding: the list shows a ?). Set PRESHOW = null for a week without one.
+const PRESHOW = null;
 
 // Snake seeding: odd seeds → poll 1, even seeds → poll 2
 const COMEBACK_POLLS = 2;
@@ -488,13 +499,14 @@ function startObs(pw) {
       if (type === 'CustomEvent' && d && d.aftr === 'yt-loaded') { videoAck(d); return; }
       if (type === 'CustomEvent' && d && d.aftr === 'yt' && d.ev === 'ended') { onVideoEnded(d); return; }
       if (type === 'CustomEvent' && d && d.aftr === 'live-cmd' && d.cmd === 'next') { skipToNext(); return; }
+      if (type === 'CustomEvent' && d && d.aftr === 'live-cmd' && /^preshow-/.test(d.cmd)) { preshowCmd(d.cmd); return; }
       if (type === 'CustomEvent' && d && d.aftr === 'live-autoplay') { autoplay = { ...autoplay, ...d, seen: Date.now() }; return; }
       if (type !== 'CustomEvent' || !d || d.aftr !== 'live-overlay-hb') return;
       // The overlay has just (re)loaded: send it what it should be showing.
       if (d.fresh || Date.now() - overlaySeen > 12000) syncObs();
       overlaySeen = Date.now(); updateObsUI();
     },
-    onStatus: s => { if (s === 'connected') { syncObs(); obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-autoplay-request' } }).catch(() => {}); } updateObsUI(); } });
+    onStatus: s => { if (s === 'connected') { syncObs(); sendPreshowInfo(); obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-autoplay-request' } }).catch(() => {}); } updateObsUI(); } });
   obs.connect();
 }
 function obsSend(data) { if (obs && obs.ready) obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live', ...data } }).catch(() => {}); }
@@ -547,6 +559,10 @@ let autoplay = { enabled: true, stopAfter: false, gapSec: 3, seen: 0 }, autoplay
 function nextOf(key) {
   if (!key) return null;
   if (key.startsWith('cb__')) return null;   // comebacks are reacted to one at a time: nothing follows on
+  if (key.startsWith('pre__')) {
+    const i = Number(key.split('__')[1]), n = PRESHOW && PRESHOW[i + 1];
+    return n ? { type: 'pre', i: i + 1, label: preLabel(i + 1) } : null;
+  }
   if (key.startsWith('al__')) {
     const [, a, i] = key.split('__').map(Number);
     const n = ALBUMS && ALBUMS[a] && ALBUMS[a].tracks[i + 1];
@@ -561,6 +577,12 @@ function onVideoEnded(d) {
   if (!onAir || !onAir.videoId || d.videoId !== onAir.videoId) return;   // only the song we put on screen
   if (lastEnded === onAir.key) return;
   lastEnded = onAir.key;
+  if (onAir.key.startsWith('pre__')) {
+    const n = nextOf(onAir.key);
+    if (n) { autoplayStarting = true; setPreshowOnAir(n.i, true); }
+    else { videoNote = 'pre-show finished'; setOnAir(null); announceNext(); }
+    return;
+  }
   if (!autoplay.enabled) return;
   if (autoplay.stopAfter) {
     obs && obs.ready && obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-autoplay-consumed' } }).catch(() => {});
@@ -583,7 +605,7 @@ function skipToNext() {
   const next = onAir ? nextOf(onAir.key) : null;
   if (!next) return;
   clearTimeout(autoplayTimer); autoplayStarting = true;
-  if (next.type === 'al') toggleAlbumOnAir(next.a, next.i, true); else if (next.type === 'cb') toggleComebackOnAir(next.videoId, true); else toggleOnAir(next.catId, next.i, true);
+  if (next.type === 'pre') setPreshowOnAir(next.i, true); else if (next.type === 'al') toggleAlbumOnAir(next.a, next.i, true); else if (next.type === 'cb') toggleComebackOnAir(next.videoId, true); else toggleOnAir(next.catId, next.i, true);
 }
 function announceNext() {
   if (!obs || !obs.ready) return;
@@ -602,7 +624,8 @@ const ONAIR_AT_KEY = 'aftr_onair_at__' + SHEET_NAME;
 let onAirChangedAt = Number(localStorage.getItem(ONAIR_AT_KEY)) || 0;
 function setOnAir(info) {
   onAirChangedAt = Date.now(); localStorage.setItem(ONAIR_AT_KEY, String(onAirChangedAt));
-  if (info) { info.announce = info.category !== lastCategory; lastCategory = info.category; localStorage.setItem(LASTCAT_KEY, lastCategory); }
+  if (info && info.key.startsWith('pre__')) info.announce = false;   // no "New category" card for the pre-show
+  else if (info) { info.announce = info.category !== lastCategory; lastCategory = info.category; localStorage.setItem(LASTCAT_KEY, lastCategory); }
   onAir = info;
   if (info) info.videoId = info.videoId || null;
   if (info) localStorage.setItem(ONAIR_KEY, JSON.stringify(info)); else localStorage.removeItem(ONAIR_KEY);
@@ -1026,7 +1049,94 @@ function pollBtn(catId) {
   return `<input type="number" class="poll-points-input" id="pollPoints_${catId}" value="1000" min="1" max="1000000" title="Channel Points per extra vote"><button class="poll-btn" onclick="openPollModal('${catId}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M3 3h4v18H3V3zm7 6h4v12h-4V9zm7-4h4v16h-4V5z"/></svg>Start poll</button>`;
 }
 
+// ─── Pre-show: measuring, listing and playing ─────────────────────────────────
+// Lengths come from YouTube's own embedded player, loaded out of sight in this page; they're cached in this browser.
+const PRE_KEY = 'aftr_ytlen_v1';
+let preLen = {}; try { preLen = JSON.parse(localStorage.getItem(PRE_KEY) || '{}'); } catch {}
+let preChecking = false, preChangedAt = Date.now();
+const preItems = () => Array.isArray(PRESHOW) ? PRESHOW : [];
+function preLabel(i) { const it = preItems()[i] || {}, m = preLen[it.videoId] || {}; return it.title ? `${it.artist ? it.artist + ' – ' : ''}${it.title}` : (m.title || it.videoId || ''); }
+const parseLen = v => { if (typeof v === 'number') return v; const m = /^(\d+):(\d{1,2})$/.exec(String(v || '').trim()); return m ? Number(m[1]) * 60 + Number(m[2]) : 0; };
+const preDur = it => { const m = preLen[it.videoId] || {}; return m.dur > 0 ? m.dur : parseLen(it.dur); };
+const fmtLen = sec => { const s = Math.round(sec || 0); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+function measurePreshow() {
+  const todo = preItems().filter(it => it.videoId && !(preLen[it.videoId] && preLen[it.videoId].dur > 0));
+  if (!todo.length) { preChecking = false; renderPreshow(); sendPreshowInfo(); return; }
+  preChecking = true; renderPreshow();
+  const go = () => {
+    const holder = document.createElement('div'); holder.id = 'preHiddenPlayer'; document.body.append(holder);
+    let k = 0, timer = null, player = null;
+    const done = (id, dur, title, err) => {
+      clearTimeout(timer);
+      if (dur > 0) preLen[id] = { dur, title: title || '' }; else preLen[id] = { dur: 0, failed: err || 'unknown', title: title || '' };
+      localStorage.setItem(PRE_KEY, JSON.stringify(Object.fromEntries(Object.entries(preLen).filter(([, v]) => v.dur > 0))));
+      k++; next();
+    };
+    const next = () => {
+      if (k >= todo.length) { preChecking = false; preChangedAt = Date.now(); try { player.destroy(); } catch {} holder.remove(); renderPreshow(); sendPreshowInfo(); return; }
+      const id = todo[k].videoId;
+      timer = setTimeout(() => done(id, 0, '', 'timed out'), 15000);
+      player.cueVideoById(id);
+    };
+    player = new YT.Player(holder, { width: 320, height: 180, playerVars: { mute: 1, playsinline: 1 },
+      events: {
+        onReady: () => next(),
+        onStateChange: e => {
+          const id = todo[k] && todo[k].videoId; if (!id) return;
+          const dur = player.getDuration(), title = (player.getVideoData() || {}).title;
+          if ((e.data === YT.PlayerState.CUED || e.data === YT.PlayerState.PLAYING) && dur > 0) { player.stopVideo(); done(id, dur, title); }
+          else if (e.data === YT.PlayerState.CUED) { player.mute(); player.playVideo(); }   // some videos only report their length once playing
+        },
+        onError: e => { const id = todo[k] && todo[k].videoId; if (id) done(id, 0, '', e.data === 101 || e.data === 150 ? 'its owner blocks playing it outside YouTube' : 'YouTube error ' + e.data); }
+      } });
+  };
+  if (window.YT && YT.Player) go();
+  else { window.onYouTubeIframeAPIReady = go; const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; document.head.append(sc); }
+}
+function renderPreshow() {
+  const el = document.getElementById('preshowSection'), items = preItems();
+  if (!items.length) { el.innerHTML = ''; return; }
+  const total = items.reduce((a, it) => a + preDur(it), 0);
+  const failed = items.filter(it => (preLen[it.videoId] || {}).failed && !parseLen(it.dur)).length;
+  const rows = items.map((it, i) => {
+    const m = preLen[it.videoId] || {}, key = 'pre__' + i;
+    const len = m.dur > 0 ? fmtLen(m.dur) : parseLen(it.dur) ? fmtLen(parseLen(it.dur)) : m.failed ? `<span class="pre-warn" title="Couldn't measure: ${m.failed}. Add its length to the sheet.">?</span>` : '…';
+    return `<tr class="${onAir && onAir.key === key ? 'on-air' : ''}"><td class="td-num">${i + 1}</td><td class="td-title"><button class="onair-btn" title="Show on stream" onclick="event.stopPropagation();togglePreshowOnAir(${i})">&#9654;</button>${preLabel(i)}</td><td class="pre-len">${len}</td></tr>`;
+  }).join('');
+  el.innerHTML = `<div class="section"><div class="section-header"><div class="section-left"><span class="section-title">Pre-show</span><span class="section-sub">${preChecking ? 'measuring the videos…' : `${items.length} video${items.length > 1 ? 's' : ''} · ${fmtLen(total)} in total`}${failed ? ` · <span class="pre-warn">${failed} couldn't be measured (hover the ?)</span>` : ''}</span></div></div><table><tbody>${rows}</tbody></table></div>`;
+}
+function sendPreshowInfo() {
+  if (!obs || !obs.ready || !preItems().length) return;
+  obs.call('BroadcastCustomEvent', { eventData: { aftr: 'preshow-info', checking: preChecking, changedAt: preChangedAt,
+    items: preItems().map((it, i) => ({ videoId: it.videoId, title: preLabel(i), dur: preDur(it) })) } }).catch(() => {});
+}
+setInterval(sendPreshowInfo, 5000);
+function togglePreshowOnAir(i, fromAutoplay) {
+  if (!fromAutoplay) { clearTimeout(autoplayTimer); autoplayStarting = false; }
+  if (onAir && onAir.key === 'pre__' + i && !fromAutoplay) { videoNote = ''; setOnAir(null); announceNext(); return; }
+  setPreshowOnAir(i, fromAutoplay);
+}
+function setPreshowOnAir(i, play) {
+  const key = 'pre__' + i, it = preItems()[i]; if (!it) return;
+  const m = preLen[it.videoId] || {};
+  setOnAir({ key, category: 'Pre-show', categorySub: '', artist: it.artist || '', title: it.title || m.title || '', tag: '', submitter: '' });
+  lastEnded = null;
+  loadVideo(it.videoId, !!play);
+  announceNext();
+}
+// From the AFTR Live dock: get the first video ready (paused), play, or stop.
+function preshowCmd(cmd) {
+  if (!preItems().length) return;
+  if (cmd === 'preshow-cue') { clearTimeout(autoplayTimer); autoplayStarting = false; setPreshowOnAir(0, false); }
+  else if (cmd === 'preshow-play') {
+    if (!onAir || !onAir.key.startsWith('pre__')) { autoplayStarting = true; setPreshowOnAir(0, true); }
+    else { autoplayStarting = true; obs.call('BroadcastCustomEvent', { eventData: { aftr: 'yt-cmd', cmd: 'play' } }).catch(() => {}); }
+  }
+  else if (cmd === 'preshow-stop') { if (onAir && onAir.key.startsWith('pre__')) { obs.call('BroadcastCustomEvent', { eventData: { aftr: 'yt-cmd', cmd: 'pause' } }).catch(() => {}); videoNote = ''; setOnAir(null); announceNext(); } }
+}
+
 function render() {
+  renderPreshow();
   document.body.classList.toggle('album-mode', isAlbumStream());
   if (isAlbumStream()) return renderAlbums();
   const el = document.getElementById('setlist');
@@ -1199,6 +1309,7 @@ function copyResult() {
 }
 
 initTwitch();
+measurePreshow();
 if (localStorage.getItem(OBS_PW_KEY) !== null) startObs(localStorage.getItem(OBS_PW_KEY));
 updateObsUI();
 </script>
