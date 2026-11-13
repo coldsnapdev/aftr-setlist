@@ -120,6 +120,11 @@
   .album-artist { font-size: 13px; color: #666; margin-top: 2px; }
   .td-num { width: 44px; color: #999; font-variant-numeric: tabular-nums; text-align: right; padding-right: 10px !important; }
   body.album-mode .legend, body.album-mode .ctrl, body.album-mode #twitchStatus, body.album-mode #twitchAuthBtn, body.album-mode #comebacksSection, body.album-mode .page-sub { display: none !important; }
+  /* An album week with comebacks brings back what the comeback polls need: Twitch, the poll duration and the comebacks. */
+  body.album-mode.has-comebacks #twitchStatus, body.album-mode.has-comebacks .legend { display: flex !important; }
+  body.album-mode.has-comebacks #twitchAuthBtn { display: inline-flex !important; }
+  body.album-mode.has-comebacks #comebacksSection { display: block !important; }
+  body.album-mode.has-comebacks .legend .legend-item { display: none; }
   .comeback-row.cb-unchosen:hover { background: transparent; }
   .onair-btn:disabled { cursor: default; border-color: #ddd; color: #ccc; }
   .pre-len { width: 70px; color: #999; font-variant-numeric: tabular-nums; text-align: right; }
@@ -1142,7 +1147,8 @@ function preshowCmd(cmd) {
 function render() {
   renderPreshow();
   document.body.classList.toggle('album-mode', isAlbumStream());
-  if (isAlbumStream()) return renderAlbums();
+  document.body.classList.toggle('has-comebacks', !!(comebacks && comebacks.length));
+  if (isAlbumStream()) { renderAlbums(); if (comebacks && comebacks.length) renderComebacks(); return; }
   const el = document.getElementById('setlist');
   let html = '';
   data.categories.forEach(cat => {
@@ -1209,7 +1215,10 @@ function buildPatreonTracklist() {
   if (isAlbumStream()) return buildAlbumTracklist();
   return data.categories.map((cat, ci) => (ci > 0 ? '\n' : '') + `${cat.title.toUpperCase()}${cat.sub ? ` (${cat.sub})` : ''}\n` + cat.songs.map(s => `  ${s.artist} – ${s.title}${s.tag ? ` [${s.tag}]` : ''}`).join('\n')).join('\n');
 }
-function buildAlbumTracklist() { return ALBUMS.map(al => `${al.artist} – ${al.title}\n` + al.tracks.map((t, i) => `  ${i + 1}. ${t.title}`).join('\n')).join('\n\n'); }
+function buildAlbumTracklist() {
+  const albums = ALBUMS.map(al => `${al.artist} – ${al.title}\n` + al.tracks.map((t, i) => `  ${i + 1}. ${t.title}`).join('\n')).join('\n\n');
+  return comebacks && comebacks.length ? 'COMEBACKS\n' + comebacks.map(c => `  ${c.artist} – ${c.title}`).join('\n') + '\n\nALBUMS\n' + albums : albums;
+}
 function buildYouTubeTracklist() {
   if (isAlbumStream()) return buildAlbumTracklist();
   const comebacksBlock = comebacks && comebacks.length
@@ -1271,7 +1280,7 @@ function buildPrompt() {
   const context = date?`Stream date: ${date}`:'';
   const sr = `Style rules:\n- Always use "we" not "I"\n- UK English spelling\n- No em dashes\n- No emojis\n- Natural, warm, non-robotic prose\n- No time-based references like "today" or "tonight"\n- No analysis of song content or lyrics\n- Do not reproduce the tracklist as a raw block — instead weave it into the body as a formatted list after the descriptive sentences`;
   if (isAlbumStream()) {
-    return `You are writing a ${selectedType==='youtube'?'YouTube':'Patreon'} description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is an album stream: full listen-throughs of the albums below, recorded live. Follow the AFTR rules for album reviews (write about each album as a body of work: atmosphere, cohesion, pacing, identity; no invented track-by-track detail) and the ${selectedType==='youtube'?'YouTube':'Patreon'} format and style rules.\n\n${sr}\n\n${context?context+'\n\n':''}Albums:\n${tracklist}`;
+    return `You are writing a ${selectedType==='youtube'?'YouTube':'Patreon'} description for Along for the Ride Reacts (AFTR), a K-Pop reaction channel run by Simon and Kerry. This is an album stream: full listen-throughs of the albums below, recorded live.${comebacks && comebacks.length ? ' It also features this week\'s comebacks, voted on by the community, listed before the albums.' : ''} Follow the AFTR rules for album reviews (write about each album as a body of work: atmosphere, cohesion, pacing, identity; no invented track-by-track detail) and the ${selectedType==='youtube'?'YouTube':'Patreon'} format and style rules.\n\n${sr}\n\n${context?context+'\n\n':''}${comebacks && comebacks.length ? 'Comebacks and albums' : 'Albums'}:\n${tracklist}`;
   }
   if (selectedType==='youtube') {
     const ytIntro = comebacks && comebacks.length
