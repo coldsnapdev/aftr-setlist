@@ -413,6 +413,23 @@ const comebacks = [
 const ALBUMS = null;
 const isAlbumStream = () => Array.isArray(ALBUMS) && ALBUMS.length > 0;
 
+// ─── Free picks ───────────────────────────────────────────────────────────────
+// Sent to the AFTR Live dock for its free pick draws. draw: this week's Winner Draw tab (name = what we call them on
+// stream, patron = their Patreon username). fave: the submitter of last stream's favourite song (marked Fave in
+// column A of last week's tab), or null to type it in the dock.
+const FREE_PICKS = {
+  draw: [
+    { name: "Lu", patron: "lelmDR.WHO" },
+    { name: "wooahaepuffs", patron: "wooahaepuffs" },
+    { name: "Olivia", patron: "Olivia" },
+    { name: "diz", patron: "diz" },
+    { name: "Krista", patron: "WooshiNyang" },
+    { name: "Faye", patron: "Faye" },
+    { name: "nat", patron: "mnceurxx" },
+  ],
+  fave: null,
+};
+
 // ─── Pre-show ─────────────────────────────────────────────────────────────────
 // Videos played back to back after "Go live" in the AFTR Live dock, with a countdown on screen. Only videoId is needed:
 // this page measures each video's exact length (and reads its title) itself. artist and title are optional, and
@@ -540,13 +557,14 @@ function startObs(pw) {
       if (type === 'CustomEvent' && d && d.aftr === 'yt' && d.ev === 'ended') { onVideoEnded(d); return; }
       if (type === 'CustomEvent' && d && d.aftr === 'live-cmd' && d.cmd === 'next') { skipToNext(); return; }
       if (type === 'CustomEvent' && d && d.aftr === 'live-cmd' && /^preshow-/.test(d.cmd)) { preshowCmd(d.cmd); return; }
+      if (type === 'CustomEvent' && d && d.aftr === 'freepicks-record') { onFreePicksRecord(d); return; }
       if (type === 'CustomEvent' && d && d.aftr === 'live-autoplay') { autoplay = { ...autoplay, ...d, seen: Date.now() }; return; }
       if (type !== 'CustomEvent' || !d || d.aftr !== 'live-overlay-hb') return;
       // The overlay has just (re)loaded: send it what it should be showing.
       if (d.fresh || Date.now() - overlaySeen > 12000) syncObs();
       overlaySeen = Date.now(); updateObsUI();
     },
-    onStatus: s => { if (s === 'connected') { syncObs(); sendPreshowInfo(); obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-autoplay-request' } }).catch(() => {}); } updateObsUI(); } });
+    onStatus: s => { if (s === 'connected') { syncObs(); sendPreshowInfo(); sendFreePicksInfo(); obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-autoplay-request' } }).catch(() => {}); } updateObsUI(); } });
   obs.connect();
 }
 function obsSend(data) { if (obs && obs.ready) obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live', ...data } }).catch(() => {}); }
@@ -998,7 +1016,40 @@ function rowId(catId, i) { return catId + '__' + i; }
 
 // ─── Toggles ──────────────────────────────────────────────────────────────────
 function toggleWinner(id) { if (winners.has(id)) winners.delete(id); else winners.add(id); render(); }
-function toggleFreePick(id) { if (freePicks.has(id)) freePicks.delete(id); else freePicks.add(id); render(); }
+function toggleFreePick(id) {
+  const on = !freePicks.has(id);
+  if (on) freePicks.add(id); else freePicks.delete(id);
+  render();
+  // Our favourite song of the stream: written as "Fave" in column K of its row, so next week's free pick can find it.
+  const [catId, i] = id.split('__');
+  const cat = (data.categories || []).find(c => c.id === catId);
+  const song = cat && cat.songs[Number(i)];
+  if (song && song.sheetRow !== undefined) sheetWrite({ action: 'mark_fave', rowIndex: song.sheetRow, on }, on ? `Saved ${song.artist} – ${song.title} as our favourite in the sheet.` : 'Removed the favourite mark in the sheet.');
+}
+// Writes to the stream sheet through the worker. Failures show in the page title bar's tooltip and the console.
+async function sheetWrite(body, okMsg) {
+  try {
+    const res = await fetch(WORKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sheetName: SHEET_NAME, ...body }) });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+    if (okMsg) console.log(okMsg);
+    return true;
+  } catch (err) { console.error('Sheet write error:', err); alertSheet('Could not save to the sheet: ' + err.message); return false; }
+}
+function alertSheet(msg) {
+  let el = document.getElementById('sheetAlert');
+  if (!el) { el = document.createElement('div'); el.id = 'sheetAlert'; el.style.cssText = 'position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#b42318;color:#fff;padding:10px 16px;border-radius:8px;font:600 14px system-ui;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.25)'; document.body.append(el); }
+  el.textContent = msg; el.style.display = ''; clearTimeout(el._t); el._t = setTimeout(() => { el.style.display = 'none'; }, 8000);
+}
+// The AFTR Live dock sends the night's free pick winners as they're revealed; they're written to columns M to O.
+let fpRecordTimer = null, fpRecordLast = '';
+function onFreePicksRecord(d) {
+  const key = JSON.stringify(d.winners || []);
+  if (d.sheet && d.sheet !== SHEET_NAME) return;
+  if (key === fpRecordLast) return;
+  clearTimeout(fpRecordTimer);
+  fpRecordTimer = setTimeout(async () => { if (await sheetWrite({ action: 'record_free_picks', winners: d.winners || [] })) fpRecordLast = key; }, 1500);
+}
 function toggleComebackWinner(videoId) {
   if (comebackWinners.has(videoId)) comebackWinners.delete(videoId);
   else comebackWinners.add(videoId);
@@ -1159,6 +1210,12 @@ function sendPreshowInfo() {
     items: preItems().map((it, i) => ({ videoId: it.videoId, title: preLabel(i), dur: preDur(it) })) } }).catch(() => {});
 }
 setInterval(sendPreshowInfo, 5000);
+function sendFreePicksInfo() {
+  if (!obs || !obs.ready || typeof FREE_PICKS === 'undefined' || !FREE_PICKS) return;
+  obs.call('BroadcastCustomEvent', { eventData: { aftr: 'freepicks-info', sheet: SHEET_NAME, draw: FREE_PICKS.draw || [], fave: FREE_PICKS.fave || null } }).catch(() => {});
+}
+setInterval(sendFreePicksInfo, 5000);
+
 function togglePreshowOnAir(i, fromAutoplay) {
   if (!fromAutoplay) { clearTimeout(autoplayTimer); autoplayStarting = false; }
   if (onAir && onAir.key === 'pre__' + i && !fromAutoplay) { videoNote = ''; setOnAir(null); announceNext(); return; }
