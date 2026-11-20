@@ -671,7 +671,9 @@ function announceNext() {
   if (!obs || !obs.ready) return;
   const nx = onAir ? nextOf(onAir.key) : null;
   obs.call('BroadcastCustomEvent', { eventData: { aftr: 'live-next',
-    current: onAir ? (onAir.kind === 'album' ? `${onAir.title} (${onAir.trackNo}/${onAir.trackCount})` : `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}`) : null, album: !!(onAir && onAir.kind === 'album'), next: nx ? nx.label : null, videoId: onAir ? onAir.videoId : null, changedAt: onAirChangedAt, streamType: isAlbumStream() ? 'albums' : 'jukebox', single: !!(onAir && onAir.key.startsWith('cb__')) } }).catch(() => {});
+    current: onAir ? (onAir.kind === 'album' ? `${onAir.title} (${onAir.trackNo}/${onAir.trackCount})` : `${onAir.artist ? onAir.artist + ' – ' : ''}${onAir.title}`) : null, album: !!(onAir && onAir.kind === 'album'), next: nx ? nx.label : null, videoId: onAir ? onAir.videoId : null, changedAt: onAirChangedAt, streamType: isAlbumStream() ? 'albums' : 'jukebox', single: !!(onAir && onAir.key.startsWith('cb__')),
+    // For the dock's run of show: the categories in order, and which one is on screen.
+    sheet: SHEET_NAME, category: onAir ? onAir.category : null, cats: (data.categories || []).map(c => c.title), comebackCount: Array.isArray(comebacks) ? comebacks.length : 0 } }).catch(() => {});
 }
 setInterval(announceNext, 5000);
 
