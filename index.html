@@ -427,7 +427,7 @@ const FREE_PICKS = {
     { name: "Faye", patron: "Faye" },
     { name: "nat", patron: "mnceurxx" },
   ],
-  fave: null,
+  fave: { name: "Romeo", patron: "romeo_is_alone", artist: "XLOV", title: "Hush (Dance Practice)" },
 };
 
 // ─── Pre-show ─────────────────────────────────────────────────────────────────
@@ -1205,7 +1205,8 @@ function renderPreshow() {
   el.innerHTML = `<div class="section"><div class="section-header"><div class="section-left"><span class="section-title">Pre-show</span><span class="section-sub">${preChecking ? 'measuring the videos…' : `${items.length} video${items.length > 1 ? 's' : ''} · ${fmtLen(total)} in total`}${failed ? ` · <span class="pre-warn">${failed} couldn't be measured (hover the ?)</span>` : ''}</span></div></div><table><tbody>${rows}</tbody></table></div>`;
 }
 function sendPreshowInfo() {
-  if (!obs || !obs.ready || !preItems().length) return;
+  // Sent even with no pre-show videos, so the AFTR Live dock knows the setlist is connected.
+  if (!obs || !obs.ready) return;
   obs.call('BroadcastCustomEvent', { eventData: { aftr: 'preshow-info', checking: preChecking, changedAt: preChangedAt,
     items: preItems().map((it, i) => ({ videoId: it.videoId, title: preLabel(i), dur: preDur(it) })) } }).catch(() => {});
 }
