@@ -435,7 +435,9 @@ const FREE_PICKS = {
 // this page measures each video's exact length (and reads its title) itself. artist and title are optional, and
 // replace YouTube's title on the stream's now-playing card. dur ("3:34") is only needed for a video the page can't
 // measure (its owner blocks embedding: the list shows a ?). Set PRESHOW = null for a week without one.
-const PRESHOW = null;
+const PRESHOW = [
+  { videoId: "hfDrBfGmzqo", artist: "XLOV", title: "Hush (Dance Practice)" },   // last stream's favourite
+];
 
 // A Twitch poll holds 5 options: up to 5 comebacks is one poll; 6 to 10 split into two by snake seeding (odd seeds → poll 1, even → poll 2)
 const COMEBACK_POLLS = (comebacks && comebacks.length > 5) ? 2 : 1;
