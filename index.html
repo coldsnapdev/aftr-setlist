@@ -700,7 +700,7 @@ function toggleOnAir(catId, i, fromAutoplay) {
   if (onAir && onAir.key === id) { videoNote = ''; setOnAir(null); announceNext(); return; }
   const cat = data.categories.find(c => c.id === catId), song = cat && cat.songs[i];
   if (!song) return;
-  setOnAir({ key: id, category: cat.title, categorySub: cat.sub || '', artist: song.artist, title: song.title, tag: song.tag || '', submitter: (song.submitter || '').trim() });
+  setOnAir({ key: id, category: cat.title, categorySub: '', artist: song.artist, title: song.title, tag: song.tag || '', submitter: (song.submitter || '').trim() });
   lastEnded = null;
   loadVideo(videoIdFor(cat, i), fromAutoplay);
   announceNext();
