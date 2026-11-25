@@ -331,63 +331,63 @@
 const TWITCH_CLIENT_ID    = 'umh17eumefmyh0l2ovp3sqogfo5bi1';
 const TWITCH_REDIRECT_URI = 'https://coldsnapdev.github.io/aftr-setlist/';
 const TWITCH_SCOPES       = 'channel:manage:polls';
-const STREAM_DATE_DEFAULT = '20th November 2026';
-const SHEET_NAME = 'November 20th Playlist';
+const STREAM_DATE_DEFAULT = '25th November 2026';
+const SHEET_NAME = 'November 25th Playlist';
 const WORKER_URL = 'https://aftr-setlist.simon-chilley.workers.dev';
 const POLL_MAX_CHARS      = 25;
 
 const data = {
   categories: [
     {
-      id: "NCT",
-      title: "Back inside, I may gnaw kibbles",
-      sub: "NCT Members and Alumni",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=0A3FrSYq0wA,N69LuCJ5VPI,JvzbFG4-5W4,mH7xjaEA-94,I_FawQTrpxM',
+      id: "MVs",
+      title: "Nearly a Sin",
+      sub: "MVs",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=g5idjxf4jHI,5C5lcn1GYfM,xnwOfIiZ-zQ,O3nFopIjmjI,A_H1EH6p4A0',
       songs: [
-        { artist: "Chenle & Jisung", title: "Smash It", tag: "OST", vibe: "Unexpected & Jisung", submitter: "MamaJoss & Neo", sheetRow: 9, videoId: "0A3FrSYq0wA" },
-        { artist: "NCT WISH", title: "Happy Yushi Day", tag: "Birthday", vibe: "Birthday madness", submitter: "Krista", sheetRow: 10, videoId: "N69LuCJ5VPI" },
-        { artist: "XIAOJUN", title: "Hey, Somebody", tag: "English Ver.", vibe: "wonderful", submitter: "taz", sheetRow: 11, videoId: "JvzbFG4-5W4" },
-        { artist: "RIIZE", title: "Honestly", tag: "", vibe: "vocals", submitter: "Kona", sheetRow: 12, videoId: "mH7xjaEA-94" },
-        { artist: "NCT WISH", title: "Genie", tag: "Cover", vibe: "", submitter: "jaehyunlicker", sheetRow: 13, videoId: "I_FawQTrpxM" },
+        { artist: "GOT7", title: "Breath", tag: "", vibe: "like a breath of fresh air", submitter: "Klára", sheetRow: 9, videoId: "g5idjxf4jHI" },
+        { artist: "Jeon Somi", title: "Closer", tag: "", vibe: "", submitter: "Laker", sheetRow: 10, videoId: "5C5lcn1GYfM" },
+        { artist: "Wheein", title: "The Symphony of Fxxkboys", tag: "", vibe: "Art", submitter: "Mercy", sheetRow: 11, videoId: "xnwOfIiZ-zQ" },
+        { artist: "DAY6", title: "I Wait", tag: "MV", vibe: "Dreamy anthem", submitter: "Lu", sheetRow: 12, videoId: "O3nFopIjmjI" },
+        { artist: "CL", title: "ICONIC", tag: "MV", vibe: "The Queen is back", submitter: "Niki", sheetRow: 13, videoId: "A_H1EH6p4A0" },
       ]
     },
     {
-      id: "Ladies",
-      title: "Past Love Duet",
-      sub: "Ladies",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=bnNxMtLjhPA,1MOyde9st4k,FyS5dAywkEo,2fyFx2u5fbU,s6P-rEylWaQ',
+      id: "Awards",
+      title: "Thief with a Crowbar",
+      sub: "Awards/Competitions",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=b-ivUp5KmrU,s19BcuRdqQ4,f5zeVTLO9sA,MZsDgKYPXq0,XI4Toxyw-8M',
       songs: [
-        { artist: "Billlie", title: "B'yond Me", tag: "Live", vibe: "Enchanting vocals creating an ethereal atmosphere", submitter: "Billlie is the the best 4th gen GG fight me I dare you.", sheetRow: 15, videoId: "bnNxMtLjhPA" },
-        { artist: "Red Velvet", title: "Bulldozer", tag: "Live", vibe: "Confident", submitter: "Dogeva", sheetRow: 16, videoId: "1MOyde9st4k" },
-        { artist: "LISA", title: "SawaDika", tag: "", vibe: "Fire", submitter: "Aya", sheetRow: 17, videoId: "FyS5dAywkEo" },
-        { artist: "izna", title: "Mamma Mia", tag: "", vibe: "", submitter: "diz", sheetRow: 18, videoId: "2fyFx2u5fbU" },
-        { artist: "Chiaki Ishikawa", title: "Uninstall", tag: "", vibe: "Ptsd but good?", submitter: "Mirva", sheetRow: 19, videoId: "s6P-rEylWaQ" },
+        { artist: "WOODZ", title: "Come Into My World", tag: "MAMA 2026", vibe: "", submitter: "FickleFairy", sheetRow: 15, videoId: "b-ivUp5KmrU" },
+        { artist: "WayV", title: "4 Walls", tag: "KGMA 2026", vibe: "sultry", submitter: "taz", sheetRow: 16, videoId: "s19BcuRdqQ4" },
+        { artist: "NCT WISH", title: "MAMA 2026 Performance", tag: "Live", vibe: "Cyber Angels", submitter: "Krista", sheetRow: 17, videoId: "f5zeVTLO9sA" },
+        { artist: "ILLIT", title: "You're Under Arrest + It's Me", tag: "MMA 2026", vibe: "fun", submitter: "infin", sheetRow: 18, videoId: "MZsDgKYPXq0" },
+        { artist: "Yoo Hwe Seung", title: "In Full Bloom", tag: "King of Masked Singer", vibe: "Heaven", submitter: "Byakko", sheetRow: 19, videoId: "XI4Toxyw-8M" },
       ]
     },
     {
-      id: "Lives",
-      title: "Bridalware Mix-up",
-      sub: "Lives",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=pDGV24n5ggE,KXvwqtinibk,WHexJXXvtxM,a9TtLWQBLsc,zXoQZIpnBwk',
+      id: "Covers",
+      title: "Wrapping Up",
+      sub: "Cover/Sing-along",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=T1yHcRb0Cfo,DiyBJqGTmgE,QZ_yof3aU6Q,1WsSY1I17gw,KFMWNoPrST8',
       songs: [
-        { artist: "Jeongwoo", title: "Melody Instead of a Bouquet", tag: "", vibe: "this boy is a star", submitter: "Klára", sheetRow: 21, videoId: "pDGV24n5ggE" },
-        { artist: "BTS Vocal Line", title: "Zero O'Clock", tag: "", vibe: "Angels", submitter: "Our favourite person", sheetRow: 22, videoId: "KXvwqtinibk" },
-        { artist: "N.Flying", title: "STARLIGHT", tag: "", vibe: "DEPRESSION", submitter: "BYAKKO", sheetRow: 23, videoId: "WHexJXXvtxM" },
-        { artist: "EXO", title: "Suffocate", tag: "", vibe: "Sexy & Completely Innocent", submitter: "Eri & Leah", sheetRow: 24, videoId: "a9TtLWQBLsc" },
-        { artist: "Beatpella House", title: "Team Korea", tag: "", vibe: "", submitter: "Kristine", sheetRow: 25, videoId: "zXoQZIpnBwk" },
+        { artist: "SEVENTEEN", title: "Yeah Yeah Yeah", tag: "Pre-debut Dance Cover", vibe: "predebut", submitter: "wooahaepuffs", sheetRow: 21, videoId: "T1yHcRb0Cfo" },
+        { artist: "Sungchan", title: "The Snowman", tag: "Cover", vibe: "winter", submitter: "kona", sheetRow: 22, videoId: "DiyBJqGTmgE" },
+        { artist: "LU", title: "Good Goodbye", tag: "Hwasa Cover", vibe: "flawless", submitter: "Diz", sheetRow: 23, videoId: "QZ_yof3aU6Q" },
+        { artist: "BTS", title: "Butter", tag: "Karaoke Ver.", vibe: "Smooth", submitter: "Faye", sheetRow: 24, videoId: "1WsSY1I17gw" },
+        { artist: "MC Special", title: "My Only Wish", tag: "", vibe: "Sweet", submitter: "Eri", sheetRow: 25, videoId: "KFMWNoPrST8" },
       ]
     },
     {
-      id: "Misfits",
-      title: "Categorically Inappropriate",
-      sub: "Didn't fit in other categories",
-      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=g7sCkcMC6dI,pTziJ4RaYnk,004Bvzb5UV4,-Lw_ZtPUkuA,tAcKfnf0zv4',
+      id: "Leftovers",
+      title: "English Loot Overs",
+      sub: "Leftovers",
+      playlistUrl: 'https://www.youtube.com/watch_videos?video_ids=zxlm3ARS-nw,chGxYInJLSo,JDMxO6m_XaE,z9Bz9A_1YWQ,HbOvIsRfqJ8',
       songs: [
-        { artist: "Lee Jin Hyuk", title: "Relax", tag: "MV", vibe: "Cool", submitter: "Niki", sheetRow: 27, videoId: "g7sCkcMC6dI" },
-        { artist: "Epik High × Davichi", title: "Mise-en-scène", tag: "", vibe: "Cinema", submitter: "Faye", sheetRow: 28, videoId: "pTziJ4RaYnk" },
-        { artist: "WE GO-6", title: "Lucky Charm", tag: "", vibe: "furry debut", submitter: "wooahaepuffs", sheetRow: 29, videoId: "004Bvzb5UV4" },
-        { artist: "D.O.", title: "Darling", tag: "English Ver.", vibe: "Romantic", submitter: "Sooingkids", sheetRow: 30, videoId: "-Lw_ZtPUkuA" },
-        { artist: "Jungkook", title: "Hate You", tag: "", vibe: "Perfect vocal", submitter: "Sui💜JK", sheetRow: 31, videoId: "tAcKfnf0zv4" },
+        { artist: "WE DEM BOYZ", title: "CINEMA", tag: "", vibe: "Powerful", submitter: "Aya", sheetRow: 27, videoId: "zxlm3ARS-nw" },
+        { artist: "HAECHAN", title: "PADO", tag: "Fancam", vibe: "Unforgettable", submitter: "dudahyucklover", sheetRow: 28, videoId: "chGxYInJLSo" },
+        { artist: "LAY", title: "Obsessed", tag: "Live", vibe: "Xianxia period drama please", submitter: "Leah", sheetRow: 29, videoId: "JDMxO6m_XaE" },
+        { artist: "iLiFE!", title: "LOML", tag: "", vibe: "", submitter: "Yuzzhi", sheetRow: 30, videoId: "z9Bz9A_1YWQ" },
+        { artist: "Jung Kook", title: "Yes or No", tag: "", vibe: "Cute playful romantic", submitter: "Sui💜JK", sheetRow: 31, videoId: "HbOvIsRfqJ8" },
       ]
     },
   ]
@@ -397,11 +397,11 @@ const data = {
 // Set to null for no comebacks; array of {seed,artist,title,videoId,sheetRow} for active week
 // sheetRow is 0-based index into the sheet
 const comebacks = [
-  { seed: 1, artist: "NCT WISH", title: "1000", videoId: "CVUFL02iRSE", sheetRow: 1 },
-  { seed: 2, artist: "TOMORROW X TOGETHER", title: "Angel Bite", videoId: "M9G4guYg-i8", sheetRow: 2 },
-  { seed: 3, artist: "ATEEZ", title: "THANK U", videoId: "4BSexJbNNLY", sheetRow: 3 },
-  { seed: 4, artist: "LISA", title: "Leave With Me", videoId: "M8fO5lQpfrc", sheetRow: 4 },
-  { seed: 5, artist: "P1Harmony", title: "MOMENTUM", videoId: "o0Owh8lCKfc", sheetRow: 5 },
+  { seed: 1, artist: "BIGBANG", title: "GiiiRIP", videoId: "4EFxXjiWDOM", sheetRow: 1 },
+  { seed: 2, artist: "Stray Kids", title: "SUIATSU", videoId: "vNpbvIU1kWg", sheetRow: 2 },
+  { seed: 3, artist: "WENDY", title: "Before Sunrise", videoId: "4FVkUBRVXiU", sheetRow: 3 },
+  { seed: 4, artist: "KISS OF LIFE", title: "Greedy", videoId: "9AzCkUyVmdE", sheetRow: 4 },
+  { seed: 5, artist: "1VERSE", title: "Dancing in the Rain", videoId: "i1AA1Aq2pcs", sheetRow: 5 },
 ];
 
 // ─── Album streams ────────────────────────────────────────────────────────────
@@ -416,18 +416,15 @@ const isAlbumStream = () => Array.isArray(ALBUMS) && ALBUMS.length > 0;
 // ─── Free picks ───────────────────────────────────────────────────────────────
 // Sent to the AFTR Live dock for its free pick draws. draw: this week's Winner Draw tab (name = what we call them on
 // stream, patron = their Patreon username). fave: the submitter of last stream's favourite song (marked Fave in
-// column A of last week's tab), or null to type it in the dock.
+// column K of last week's tab), or null to type it in the dock.
 const FREE_PICKS = {
   draw: [
-    { name: "Lu", patron: "lelmDR.WHO" },
-    { name: "wooahaepuffs", patron: "wooahaepuffs" },
-    { name: "Olivia", patron: "Olivia" },
-    { name: "diz", patron: "diz" },
-    { name: "Krista", patron: "WooshiNyang" },
-    { name: "Faye", patron: "Faye" },
-    { name: "nat", patron: "mnceurxx" },
+    { name: "Dou", patron: "Dou" },
+    { name: "infin", patron: "Emil" },
+    { name: "Laker", patron: "Vie" },
+    { name: "Aqilah", patron: "Umara Aqilah Haris" },
   ],
-  fave: { name: "Romeo", patron: "romeo_is_alone", artist: "XLOV", title: "Hush (Dance Practice)" },
+  fave: { name: "Eri & Leah", patron: "Lily / LeijahMarie", artist: "EXO", title: "Suffocate" },
 };
 
 // ─── Pre-show ─────────────────────────────────────────────────────────────────
@@ -436,7 +433,7 @@ const FREE_PICKS = {
 // replace YouTube's title on the stream's now-playing card. dur ("3:34") is only needed for a video the page can't
 // measure (its owner blocks embedding: the list shows a ?). Set PRESHOW = null for a week without one.
 const PRESHOW = [
-  { videoId: "hfDrBfGmzqo", artist: "XLOV", title: "Hush (Dance Practice)" },   // last stream's favourite
+  { videoId: "a9TtLWQBLsc", artist: "EXO", title: "Suffocate" },   // last stream's favourite
 ];
 
 // A Twitch poll holds 5 options: up to 5 comebacks is one poll; 6 to 10 split into two by snake seeding (odd seeds → poll 1, even → poll 2)
